@@ -1,0 +1,143 @@
+{
+    "patients": [
+        {
+            "name": 'Jeff',
+            "dob": '1967-03-28',
+            "meds": [
+                {
+                    "name": 'Isosorbide',
+                    "dosage": '60mg',
+                    "instructions": '1 tablet by mouth every day',
+                    "schedule": {
+                        "frequency": 'Daily',
+                        "dow": 'Today',
+                        "tod": ['Morning']
+                    }
+                },
+                {
+                    "name": 'Omeprazole',
+                    "dosage": '40mg',
+                    "instructions": '1 capsule by mouth every other day',
+                    "schedule": {
+                        "frequency": 'Alternating Days',
+                        "dow": 'Today',
+                        "tod": ['Evening']
+                    }
+                },
+                {
+                    "name": 'Atorvastatin',
+                    "dosage": '10mg',
+                    "instructions": '1 tablet by mouth every other day',
+                    "schedule": {
+                        "frequency": 'Alternating Days',
+                        "dow": 'Today',
+                        "tod": ['Bedtime']
+                    }
+                },
+                {
+                    "name": 'Vitamin D',
+                    "dosage": '1000IU',
+                    "instructions": '1 tablet by mouth every day',
+                    "schedule": {
+                        "frequency": 'Daily',
+                        "dow": 'Today',
+                        "tod": ['Morning']
+                    }
+                }
+            ],
+            "status": 'active',
+            "created": null,
+            "modified": null
+        },
+
+        {
+            "name": 'Atar',
+            "dob": '2001-01-01',
+            "meds": [
+                {
+                    "name": 'Prednisolone',
+                    "dosage": '15mg/5ml',
+                    "instructions": '0.5ml by mouth every other day',
+                    "schedule": {
+                        "frequency": 'Alternating Days',
+                        "dow": 'Today',
+                        "tod": ['Morning']
+                    }
+                },
+                {
+                    "name": 'Metronidazole',
+                    "dosage": '100mg/ml',
+                    "instructions": '0.5ml by mouth every day',
+                    "schedule": {
+                        "frequency": 'Daily',
+                        "dow": 'Today',
+                        "tod": ['Morning']
+                    }
+                },
+                {
+                    "name": 'Furosemide',
+                    "dosage": '10mg/ml',
+                    "instructions": '0.8ml by mouth every day',
+                    "schedule": {
+                        "frequency": 'Daily',
+                        "dow": 'Today',
+                        "tod": ['Evening']
+                    }
+                }
+            ],
+            "status": 'active',
+            "created": null,
+            "modified": null
+        },
+
+        {
+            "name": 'Qimmiq',
+            "dob": '2011-05-01',
+            "meds": [
+                {
+                    "name": 'Allergy Vaccine',
+                    "dosage": 'Bottle C',
+                    "instructions": '3 pumps sublingual twice daily',
+                    "schedule": {
+                        "frequency": 'Daily',
+                        "dow": 'Today',
+                        "tod": ['Morning','Evening']
+                    }
+                },
+                {
+                    "name": 'Cefpodoxime',
+                    "dosage": '200mg',
+                    "instructions": '1 tablet by mouth every day, with food',
+                    "schedule": {
+                        "frequency": 'Daily',
+                        "dow": 'Today',
+                        "tod": ['Evening']
+                    }
+                },
+                {
+                    "name": 'Ketoconazole',
+                    "dosage": '200mg',
+                    "instructions": '1 tablet by mouth every day, with food',
+                    "schedule": {
+                        "frequency": 'Daily',
+                        "dow": 'Today',
+                        "tod": ['Evening']
+                    }
+                },
+                {
+                    "name": 'Conofite',
+                    "dosage": '1%/60ml',
+                    "instructions": '0.4cc in left ear every day',
+                    "schedule": {
+                        "frequency": 'Daily',
+                        "dow": 'Today',
+                        "tod": ['Evening']
+                    }
+                }                
+            ],
+            "status": 'active',
+            "created": null,
+            "modified": null
+        }
+    ]
+}

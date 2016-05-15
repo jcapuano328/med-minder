@@ -1,0 +1,59 @@
+====== Med Schedules
+---- Frequency
+	Daily
+		DOW: Today
+	Alternating Days
+		DOW: Today
+	Weekly
+		DOW: Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday			
+	Alternating Weeks
+		DOW: Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday		
+	Monthly
+		DOW: Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday		
+
+---- Day of Week
+	Today
+	Sunday
+	Monday
+	Tuesday
+	Wednesday
+	Thursday
+	Friday
+	Saturday
+
+---- Time of Day
+	Morning		(0600)
+	Noon		(1200)
+	Evening		(1800)
+	Bedtime		(2200)
+
+
+====== Reminder Scheduling
+
+patients have meds, each med has a "schedule".
+app will schedule the reminder for the first occurrence of each med when med is entered/updated.
+when user "acknowledges" the reminder (dismiss, etc), app will schedule next occurrence of the med.
+reminders are scheduled indefinitely
+(reminders schedule for each "active" med for each "active" patient)
+
+
+---- Examples
+
+_____ Example 1
+	Freq: Daily
+	DOW: Today
+	TOD: Morning
+	
+	Reminder: Today @ 0600
+	"Acknowledged"
+	Reminder: Tomorrow @ 0600
+	
+_____ Example 2
+	Freq: Alternating Days
+	DOW: Today
+	TOD: Bedtime
+	
+	Reminder: Today @ 2200
+	"Acknowledged"
+	Reminder: Day after Tomorrow @ 2200
+	

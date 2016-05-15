@@ -1,0 +1,3 @@
+rootProject.name = 'Med Minder'
+
+include ':app'
