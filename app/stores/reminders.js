@@ -143,7 +143,7 @@ module.exports = {
             "on": Scheduler.next(med.schedule, last),
             "created": null,
             "modified": null
-        };
+        };        
         return this.add(reminder);
     }
 };

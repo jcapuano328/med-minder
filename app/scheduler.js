@@ -35,7 +35,11 @@ let increment = (dt, freq) => {
 }
 
 let mapDOW = (dow) => {
-    return _days.indexOf(dow.toLowerCase());
+    let idx = _days.indexOf(dow.toLowerCase());
+    if (idx < 0) {
+        idx = moment().day();
+    }
+    return idx;
 }
 let mapTOD = (tod) => {
     switch(_times.indexOf(tod.toLowerCase())) {
@@ -92,7 +96,9 @@ let scheduler = (schedule, last) => {
         minute: tod.minute,
         second: tod.second
     });
-    next.add(7 - (now.day() - dow), 'd');
+    if (now.day() != dow) {
+        next.add(7 - (now.day() - dow), 'd');
+    }
     return next;
 }
 

@@ -4,6 +4,7 @@ var React = require('react-native');
 var { View, Text } = React;
 var FilterMenu = require('./filterMenu');
 var IconButton = require('./iconButton');
+let iconWidth = 32, iconHeight = 32;
 
 var renderTitle = (props) => {
     if (typeof props.title == 'function') {
@@ -19,13 +20,13 @@ var TitleBar = (props) => {
             route = route || {};
             return (
                 <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-                    <IconButton image={props.logo || 'menu'} resizeMode='stretch' onPress={route.onMenu} />
-                    {index > 0 ? <IconButton image={'back'} resizeMode='stretch' onPress={() => navigator.pop()} /> : null}
+                    <IconButton image={props.logo || 'menu'} height={iconHeight} width={iconWidth} resizeMode='stretch' onPress={route.onMenu} />
+                    {index > 0 ? <IconButton image={'back'} height={iconHeight} width={iconWidth} resizeMode='stretch' onPress={() => navigator.pop()} /> : null}
                 </View>
             );
         },
         Title(route, navigator, index, navState) {
-            route = route || {};            
+            route = route || {};
             return (
                 <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
                     <Text style={{
@@ -48,10 +49,10 @@ var TitleBar = (props) => {
             }
             return (
                 <View style={{flex: 1, flexDirection: 'row', marginVertical: 10}}>
-                    {route.onAccept ? <IconButton border={true} image={'accept'} onPress={route.onAccept} /> : null}
-                    {route.onDiscard ? <IconButton image={'discard'} onPress={route.onDiscard} /> : null}
-                    {route.onAdd ? <IconButton image={'add'} onPress={route.onAdd} /> : null}
-                    {route.onFilter ? <FilterMenu image={'filter'} onSelect={route.onFilter} /> : null}
+                    {route.onAccept ? <IconButton border={true} image={'accept'} height={iconHeight} width={iconWidth} onPress={route.onAccept} /> : null}
+                    {route.onDiscard ? <IconButton image={'discard'} height={iconHeight} width={iconWidth} onPress={route.onDiscard} /> : null}
+                    {route.onAdd ? <IconButton image={'add'} height={iconHeight} width={iconWidth} onPress={route.onAdd} /> : null}
+                    {route.onFilter ? <FilterMenu image={'filter'} height={iconHeight} width={iconWidth} onSelect={route.onFilter} /> : null}
                 </View>
             );
         }

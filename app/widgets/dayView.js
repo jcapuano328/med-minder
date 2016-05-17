@@ -7,25 +7,10 @@ var MedsView = require('./medsView');
 var Scheduler = require('../scheduler');
 
 var DayView = React.createClass({
-    timeLabel(t) {
-        switch(t) {
-            case 0:
-                return 'Morn';
-            case 1:
-                return 'Noon';
-            case 2:
-                return 'Eve';
-            case 3:
-                return 'Bed';
-            default:
-                break;
-        }
-        return t;
-    },
     render() {
         return (
             <View style={{flex: 1, marginTop: 50}}>
-                {Scheduler.times().map((t,i) => {
+                {Scheduler.times().map((t,i) => {                    
                     return (
                         <View key={i} style={{
                             flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start',
