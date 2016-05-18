@@ -20,12 +20,30 @@ var TimeHeaderView = React.createClass({
         }
         return t;
     },
+    timeIcon(t) {
+        switch(t) {
+            case 0:
+                return Icons['clockAM'];
+            case 1:
+                return Icons['clockNoon'];
+            case 2:
+                return Icons['clockPM'];
+            case 3:
+                return Icons['clockBed'];
+            default:
+                break;
+        }
+        return Icons['clock'];
+    },
     render() {
+        /*
+        <Text style={{fontSize: 20, fontWeight: 'bold', color: 'cornflowerblue'}}>
+            {this.timeLabel(this.props.code)}
+        </Text>
+        */
         return (
             <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', marginLeft: 5, marginRight: 5}}>
-                <Text style={{/*fontSize: 20, */fontWeight: 'bold', color: 'cornflowerblue'}}>
-                    {this.timeLabel(this.props.code)}
-                </Text>
+                <Image source={this.timeIcon(this.props.code)} style={{width:28, height:28}}/>
             </View>
         );
     }

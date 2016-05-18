@@ -18,8 +18,12 @@ module.exports = {
 	"filter": require('./filter.png'),
 	"remove": require('./remove.png'),
 	"accept": require('./accept.png'),
-	"discard": require('./reject.png'),	
+	"discard": require('./reject.png'),
 
 	"calendar": require('./calendar.png'),
+	"clockAM": require('./clock-am.png'),
+	"clockNoon": require('./clock-noon.png'),
+	"clockPM": require('./clock-pm.png'),
+	"clockBed": require('./clock-bed.png'),
 	"clock": require('./clock.png')
 };
