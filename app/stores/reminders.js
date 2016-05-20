@@ -68,9 +68,9 @@ module.exports = {
     getActive() {
         return select({status: 'pending'});
     },
-    getActiveToday() {
+    getToday() {
         console.log('get today');
-        return select({status: 'pending', on: new Date(), day: true})
+        return select({/*status: 'pending', */on: new Date(), day: true})
         .then((data) => {
             let schedule = {
                 morning: {},
@@ -89,8 +89,8 @@ module.exports = {
             return schedule;
         });
     },
-    getActiveThisWeek() {
-        return select({status: 'pending', on: new Date(), week: true})
+    getThisWeek() {
+        return select({/*status: 'pending', */on: new Date(), week: true})
         .then((data) => {
             let schedule = {
                 sunday: {morning: [], noon: [], evening: [], bedtime: []},
@@ -111,8 +111,8 @@ module.exports = {
             return schedule;
         });
     },
-    getActiveThisMonth() {
-        return select({status: 'pending', on: new Date(), month: true});
+    getThisMonth() {
+        return select({/*status: 'pending', */on: new Date(), month: true});
     },
     add(reminder) {
         reminder.created = new Date();
@@ -143,7 +143,7 @@ module.exports = {
             "on": Scheduler.next(med.schedule, last),
             "created": null,
             "modified": null
-        };        
+        };
         return this.add(reminder);
     }
 };

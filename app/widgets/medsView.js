@@ -1,41 +1,39 @@
 'use strict'
 
 var React = require('react-native');
-var { View, ScrollView, Text } = React;
-
-var PatientMedView = React.createClass({
-    render() {
-        return (
-            <View style={{flex:1, flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'flex-start', marginLeft: 15}}>
-                <Text style={{flex: 1, fontSize: 18, fontWeight: 'bold', fontStyle: 'italic'}}>{this.props.name}</Text>
-                <View style={{flex: 5, flexDirection: 'column'}}>
-                {this.props.meds.map((d, i) => {
-                    let med = d.med;
-                    console.log(med.name);
-                    return (
-                        <View key={i} style={{flex: 1, flexDirection: 'row'}}>
-                            <Text style={{flex: 1, fontSize: 16, fontWeight: 'bold'}}>{med.name} {med.dosage}</Text>
-                            <Text style={{flex: 2, fontSize: 16}}>{med.instructions}</Text>
-                        </View>
-                    );
-                })}
-                </View>
-            </View>
-        );
-    }
-});
-
+var { View, Text } = React;
+var IconButton = require('./iconButton');
 
 var MedsView = React.createClass({
+    onStatus(r) {
+        return () => {
+            r.status = r.status == 'pending' ? 'complete' : 'pending';
+            this.props.onStatus && this.props.onStatus(this.props.name, r);
+        }
+    },
     render() {
         //console.log(this.props.data);
         return (
-            <ScrollView
-                automaticallyAdjustContentInsets={false}
-                scrollEventThrottle={200}
-                style={{flex: 1,backgroundColor: 'transparent'}}>
-                <PatientMedView name={this.props.name} meds={this.props.data} />
-            </ScrollView>
+            <View style={{flex:1, flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'flex-start'}}>
+                <Text style={{flex: 1, fontSize: 18, fontWeight: 'bold', fontStyle: 'italic'}}>{this.props.name}</Text>
+                <View style={{flex: 5}}>
+                    {this.props.data.map((d, i) => {
+                        let med = d.med;
+                        let textdec = d.status == 'pending' ? 'none' : 'line-through';
+                        //console.log(med.name);
+                        return (
+                            <View key={i} style={{flex: 1, flexDirection: 'row'}}>
+                                <View style={{marginTop: 5}}>
+                                    <IconButton image={d.status == 'pending' ? 'open' : 'complete'} width={16} height={16} onPress={this.onStatus(d)}/>
+                                </View>
+                                <Text style={{flex: 1, fontSize: 16, fontWeight: 'bold', textDecorationLine: textdec}}>{med.name} {med.dosage}</Text>
+                                <Text style={{flex: 2, fontSize: 16, textDecorationLine: textdec}}>{med.instructions}</Text>
+                            </View>
+                        );
+                    })}
+                </View>
+            </View>
+
         );
     }
 });

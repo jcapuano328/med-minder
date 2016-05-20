@@ -9,6 +9,7 @@ import { MenuContext } from 'react-native-menu';
 var LandingView = require('./landingView');
 var AboutView = require('./aboutView');
 var ScheduleView = require('./scheduleView');
+var PatientsView = require('./patientsView');
 var EventEmitter = require('EventEmitter');
 var Sample = require('./stores/sample.js');
 
@@ -19,6 +20,8 @@ var MainView = React.createClass({
             routes: {
                 landing: {index: 0, name: 'landing', onMenu: this.navMenuHandler},
                 schedule: {index: 1, name: 'schedule', title: 'Schedule', onMenu: this.navMenuHandler, onFilter: this.onFilter},
+                patients: {index: 2, name: 'patients', title: 'Patients', onMenu: this.navMenuHandler, onAdd: this.onAdd('patient')},
+                patient: {index: 3, name: 'patient', title: 'Patient', onMenu: this.navMenuHandler, onAccept: this.onAccept('patient'), onDiscard: this.onDiscard('patient')},
                 about: {index: 5, name: 'about'}
             },
             version: '0.0.1',
@@ -28,11 +31,13 @@ var MainView = React.createClass({
     componentWillMount() {
         //console.log('set initial route');
         this.eventEmitter = new EventEmitter();
+        this.eventEmitter.addListener('changeroute', this.onChangeRoute);
         this.state.initialRoute = this.state.routes.landing;
         //return Sample.load()
         return new Promise((a,r) => a())
         .then(() => {
-            this.refs.navigator.push(this.state.routes.schedule);
+            //this.refs.navigator.push(this.state.routes.schedule);
+            this.refs.navigator.push(this.state.routes.patients);
         })
         .done();
     },
@@ -62,6 +67,14 @@ var MainView = React.createClass({
         }
         this.toggleDrawer();
     },
+    onChangeRoute(route, data) {
+        if (this.state.routes[route]) {
+            let state = {};
+            state[route] = data;
+            this.setState(state);
+            this.refs.navigator.push(this.state.routes[route]);
+        }
+    },
     onFilter(filter) {
         console.log('filter ' + filter);
         this.setState({filter: filter});
@@ -77,6 +90,21 @@ var MainView = React.createClass({
             return 'This Month';
         }
     },
+    onAdd(type) {
+        return () => {
+            console.log('Add ' + type);
+        }
+    },
+    onAccept(type) {
+        return () => {
+            console.log('Accept ' + type);
+        }
+    },
+    onDiscard(type) {
+        return () => {
+            console.log('Discard ' + type);
+        }
+    },    
     renderScene(route, navigator) {
         route = route || {};
         //console.log('render scene ' + route.name);
@@ -94,6 +122,18 @@ var MainView = React.createClass({
             this.state.routes.schedule.title = this.filterTitle();
             return (
                 <ScheduleView filter={this.state.filter} events={this.eventEmitter} />
+            );
+        }
+
+        if (route.name == 'patients') {
+            return (
+                <PatientsView events={this.eventEmitter} />
+            );
+        }
+
+        if (route.name == 'patient') {
+            return (
+                <PatientView patient={this.state.patient} events={this.eventEmitter} />
             );
         }
 

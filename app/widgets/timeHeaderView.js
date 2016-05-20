@@ -36,14 +36,14 @@ var TimeHeaderView = React.createClass({
         return Icons['clock'];
     },
     render() {
-        /*
-        <Text style={{fontSize: 20, fontWeight: 'bold', color: 'cornflowerblue'}}>
-            {this.timeLabel(this.props.code)}
-        </Text>
-        */
         return (
+            /*
+            <Text style={{fontSize: 20, fontWeight: 'bold', color: 'cornflowerblue'}}>
+                {this.timeLabel(this.props.code)}
+            </Text>
+            */            
             <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', marginLeft: 5, marginRight: 5}}>
-                <Image source={this.timeIcon(this.props.code)} style={{marginLeft: 5, width:64, height:64}}/>
+                <Image source={this.timeIcon(this.props.code)} style={{marginLeft: 15, width:64, height:64}}/>
             </View>
         );
     }

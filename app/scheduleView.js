@@ -2,9 +2,8 @@
 
 var React = require('react-native');
 var { View, Text } = React;
-var Icons = require('./resources/icons');
-var WeekView = require('./widgets/weekView');
 var DayView = require('./widgets/dayView');
+var WeekView = require('./widgets/weekView');
 var RemindersStore = require('./stores/reminders');
 
 var ScheduleView = React.createClass({
@@ -16,20 +15,36 @@ var ScheduleView = React.createClass({
     componentWillMount() {
         let f = null;
         if (!this.props.filter || this.props.filter == 'today') {
-            f = RemindersStore.getActiveToday;
+            f = RemindersStore.getToday;
         } else if (this.props.filter == 'week') {
-            f = RemindersStore.getActiveThisWeek;
+            f = RemindersStore.getThisWeek;
         } else if (this.props.filter == 'month') {
-            f = RemindersStore.getActiveThisMonth;
+            f = RemindersStore.getThisMonth;
         }
         return f()
         .then((data) => {
+            console.log(data);
             this.setState({schedule: data});
         })
         .catch((err) => {
             console.log(err)
         })
         .done();
+    },
+    onStatus(patient, tod, med) {
+        var r = this.state.schedule[tod][patient].find((r) => {
+            return r.med.name == med.med.name;
+        });
+        if (r) {
+            r.status = med.status;
+            RemindersStore.update(r)
+            .then(() => {
+                this.setState({schedule: this.state.schedule});
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+        }
     },
     render() {
         return (
@@ -73,7 +88,7 @@ var ScheduleView = React.createClass({
     renderToday() {
         console.log('render today');
         return (
-            <DayView data={this.state.schedule} />
+            <DayView data={this.state.schedule} onStatus={this.onStatus}/>
         );
         /*
         return (

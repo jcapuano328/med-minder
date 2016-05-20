@@ -15,6 +15,7 @@ let sorter = (l,r) => {
 }
 
 let comparer = (filter) => {
+    filter = filter || {};
     return (item) => {
         return (!filter.status || item.status == filter.status);
     }
