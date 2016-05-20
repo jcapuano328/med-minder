@@ -43,7 +43,7 @@ var TimeHeaderView = React.createClass({
         */
         return (
             <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', marginLeft: 5, marginRight: 5}}>
-                <Image source={this.timeIcon(this.props.code)} style={{width:28, height:28}}/>
+                <Image source={this.timeIcon(this.props.code)} style={{marginLeft: 5, width:64, height:64}}/>
             </View>
         );
     }

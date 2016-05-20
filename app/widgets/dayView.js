@@ -16,7 +16,7 @@ var DayView = React.createClass({
                         <View key={i} style={{
                             flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start',
                             backgroundColor: 'cornsilk',
-                            borderStyle: 'dotted', borderBottomColor: 'gray', borderBottomWidth: 1
+                            borderStyle: 'dotted', borderBottomColor: 'gray', borderBottomWidth: 2
                         }}>
                             <TimeHeaderView code={i} />
                             <View style={{flex: 10}}>
@@ -30,7 +30,7 @@ var DayView = React.createClass({
                                         );
                                     })
                                 : (
-                                    <Text style={{alignSelf:'center'}}>No Meds</Text>
+                                    <Text style={{fontSize: 16, alignSelf:'center'}}>No Meds</Text>
                                 )
                             }
                             </View>
