@@ -13,6 +13,10 @@ module.exports = {
 
 	"open":	require('./unchecked_checkbox.png'),
 	"complete": require('./checked_checkbox.png'),
+
+	"inactive":	require('./unchecked_checkbox.png'),
+	"active": require('./checked_checkbox.png'),
+
 	"select": require('./select.png'),
 	"add": require('./add.png'),
 	"filter": require('./filter.png'),

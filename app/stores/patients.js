@@ -3,9 +3,9 @@ var DB = require('./db');
 
 let sorter = (l,r) => {
     if (l.status < r.status) {
-        return 1;
-    } else if (l.status > r.status) {
         return -1;
+    } else if (l.status > r.status) {
+        return 1;
     } else if (l.name < r.name) {
         return -1;
     } else if (l.name > r.name) {
@@ -66,10 +66,13 @@ module.exports = {
     removeAll() {
         return DB.patients.remove();
     },
+    sort(a) {
+        return a.sort(sorter);
+    },
     createNewPatient(name) {
         return {
             "name": name,
-            "dob": null,
+            "dob": new Date(),
             "meds": [],
             "status": 'active',
             "created": new Date(),

@@ -7,8 +7,8 @@ var moment = require('moment');
 
 var PatientsItemView = React.createClass({
     onStatus() {
-        let s = this.props.patient.status == 'open' ? 'complete' : 'open';
-        this.props.onChanged && this.props.onChanged('status', s);
+        let s = this.props.patient.status == 'active' ? 'inactive' : 'active';
+        this.props.onChanged && this.props.onChanged(this.props.patient, {field: 'status', value: s});
     },
     render() {
         return (

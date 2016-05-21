@@ -10,6 +10,7 @@ var LandingView = require('./landingView');
 var AboutView = require('./aboutView');
 var ScheduleView = require('./scheduleView');
 var PatientsView = require('./patientsView');
+var PatientDetailView = require('./patientDetailView');
 var EventEmitter = require('EventEmitter');
 var Sample = require('./stores/sample.js');
 
@@ -22,6 +23,7 @@ var MainView = React.createClass({
                 schedule: {index: 1, name: 'schedule', title: 'Schedule', onMenu: this.navMenuHandler, onFilter: this.onFilter},
                 patients: {index: 2, name: 'patients', title: 'Patients', onMenu: this.navMenuHandler, onAdd: this.onAdd('patient')},
                 patient: {index: 3, name: 'patient', title: 'Patient', onMenu: this.navMenuHandler, onAccept: this.onAccept('patient'), onDiscard: this.onDiscard('patient')},
+                med: {index: 4, name: 'med', title: 'Medication', onMenu: this.navMenuHandler, onAccept: this.onAccept('med'), onDiscard: this.onDiscard('med')},
                 about: {index: 5, name: 'about'}
             },
             version: '0.0.1',
@@ -93,18 +95,29 @@ var MainView = React.createClass({
     onAdd(type) {
         return () => {
             console.log('Add ' + type);
+            this.eventEmitter.emit('add' + type);
         }
     },
     onAccept(type) {
         return () => {
             console.log('Accept ' + type);
+            this.eventEmitter.emit('accept' + type, this.state[type]);
+            let state = {};
+            state[type] = null;
+            this.setState(state);
+            this.refs.navigator.pop();
         }
     },
     onDiscard(type) {
         return () => {
             console.log('Discard ' + type);
+            this.eventEmitter.emit('discard' + type, this.state[type]);
+            let state = {};
+            state[type] = null;
+            this.setState(state);            
+            this.refs.navigator.pop();
         }
-    },    
+    },
     renderScene(route, navigator) {
         route = route || {};
         //console.log('render scene ' + route.name);
@@ -133,7 +146,15 @@ var MainView = React.createClass({
 
         if (route.name == 'patient') {
             return (
-                <PatientView patient={this.state.patient} events={this.eventEmitter} />
+                <PatientDetailView patient={this.state.patient} events={this.eventEmitter} />
+            );
+        }
+
+        if (route.name == 'med') {
+            return (
+                <View>
+                    <Text>Medications</Text>
+                </View>
             );
         }
 
