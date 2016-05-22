@@ -14,13 +14,15 @@ var PatientsView = React.createClass({
     },
     componentWillMount() {
         this.props.events.addListener('addpatient', this.onAdd);
-        this.props.events.addListener('acceptpatient', this.onAccept);
-        this.props.events.addListener('discardpatient', this.onDiscard);
-        this.props.events.addListener('patientchanged', this.onChanged);
+        this.props.events.addListener('savepatient', this.onSave);
+        //this.props.events.addListener('acceptpatient', this.onAccept);
+        //this.props.events.addListener('discardpatient', this.onDiscard);
+        //this.props.events.addListener('patientchanged', this.onChanged);
 
         return PatientsStore.getAll()
         .then((data) => {
             this.setState({patients: data || []});
+//this.props.events.emit('changeroute','med', data[0].meds[0]);
             return data;
         })
         .catch((e) => {
@@ -35,7 +37,7 @@ var PatientsView = React.createClass({
     },
     onAdd() {
         let patient = PatientsStore.createNewPatient('');
-        this.setState({newPatient: patient});
+        //this.setState({newPatient: patient});
         this.props.events.emit('changeroute','patient', patient);
     },
     onRemove(patient) {
@@ -55,13 +57,16 @@ var PatientsView = React.createClass({
                         .catch((err) => {
                             console.log(err);
                         });
-                    }                    
+                    }
                 }}
             ]);
         }
     },
     onChanged(patient, e) {
         console.log('patient ' + patient.name + ' changed: ' + e.field + ' = ' + e.value);
+        if (this.state.patient) {
+            this.state.patient[e.field] = e.value;
+        }
         let field = e.field;
         let value = e.value;
         let idx = this.state.patients.indexOf(patient);
@@ -74,11 +79,15 @@ var PatientsView = React.createClass({
         }
     },
     onStatusChanged(patient, e) {
-        this.onChanged(patient, e);
-        this.onAccept(patient);
+        //this.onChanged(patient, e);
+        patient[e.field] = e.value;
+        this.onSave(patient);
     },
-    onAccept(patient) {
-        if (this.state.patients.indexOf(patient) < 0) {
+    onSave(patient) {
+        var idx = this.state.patients.findIndex((p) => {
+            return p._id == patient._id;
+        });
+        if (idx < 0) {
             console.log('adding new patient');
             this.state.patients.push(patient);
             PatientsStore.add(patient)
@@ -90,7 +99,8 @@ var PatientsView = React.createClass({
             });
         } else {
             console.log('updating existing patient');
-            PatientsStore.update(patient)
+            Object.assign(this.state.patients[idx], patient);
+            PatientsStore.update(this.state.patients[idx])
             .then(() => {
                 console.log('patient updated');
             })
@@ -99,9 +109,6 @@ var PatientsView = React.createClass({
             });
         }
         this.setState({patients: PatientsStore.sort(this.state.patients)});
-    },
-    onDiscard(patient) {
-
     },
     render() {
         return (

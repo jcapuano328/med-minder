@@ -26,7 +26,7 @@ var PatientMedsView = React.createClass({
         return (
             <View>
                 <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', margin: 7,
-                    backgroundColor: 'cornflowerblue', borderColor: 'black', borderWidth: 1, borderRadius: 2, borderStyle: 'solid'
+                    backgroundColor: 'goldenrod', borderColor: 'black', borderWidth: 1, borderRadius: 2, borderStyle: 'solid'
                 }}>
                     <Text style={{color: 'white', fontSize: 22, fontWeight: 'bold', margin: 10}}>Medications</Text>
                     <View style={{flex: 1, alignItems: 'flex-end', justifyContent: 'center'}}>

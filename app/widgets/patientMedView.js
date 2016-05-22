@@ -26,7 +26,7 @@ var PatientMedView = React.createClass({
         });
     },
     onStatus() {
-        var s = this.state.status == 'open' ? 'complete' : 'open';
+        var s = this.state.status == 'active' ? 'inactive' : 'active';
         this.props.med.status = s;
         this.setState({status: s});
         this.props.onChanged && this.props.onChanged('status', s);

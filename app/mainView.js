@@ -11,6 +11,7 @@ var AboutView = require('./aboutView');
 var ScheduleView = require('./scheduleView');
 var PatientsView = require('./patientsView');
 var PatientDetailView = require('./patientDetailView');
+var MedDetailView = require('./medDetailView');
 var EventEmitter = require('EventEmitter');
 var Sample = require('./stores/sample.js');
 
@@ -71,9 +72,7 @@ var MainView = React.createClass({
     },
     onChangeRoute(route, data) {
         if (this.state.routes[route]) {
-            let state = {};
-            state[route] = data;
-            this.setState(state);
+            this.state.routes[route].data = data;
             this.refs.navigator.push(this.state.routes[route]);
         }
     },
@@ -101,20 +100,16 @@ var MainView = React.createClass({
     onAccept(type) {
         return () => {
             console.log('Accept ' + type);
-            this.eventEmitter.emit('accept' + type, this.state[type]);
-            let state = {};
-            state[type] = null;
-            this.setState(state);
+            this.eventEmitter.emit('accept' + type);
+            this.state.routes[type].data = null;
             this.refs.navigator.pop();
         }
     },
     onDiscard(type) {
         return () => {
             console.log('Discard ' + type);
-            this.eventEmitter.emit('discard' + type, this.state[type]);
-            let state = {};
-            state[type] = null;
-            this.setState(state);            
+            this.eventEmitter.emit('discard' + type);
+            this.state.routes[type].data = null;
             this.refs.navigator.pop();
         }
     },
@@ -146,15 +141,13 @@ var MainView = React.createClass({
 
         if (route.name == 'patient') {
             return (
-                <PatientDetailView patient={this.state.patient} events={this.eventEmitter} />
+                <PatientDetailView patient={route.data} events={this.eventEmitter} />
             );
         }
 
         if (route.name == 'med') {
             return (
-                <View>
-                    <Text>Medications</Text>
-                </View>
+                <MedDetailView med={route.data} events={this.eventEmitter} />
             );
         }
 

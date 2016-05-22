@@ -1,10 +1,36 @@
 'use strict'
 
 var React = require('react-native');
-var { View, Switch, Text, TextInput } = React;
+var { View, Switch, Text, TextInput, Picker } = React;
 var IconButton = require('./widgets/iconButton');
 var Subscribable = require('Subscribable');
 var moment = require('moment');
+
+let frequencies = [
+    {name: 'Daily', value: 'Daily'},
+    {name: 'Alternating Days', value: 'Alternating Days'},
+    {name: 'Weekly', value: 'Weekly'},
+    {name: 'Alternating Weeks', value: 'Alternating Weeks'},
+    {name: 'Monthly', value: 'Monthly'}
+];
+
+let days = [
+    {name: 'Today', value: 'Today'},
+    {name: 'Sunday', value: 'Sunday'},
+    {name: 'Monday', value: 'Monday'},
+    {name: 'Tuesday', value: 'Tuesday'},
+    {name: 'Wednesday', value: 'Wednesday'},
+    {name: 'Thursday', value: 'Thursday'},
+    {name: 'Friday', value: 'Friday'},
+    {name: 'Saturday', value: 'Saturday'}
+];
+
+let times = [
+    {name: 'Morning', value: 'Morning'},
+    {name: 'Noon', value: 'Noon'},
+    {name: 'Evening', value: 'Evening'},
+    {name: 'Bedtime', value: 'Bedtime'}
+];
 
 var MedDetailView = React.createClass({
     mixins: [Subscribable.Mixin],
@@ -24,63 +50,86 @@ var MedDetailView = React.createClass({
     },
     onChangeName(v) {
         this.setState({name: v});
-        this.props.onChanged && this.props.onChanged({name: 'name', value: v});
+        this.props.events && this.props.events.emit('medchanged', this.props.med, {field: 'name', value: v});
     },
     onChangeDosage(v) {
         this.setState({dosage: v});
-        this.props.onChanged && this.props.onChanged({name: 'dosage', value: v});
+        this.props.events && this.props.events.emit('medchanged', this.props.med, {field: 'dosage', value: v});
     },
     onChangeInstructions(v) {
         this.setState({instructions: v});
-        this.props.onChanged && this.props.onChanged({name: 'instructions', value: v});
+        this.props.events && this.props.events.emit('medchanged', this.props.med, {field: 'instructions', value: v});
     },
     onStatusChanged(v) {
-        let status = v ? 'complete' : 'open';
+        let status = v ? 'active' : 'inactive';
         this.setState({status: status});
-        this.props.onChanged && this.props.onChanged({name: 'status', value: status});
+        this.props.events && this.props.events.emit('medchanged', this.props.med, {field: 'status', value: v});
     },
     onFrequencyChanged(v) {
         this.setState({frequency: v});
-        this.props.onChanged && this.props.onChanged({name: 'frequency', value: v});
+        this.props.events && this.props.events.emit('medchanged', this.props.med, {field: 'frequency', value: v});
     },
     onDayOfWeekChanged(v) {
         this.setState({dow: v});
-        this.props.onChanged && this.props.onChanged({name: 'dow', value: v});
+        this.props.events && this.props.events.emit('medchanged', this.props.med, {field: 'dow', value: v});
     },
     onTimeOfDayChanged(v) {
         this.setState({tod: v});
-        this.props.onChanged && this.props.onChanged({name: 'tod', value: v});
+        this.props.events && this.props.events.emit('medchanged', this.props.med, {field: 'tod', value: v});
     },
     render() {
         return (
             <View style={{
-                flex: 1,
-                //marginTop: 30,
+                //flex: 1,
+                marginTop: 50,
                 //backgroundColor: 'rgba(0,0,0,0.01)',
             }}>
-                <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
-                    <TextInput style={{flex: 1, margin: 10, fontSize: 20}} placeholder={'Description'} onChangeText={this.onChangeName}>{this.state.name}</TextInput>
-                    <IconButton style={{flex: 1}} image={'favorite'} onPress={this.props.onFavorites}/>
-                    <TextInput style={{flex: 1, margin: 10, fontSize: 20}} placeholder={'Location'} onChangeText={this.onChangeLocation}>{this.state.location}</TextInput>
+                <View style={{flex: 1, flexDirection: 'row'}}>
+                    <TextInput style={{flex: 2, margin: 10, fontSize: 20}} placeholder={'Name'} onChangeText={this.onChangeName}>{this.state.name}</TextInput>
+                    <TextInput style={{flex: 1, margin: 10, fontSize: 20}} placeholder={'Dosage'} onChangeText={this.onChangeDosage}>{this.state.dosage}</TextInput>
                 </View>
-                <TextInput style={{flex: 1, margin: 10, fontSize: 20}} placeholder={'Details'} multiline={true} onChangeText={this.onChangeDetails}>{this.state.details}</TextInput>
-                <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
-                    <View style={{flex: 1, flexDirection: 'row'}}>
-                        <Text style={{flex: 1, textAlign: 'right'}}>Favorite</Text>
-                        <View style={{flex: 1, alignItems: 'flex-start', marginLeft: 10}} >
-                            <Switch value={!!this.state.favorite} onValueChange={this.onFavoriteChanged} />
+                <TextInput style={{margin: 10, fontSize: 20}} placeholder={'Instructions'} multiline={true} onChangeText={this.onChangeInstructions}>{this.state.instructions}</TextInput>
+                <View style={{margin: 10}}>
+                    <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                        <Text style={{flex: 3, fontSize: 20,fontWeight: 'bold', fontStyle: 'italic', marginLeft: 5, marginTop: 10}}>Schedule</Text>
+                        <View style={{flex:1, alignItems: 'center', justifyContent: 'center'}}>
+                            <Text>Active</Text>
+                            <Switch value={this.state.status == 'active'} onValueChange={this.onStatusChanged} />
                         </View>
                     </View>
-                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
-                        <Text style={{flex: 1, textAlign: 'right'}}>Complete</Text>
-                        <View style={{flex: 1, alignItems: 'flex-start', marginLeft: 10}} >
-                            <Switch value={this.state.status == 'complete'} onValueChange={this.onStatusChanged} />
-                        </View>
+                    <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                        <Text style={{flex: 1, fontSize: 16,fontWeight: 'bold', marginLeft: 15, marginTop: 13}}>Interval</Text>
+                        <Picker style={{flex: 3}}
+                            selectedValue={this.state.frequency}
+                            onValueChange={this.onFrequencyChanged}
+                        >
+                            {frequencies.map((f,i) => {return (<Picker.Item key={i} label={f.name} value={f.value} />);})}
+                        </Picker>
+                    </View>
+
+                    <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                        <Text style={{flex: 1, fontSize: 16,fontWeight: 'bold', marginLeft: 15, marginTop: 13}}>Day of Week</Text>
+                        <Picker style={{flex: 3}}
+                            selectedValue={this.state.dow}
+                            onValueChange={this.onDayOfWeekChanged}
+                        >
+                            {days.map((f,i) => {return (<Picker.Item key={i} label={f.name} value={f.value} />);})}
+                        </Picker>
+                    </View>
+
+                    <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                        <Text style={{flex: 1, fontSize: 16,fontWeight: 'bold', marginLeft: 15, marginTop: 13}}>Time of Day</Text>
+                        <Picker style={{flex: 3}}
+                            selectedValue={this.state.tod}
+                            onValueChange={this.onTimeOfDayChanged}
+                        >
+                            {times.map((f,i) => {return (<Picker.Item key={i} label={f.name} value={f.value} />);})}
+                        </Picker>
                     </View>
                 </View>
-                {this.state.modified ? <Text>modified {moment(this.state.modified).format('MMM DD, YYYY HH:mm')}</Text> : null}
             </View>
         );
+        //{this.state.modified ? <Text>modified {moment(this.state.modified).format('MMM DD, YYYY HH:mm')}</Text> : null}
         //<Text>created {moment(this.state.created).format('MMM DD, YYYY HH:mm')}</Text>
     }
 });
