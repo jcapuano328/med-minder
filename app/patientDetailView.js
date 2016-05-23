@@ -19,12 +19,8 @@ var PatientDetailView = React.createClass({
         };
     },
     componentWillMount() {
-        this.props.events.addListener('acceptpatient', this.onAccept);
-        this.props.events.addListener('discardpatient', this.onDiscard);
-        //this.props.events.addListener('acceptmed', this.onAcceptMed);
-        //this.props.events.addListener('discardmed', this.onDiscardMed);
-        //this.props.events.addListener('medchanged', this.onMedChanged);
-        this.props.events.emit('patientdetail', this.props.patient);
+        this.props.events.once('acceptpatient', this.onAccept);
+        this.props.events.once('discardpatient', this.onDiscard);
     },
     onChangeName(v) {
         this.setState({name: v});
@@ -40,18 +36,18 @@ var PatientDetailView = React.createClass({
         this.props.events && this.props.events.emit('patientchanged', this.props.patient, {field: 'status', value: status});
     },
     onMedSelected(med) {
-        console.log('select med');
+        this.state.currentMed = med;
+        this.props.events.once('savemed', this.onAcceptMed);
         this.props.events.emit('changeroute','med', med);
         //this.props.onSelected && this.props.onSelected(med);
     },
     onMedAdd() {
-        console.log('add med');
         let med = PatientsStore.createNewMed('');
-        this.setState({newMed: med});
+        this.state.currentMed = med;
+        this.props.events.once('savemed', this.onAcceptMed);
         this.props.events.emit('changeroute','med', med);
     },
     onMedRemove(med) {
-        console.log('remove med');
         Alert.alert('Remove Medication ' + med.name + '?', 'The medication will be permanently removed', [
             {text: 'No', style: 'cancel'},
             {text: 'Yes', onPress: () => {
@@ -65,34 +61,33 @@ var PatientDetailView = React.createClass({
             }}
         ]);
     },
-    onMedChanged(med, e) {
+    onMedStatusChanged(med, e) {
         let f = e.field;
         let v = e.value;
-        console.log('med ' + med.name + ' ' + f + ' = ' + v);
         var idx = this.state.meds.indexOf(med);
         if (idx > -1) {
             this.state.meds[idx][f] = v;
             this.setState({meds: this.state.meds});
-        } else if (this.state.newMed) {
-            this.state.newMed[f] = v;
-            this.setState({newMed: this.state.newMed});
         }
         //this.props.onChanged && this.props.onChanged({name: f, value: v});
     },
     onAcceptMed(med) {
-        if (this.state.meds.indexOf(med) < 0) {
+        let idx = this.state.meds.indexOf(this.state.currentMed);
+        if (idx < 0) {
             console.log('adding new med');
             this.state.meds.push(med);
         } else {
             console.log('updating existing med');
+            Object.assign(this.state.meds[idx], med);
         }
-        this.setState({meds: this.state.meds});
+        this.setState({meds: this.state.meds, currentMed: null});
         this.props.events && this.props.events.emit('patientchanged', this.props.patient, {field: 'meds', value: this.state.meds});
     },
     onDiscardMed(med) {
-
+        //this.props.events.removeListener('savemed', this.onAcceptMed);
     },
     onAccept() {
+        console.log('======= patient detail saving patient ' + this.state.name);
         this.props.events.emit('savepatient', {
             _id: this.props.patient._id,
             name: this.state.name,
@@ -104,7 +99,8 @@ var PatientDetailView = React.createClass({
         });
     },
     onDiscard() {
-
+        console.log('unsubscribing from savepatient for ' + this.state.name);
+        this.props.events.removeAllListeners('savepatient');
     },
     render() {
         return (
@@ -128,7 +124,7 @@ var PatientDetailView = React.createClass({
                         onAdd={this.onMedAdd}
                         onRemove={this.onMedRemove}
                         onSelected={this.onMedSelected}
-                        onChanged={this.onMedChanged}
+                        onChanged={this.onMedStatusChanged}
                         />
                 </View>
             </View>

@@ -48,6 +48,10 @@ var MedDetailView = React.createClass({
             modified: this.props.med.modified
         };
     },
+    componentWillMount() {
+        this.props.events.once('acceptmed', this.onAccept);
+        this.props.events.once('discardmed', this.onDiscard);
+    },
     onChangeName(v) {
         this.setState({name: v});
         this.props.events && this.props.events.emit('medchanged', this.props.med, {field: 'name', value: v});
@@ -76,6 +80,24 @@ var MedDetailView = React.createClass({
     onTimeOfDayChanged(v) {
         this.setState({tod: v});
         this.props.events && this.props.events.emit('medchanged', this.props.med, {field: 'tod', value: v});
+    },
+    onAccept() {        
+        this.props.events.emit('savemed', {
+            name: this.state.name,
+            dosage: this.state.dosage,
+            instructions: this.state.instructions,
+            schedule: {
+                frequency: this.state.frequency,
+                dow: this.state.dow,
+                tod: this.state.tod
+            },
+            status: this.state.status,
+            created: this.state.created,
+            modified: this.state.modified
+        });
+    },
+    onDiscard() {
+
     },
     render() {
         return (

@@ -13,12 +13,8 @@ var PatientsView = React.createClass({
         };
     },
     componentWillMount() {
-        this.props.events.addListener('addpatient', this.onAdd);
-        this.props.events.addListener('savepatient', this.onSave);
-        //this.props.events.addListener('acceptpatient', this.onAccept);
-        //this.props.events.addListener('discardpatient', this.onDiscard);
-        //this.props.events.addListener('patientchanged', this.onChanged);
-
+        console.log('subscribe to addpatient');
+        this.props.events.once('addpatient', this.onAdd);
         return PatientsStore.getAll()
         .then((data) => {
             this.setState({patients: data || []});
@@ -31,13 +27,21 @@ var PatientsView = React.createClass({
     },
     onSelected(patient) {
         return () => {
+            var subscribers = this.props.events.listeners('savepatient') || [];
+            console.log(subscribers.length + ' current subscribers for savepatient');
+            console.log('subscribe to savepatient for ' + patient.name);
+            this.props.events.once('savepatient', this.onSave);
             this.props.events.emit('changeroute','patient', patient);
             //this.props.onSelected && this.props.onSelected(patient);
         }
     },
     onAdd() {
         let patient = PatientsStore.createNewPatient('');
-        //this.setState({newPatient: patient});
+        console.log('subscribe to addpatient ' + patient.name);
+        this.props.events.once('addpatient', this.onAdd);
+        console.log('subscribe to savepatient for ' + patient.name);
+        this.props.events.once('savepatient', this.onSave);
+
         this.props.events.emit('changeroute','patient', patient);
     },
     onRemove(patient) {
@@ -62,28 +66,13 @@ var PatientsView = React.createClass({
             ]);
         }
     },
-    onChanged(patient, e) {
-        console.log('patient ' + patient.name + ' changed: ' + e.field + ' = ' + e.value);
-        if (this.state.patient) {
-            this.state.patient[e.field] = e.value;
-        }
-        let field = e.field;
-        let value = e.value;
-        let idx = this.state.patients.indexOf(patient);
-        if (idx > -1) {
-            this.state.patients[idx][field] = value;
-            this.setState({patients: PatientsStore.sort(this.state.patients)});
-        } else if (this.state.newPatient) {
-            this.state.newPatient[field] = value;
-            this.setState({newPatient: this.state.newPatient});
-        }
-    },
     onStatusChanged(patient, e) {
         //this.onChanged(patient, e);
         patient[e.field] = e.value;
         this.onSave(patient);
     },
     onSave(patient) {
+        console.log('*********** save patient ' + patient.name);
         var idx = this.state.patients.findIndex((p) => {
             return p._id == patient._id;
         });

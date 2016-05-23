@@ -19,7 +19,7 @@ var PatientMedsView = React.createClass({
     },
     onChanged(med) {
         return (f,v) => {
-            this.props.onChanged && this.props.onChanged(med, {name: f, value: v});
+            this.props.onChanged && this.props.onChanged(med, {field: f, value: v});
         }
     },
     render() {
@@ -40,7 +40,7 @@ var PatientMedsView = React.createClass({
                         automaticallyAdjustContentInsets={false}
                         scrollEventThrottle={200}
                         style={{flex: 1, backgroundColor: 'transparent'}}>
-                        {this.props.meds.map((med, i) => {
+                        {this.props.meds.map((med, i) => {                            
                             return (
                                 <PatientMedView key={i} med={med} events={this.props.events}
                                     onChanged={this.onChanged(med)}

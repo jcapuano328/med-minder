@@ -101,7 +101,7 @@ var MainView = React.createClass({
         return () => {
             console.log('Accept ' + type);
             this.eventEmitter.emit('accept' + type);
-            this.state.routes[type].data = null;
+            //this.state.routes[type].data = null;
             this.refs.navigator.pop();
         }
     },
