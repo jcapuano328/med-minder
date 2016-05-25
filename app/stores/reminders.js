@@ -68,8 +68,7 @@ module.exports = {
     getActive() {
         return select({status: 'pending'});
     },
-    getToday() {
-        console.log('get today');
+    getToday() {        
         return select({/*status: 'pending', */on: new Date(), day: true})
         .then((data) => {
             let schedule = {
@@ -120,7 +119,11 @@ module.exports = {
     },
     update(reminder) {
         reminder.modified = new Date();
-        return DB.reminders.updateById(reminder, reminder._id);
+		let id = reminder._id;
+        return DB.reminders.updateById(reminder, id)
+		.then(() => {
+			reminder._id = id;
+		});
     },
     remove(reminder) {
         if (reminder._id) {

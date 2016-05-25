@@ -13,7 +13,7 @@ var PatientsView = React.createClass({
         };
     },
     componentWillMount() {
-        console.log('subscribe to addpatient');
+        //console.log('subscribe to addpatient');
         this.props.events.once('addpatient', this.onAdd);
         return PatientsStore.getAll()
         .then((data) => {
@@ -27,9 +27,8 @@ var PatientsView = React.createClass({
     },
     onSelected(patient) {
         return () => {
-            var subscribers = this.props.events.listeners('savepatient') || [];
-            console.log(subscribers.length + ' current subscribers for savepatient');
-            console.log('subscribe to savepatient for ' + patient.name);
+            //console.log('selected: ' + patient.name + ' (' + patient._id + ')');
+            //console.log('subscribe to savepatient for ' + patient.name);
             this.props.events.once('savepatient', this.onSave);
             this.props.events.emit('changeroute','patient', patient);
             //this.props.onSelected && this.props.onSelected(patient);
@@ -37,9 +36,9 @@ var PatientsView = React.createClass({
     },
     onAdd() {
         let patient = PatientsStore.createNewPatient('');
-        console.log('subscribe to addpatient ' + patient.name);
+        //console.log('subscribe to addpatient ' + patient.name);
         this.props.events.once('addpatient', this.onAdd);
-        console.log('subscribe to savepatient for ' + patient.name);
+        //console.log('subscribe to savepatient for ' + patient.name);
         this.props.events.once('savepatient', this.onSave);
 
         this.props.events.emit('changeroute','patient', patient);
@@ -54,7 +53,7 @@ var PatientsView = React.createClass({
                     if (idx > -1) {
                         PatientsStore.remove(patient)
                         .then(() => {
-                            console.log('patient removed');
+                            //console.log('patient removed');
                             this.state.patients.splice(idx,1);
                             this.setState({patients: this.state.patients});
                         })
@@ -72,26 +71,27 @@ var PatientsView = React.createClass({
         this.onSave(patient);
     },
     onSave(patient) {
-        console.log('*********** save patient ' + patient.name);
+        console.log('*********** save patient ' + patient.name + ' (' + patient._id + ')');
         var idx = this.state.patients.findIndex((p) => {
             return p._id == patient._id;
         });
         if (idx < 0) {
-            console.log('adding new patient');
+            //console.log('adding new patient');
             this.state.patients.push(patient);
             PatientsStore.add(patient)
             .then(() => {
-                console.log('patient added');
+                //console.log('patient added');
             })
             .catch((e) => {
                 console.error(e);
             });
         } else {
-            console.log('updating existing patient');
+            //console.log('updating existing patient');
             Object.assign(this.state.patients[idx], patient);
             PatientsStore.update(this.state.patients[idx])
             .then(() => {
                 console.log('patient updated');
+                //console.log('  updated: ' + this.state.patients[idx].name + ' (' + this.state.patients[idx]._id + ')');
             })
             .catch((e) => {
                 console.error(e);

@@ -74,10 +74,10 @@ var PatientDetailView = React.createClass({
     onAcceptMed(med) {
         let idx = this.state.meds.indexOf(this.state.currentMed);
         if (idx < 0) {
-            console.log('adding new med');
+            //console.log('adding new med');
             this.state.meds.push(med);
         } else {
-            console.log('updating existing med');
+            //console.log('updating existing med');
             Object.assign(this.state.meds[idx], med);
         }
         this.setState({meds: this.state.meds, currentMed: null});
@@ -87,7 +87,7 @@ var PatientDetailView = React.createClass({
         //this.props.events.removeListener('savemed', this.onAcceptMed);
     },
     onAccept() {
-        console.log('======= patient detail saving patient ' + this.state.name);
+        //console.log('======= patient detail saving patient ' + this.state.name);
         this.props.events.emit('savepatient', {
             _id: this.props.patient._id,
             name: this.state.name,
@@ -99,7 +99,7 @@ var PatientDetailView = React.createClass({
         });
     },
     onDiscard() {
-        console.log('unsubscribing from savepatient for ' + this.state.name);
+        //console.log('unsubscribing from savepatient for ' + this.state.name);
         this.props.events.removeAllListeners('savepatient');
     },
     render() {

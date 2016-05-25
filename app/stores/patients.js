@@ -55,7 +55,13 @@ module.exports = {
     },
     update(patient) {
         patient.modified = new Date();
-        return DB.patients.updateById(patient, patient._id);
+        let id = patient._id;
+        return DB.patients.updateById(patient, id)
+        .then(() => {
+            if (!patient._id) {                
+                patient._id = id;
+            }
+        });
     },
     remove(patient) {
         if (patient._id) {
