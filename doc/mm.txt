@@ -1,15 +1,15 @@
 ====== Med Schedules
 ---- Frequency
 	Daily
-		DOW: Today
+		DOW: Today,Tomorrow
 	Alternating Days
-		DOW: Today
+		DOW: Today,Tomorrow
 	Weekly
-		DOW: Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday			
+		DOW: Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday
 	Alternating Weeks
-		DOW: Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday		
+		DOW: Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday
 	Monthly
-		DOW: Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday		
+		DOW: Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday
 
 ---- Day of Week
 	Today
@@ -43,17 +43,16 @@ _____ Example 1
 	Freq: Daily
 	DOW: Today
 	TOD: Morning
-	
+
 	Reminder: Today @ 0600
 	"Acknowledged"
 	Reminder: Tomorrow @ 0600
-	
+
 _____ Example 2
 	Freq: Alternating Days
 	DOW: Today
 	TOD: Bedtime
-	
+
 	Reminder: Today @ 2200
 	"Acknowledged"
 	Reminder: Day after Tomorrow @ 2200
-	

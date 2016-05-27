@@ -7,22 +7,23 @@ var Subscribable = require('Subscribable');
 var moment = require('moment');
 
 let frequencies = [
-    {name: 'Daily', value: 'Daily'},
-    {name: 'Alternating Days', value: 'Alternating Days'},
-    {name: 'Weekly', value: 'Weekly'},
-    {name: 'Alternating Weeks', value: 'Alternating Weeks'},
-    {name: 'Monthly', value: 'Monthly'}
+    {name: 'Daily', value: 'Daily', filter: 1},
+    {name: 'Alternating Days', value: 'Alternating Days', filter: 1},
+    {name: 'Weekly', value: 'Weekly', filter: 2},
+    {name: 'Alternating Weeks', value: 'Alternating Weeks', filter: 2},
+    {name: 'Monthly', value: 'Monthly', filter: 2}
 ];
 
 let days = [
-    {name: 'Today', value: 'Today'},
-    {name: 'Sunday', value: 'Sunday'},
-    {name: 'Monday', value: 'Monday'},
-    {name: 'Tuesday', value: 'Tuesday'},
-    {name: 'Wednesday', value: 'Wednesday'},
-    {name: 'Thursday', value: 'Thursday'},
-    {name: 'Friday', value: 'Friday'},
-    {name: 'Saturday', value: 'Saturday'}
+    {name: 'Today', value: 'Today', filter: 1},
+    {name: 'Tomorrow', value: 'Tomorrow', filter: 1},
+    {name: 'Sunday', value: 'Sunday', filter: 2},
+    {name: 'Monday', value: 'Monday', filter: 2},
+    {name: 'Tuesday', value: 'Tuesday', filter: 2},
+    {name: 'Wednesday', value: 'Wednesday', filter: 2},
+    {name: 'Thursday', value: 'Thursday', filter: 2},
+    {name: 'Friday', value: 'Friday', filter: 2},
+    {name: 'Saturday', value: 'Saturday', filter: 2}
 ];
 
 let times = [
@@ -45,12 +46,17 @@ var MedDetailView = React.createClass({
             tod: this.props.med.schedule.tod,
             status: this.props.med.status,
             created: this.props.med.created,
-            modified: this.props.med.modified
+            modified: this.props.med.modified,
+            dows: this.filterDOW(this.props.med.schedule.frequency)
         };
     },
     componentWillMount() {
         this.props.events.once('acceptmed', this.onAccept);
         this.props.events.once('discardmed', this.onDiscard);
+    },
+    filterDOW(frequency) {
+        var f = frequencies.find((f) => { return frequency == f.value; });
+        return days.filter((day) => { return f.filter == day.filter; });
     },
     onChangeName(v) {
         this.setState({name: v});
@@ -70,7 +76,7 @@ var MedDetailView = React.createClass({
         this.props.events && this.props.events.emit('medchanged', this.props.med, {field: 'status', value: v});
     },
     onFrequencyChanged(v) {
-        this.setState({frequency: v});
+        this.setState({frequency: v, dows: this.filterDOW(v)});
         this.props.events && this.props.events.emit('medchanged', this.props.med, {field: 'frequency', value: v});
     },
     onDayOfWeekChanged(v) {
@@ -81,7 +87,7 @@ var MedDetailView = React.createClass({
         this.setState({tod: v});
         this.props.events && this.props.events.emit('medchanged', this.props.med, {field: 'tod', value: v});
     },
-    onAccept() {        
+    onAccept() {
         this.props.events.emit('savemed', {
             name: this.state.name,
             dosage: this.state.dosage,
@@ -135,7 +141,7 @@ var MedDetailView = React.createClass({
                             selectedValue={this.state.dow}
                             onValueChange={this.onDayOfWeekChanged}
                         >
-                            {days.map((f,i) => {return (<Picker.Item key={i} label={f.name} value={f.value} />);})}
+                            {this.state.dows.map((f,i) => {return (<Picker.Item key={i} label={f.name} value={f.value} />);})}
                         </Picker>
                     </View>
 
