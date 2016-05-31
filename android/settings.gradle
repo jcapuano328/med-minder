@@ -1,3 +1,5 @@
 rootProject.name = 'Med Minder'
 
 include ':app'
+include ':react-native-system-notification'
+project(':react-native-system-notification').projectDir = new File(settingsDir, '../node_modules/react-native-system-notification/android')

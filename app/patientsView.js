@@ -5,6 +5,7 @@ var { View, ScrollView, Text, Alert } = React;
 var Icons = require('./resources/icons');
 var PatientsItemView = require('./widgets/patientsItemView');
 var PatientsStore = require('./stores/patients');
+var RemindersStore = require('./stores/reminders');
 
 var PatientsView = React.createClass({
     getInitialState() {
@@ -80,7 +81,8 @@ var PatientsView = React.createClass({
             this.state.patients.push(patient);
             PatientsStore.add(patient)
             .then(() => {
-                //console.log('patient added');
+                console.log('patient added');
+                return RemindersStore.schedule(patient);
             })
             .catch((e) => {
                 console.error(e);
@@ -92,6 +94,7 @@ var PatientsView = React.createClass({
             .then(() => {
                 console.log('patient updated');
                 //console.log('  updated: ' + this.state.patients[idx].name + ' (' + this.state.patients[idx]._id + ')');
+                return RemindersStore.schedule(patient);
             })
             .catch((e) => {
                 console.error(e);

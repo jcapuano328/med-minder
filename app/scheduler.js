@@ -35,9 +35,10 @@ let increment = (dt, freq) => {
 }
 
 let mapDOW = (dow) => {
-    let idx = _days.indexOf(dow.toLowerCase());
+    dow = dow.toLowerCase();
+    let idx = _days.indexOf(dow);
     if (idx < 0) {
-        idx = moment().day();
+        idx = moment().day() + (dow == 'tomorrow' ? 1 : 0);
     }
     return idx;
 }

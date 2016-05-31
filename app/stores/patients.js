@@ -58,7 +58,7 @@ module.exports = {
         let id = patient._id;
         return DB.patients.updateById(patient, id)
         .then(() => {
-            if (!patient._id) {                
+            if (!patient._id) {
                 patient._id = id;
             }
         });

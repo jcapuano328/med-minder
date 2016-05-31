@@ -1,6 +1,7 @@
 'use strict'
 var DB = require('./db');
 var Scheduler = require('../scheduler');
+var Notifications = require('./notifications');
 var moment = require('moment');
 
 let sorter = (l,r) => {
@@ -23,10 +24,13 @@ let sorter = (l,r) => {
 }
 
 let comparer = (filter) => {
+    filter = filter || {};
     return (item) => {
         let fdt = moment(filter.on);
         let idt = moment(item.on);
         return (
+            (!filter.patient || item.patient.id == filter.patient)
+            &&
             (!filter.status || item.status == filter.status)
             &&
             (!filter.day || (fdt.year()==idt.year() && fdt.month()==idt.month() && fdt.date()==idt.date()))
@@ -61,14 +65,80 @@ let select = (filter) => {
     });
 }
 
+let addReminder = (patient, med, i, tods) => {
+    if (i < tods.length) {
+        var tod = tods[i++];
+        console.log('*********** scheduling reminder for ' + med.name + ' for patient ' + patient.name + ' @ ' + tod);
+        let reminder = create(patient, {
+            "name": med.name,
+            "dosage": med.dosage,
+            "instructions": med.instructions,
+            "schedule": {
+                "frequency": med.schedule.frequency,
+                "dow": med.schedule.dow,
+                "tod": tod
+            }
+        });
+
+        return DB.reminders.add(reminder)
+        .then((r) => {
+            return Notifications.create(r)
+            .then(() => {
+                let id = r._id;
+                return DB.reminders.updateById(r, id)
+                .then(() => {
+                    r._id = id;
+                    return r;
+                });
+            });
+        })
+        .then(() => {
+            return addReminder(patient, med, i, tods);
+        });
+    }
+    return new Promise((accept,reject) => accept());
+}
+
+let addMedReminder = (patient, i, meds) => {
+    if (i < meds.length) {
+        var med = meds[i++];
+        return addReminder(patient, med, 0, med.schedule.tod)
+        .then(() => {
+            return addMedReminder(patient, i, meds);
+        });
+    }
+    return new Promise((accept,reject) => accept());
+}
+
+let create = (patient, med, last) => {
+    return {
+        "patient": {
+            "id": patient._id,
+            "name": patient.name
+        },
+        "med": {
+            "name": med.name,
+            "dosage": med.dosage,
+            "instructions": med.instructions
+        },
+        "status": 'pending',
+        "on": Scheduler.next(med.schedule, last),
+        "created": null,
+        "modified": null
+    };
+}
+
 module.exports = {
     getAll() {
         return select();
     },
+    getPatient(patient) {
+        return select({patient: patient._id});
+    },
     getActive() {
         return select({status: 'pending'});
     },
-    getToday() {        
+    getToday() {
         return select({/*status: 'pending', */on: new Date(), day: true})
         .then((data) => {
             let schedule = {
@@ -80,10 +150,10 @@ module.exports = {
             data.forEach((d) => {
                 let on = moment(d.on);
                 let tod = Scheduler.getTOD({hour: on.hour(),minute: on.minute()});
-                if (!schedule[tod][d.patient]) {
-                    schedule[tod][d.patient] = [];
+                if (!schedule[tod][d.patient.name]) {
+                    schedule[tod][d.patient.name] = [];
                 }
-                schedule[tod][d.patient].push(d);
+                schedule[tod][d.patient.name].push(d);
             });
             return schedule;
         });
@@ -131,22 +201,65 @@ module.exports = {
         }
         return new Promise((accept,reject) => accept());
     },
-    removeAll() {
-        return DB.reminders.remove();
-    },
-    schedule(patient, med, last) {
-        let reminder = {
-            "patient": patient.name,
-            "med": {
-                "name": med.name,
-                "dosage": med.dosage,
-                "instructions": med.instructions
-            },
-            "status": 'pending',
-            "on": Scheduler.next(med.schedule, last),
-            "created": null,
-            "modified": null
+    removePatient(patient) {
+        let filter = {
+            where: {
+                patient: {
+                    id: patient._id
+                }
+            }
         };
-        return this.add(reminder);
+        return DB.reminders.remove(filter);
+    },
+    removeAll() {
+        return DB.reminders.remove()
+        .then(() => {
+            return Notifications.cancel();
+        });
+    },
+    create(patient, med, last) {
+        return create(patient, med, last);
+    },
+
+    /*
+    get all
+    return Reminders.getPatient(patient)
+    .then((reminders) => {
+        return get(reminders.map(() => {return r.notificationid;}), []);
+    });
+
+    cancel all
+    return Reminders.getPatient(patient)
+    .then((reminders) => {
+        reminders.forEach((r) => {
+            Notification.delete(r.notificationid);
+        });
+    });
+
+    */
+    schedule(patient) {
+        return addMedReminder(patient, 0, patient.meds);
+    },
+    reschedule(patient) {
+        return this.getPatient(patient)
+        .then((reminders) => {
+            return Notifications.cancel(reminders);
+        })
+        .then(() => {
+            return this.removePatient(patient)
+        })
+        .then(() => {
+            return addMedReminder(patient, 0, patient.meds)
+        });
+    },
+    complete(reminder) {
+        return DB.reminders.findById(reminder._id)
+        .then((r) => {
+            return Notifications.clear(r)
+            .then(() => {
+                r.status = 'complete';
+                return this.update(r);                
+            });
+        });
     }
 };

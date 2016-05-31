@@ -1,0 +1,24 @@
+{
+    "patients": [
+        {
+            "name": 'Jeff',
+            "dob": '1967-03-28',
+            "meds": [
+                {
+                    "name": 'Cupcake',
+                    "dosage": '5oz',
+                    "instructions": '1 by mouth every day',
+                    "schedule": {
+                        "frequency": 'Daily',
+                        "dow": 'Today',
+                        "tod": ['Morning']
+                    },
+                    "status": 'active'
+                }
+            ],
+            "status": 'active',
+            "created": null,
+            "modified": null
+        }
+    ]
+}

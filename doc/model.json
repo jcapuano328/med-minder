@@ -25,7 +25,10 @@
 	],
 	"reminders": [
 		"reminder": {
-			"patient": string,
+			"patient": {
+				"id": object,
+				"name": string
+			},
 			"med": {
 				"name": string,
 				"dosage": string,

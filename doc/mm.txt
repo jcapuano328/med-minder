@@ -56,3 +56,9 @@ _____ Example 2
 	Reminder: Today @ 2200
 	"Acknowledged"
 	Reminder: Day after Tomorrow @ 2200
+
+====== Save a patient
+store to db
+remove all reminders for patient
+schedule reminders for patient
+		

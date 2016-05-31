@@ -1,7 +1,7 @@
 'use strict';
 
 var React = require('react-native');
-var { View, Text, Navigator, Alert } = React;
+var { View, Text, Navigator, Alert, ToastAndroid } = React;
 var DrawerLayout = require('./widgets/drawerLayout');
 var NavMenu = require('./widgets/navMenu');
 var TitleBar = require('./widgets/titleBar');
@@ -12,7 +12,10 @@ var ScheduleView = require('./scheduleView');
 var PatientsView = require('./patientsView');
 var PatientDetailView = require('./patientDetailView');
 var MedDetailView = require('./medDetailView');
+var RemindersView = require('./remindersView');
 var EventEmitter = require('EventEmitter');
+var Reminders = require('./stores/reminders');
+var Notifications = require('./stores/notifications');
 var Sample = require('./stores/sample.js');
 
 var MainView = React.createClass({
@@ -25,24 +28,29 @@ var MainView = React.createClass({
                 patients: {index: 2, name: 'patients', title: 'Patients', onMenu: this.navMenuHandler, onAdd: this.onAdd('patient')},
                 patient: {index: 3, name: 'patient', title: 'Patient', onMenu: this.navMenuHandler, onAccept: this.onAccept('patient'), onDiscard: this.onDiscard('patient')},
                 med: {index: 4, name: 'med', title: 'Medication', onMenu: this.navMenuHandler, onAccept: this.onAccept('med'), onDiscard: this.onDiscard('med')},
-                about: {index: 5, name: 'about'}
+                reminders: {index: 5, name: 'reminders', title: 'Reminders', onMenu: this.navMenuHandler},
+                about: {index: 6, name: 'about'}
             },
             version: '0.0.1',
             filter: 'today'
         };
     },
     componentWillMount() {
-        //console.log('set initial route');
+        Notifications.start(this.onNotification);
         this.eventEmitter = new EventEmitter();
         this.eventEmitter.addListener('changeroute', this.onChangeRoute);
         this.state.initialRoute = this.state.routes.landing;
         //return Sample.load()
         return new Promise((a,r) => a())
         .then(() => {
-            //this.refs.navigator.push(this.state.routes.schedule);
-            this.refs.navigator.push(this.state.routes.patients);
+            this.refs.navigator.push(this.state.routes.schedule);
+            //this.refs.navigator.push(this.state.routes.patients);
+            //this.refs.navigator.push(this.state.routes.reminders);
         })
         .done();
+    },
+    componentWillUnmount() {
+        Notifications.stop();
     },
     toggleDrawer() {
         if (!this.state.drawer) {
@@ -113,6 +121,25 @@ var MainView = React.createClass({
             this.refs.navigator.pop();
         }
     },
+    onNotification(notification) {
+        //console.log('+++++++++++ Notification');
+        //console.log(notification);
+        //ToastAndroid.show(notification.subject, ToastAndroid.LONG);
+        let subject = notification.payload.patient.name + ' has a medication due';
+        let message = 'Give ' + notification.payload.patient.name + ' ' + notification.payload.med.name + ' ' + notification.payload.med.dosage + ' ' + notification.payload.med.instructions;
+        Alert.alert(subject, message, [
+            {text: 'Later', style: 'cancel'},
+            {text: 'Complete', onPress: () => {
+                Reminders.complete(notification.payload)
+                .then(() => {
+                    console.log('+++++++++++ Notification acknowledged');
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+            }}
+        ]);
+    },
     renderScene(route, navigator) {
         route = route || {};
         //console.log('render scene ' + route.name);
@@ -148,6 +175,12 @@ var MainView = React.createClass({
         if (route.name == 'med') {
             return (
                 <MedDetailView med={route.data} events={this.eventEmitter} />
+            );
+        }
+
+        if (route.name == 'reminders') {
+            return (
+                <RemindersView events={this.eventEmitter} />
             );
         }
 
