@@ -13,6 +13,7 @@ var ScheduleView = React.createClass({
         };
     },
     componentWillMount() {
+        this.props.events.once('notificationacknowledged', this.onNotification);
         let f = null;
         if (!this.props.filter || this.props.filter == 'today') {
             f = RemindersStore.getToday;
@@ -23,7 +24,7 @@ var ScheduleView = React.createClass({
         }
         return f()
         .then((data) => {
-            console.log(data);
+            //console.log(data);
             this.setState({schedule: data});
         })
         .catch((err) => {
@@ -45,6 +46,10 @@ var ScheduleView = React.createClass({
                 console.log(err);
             });
         }
+    },
+    onNotification(reminder) {
+
+        this.props.events.once('notificationacknowledged', onNotification);
     },
     render() {
         return (

@@ -4,7 +4,7 @@ var React = require('react-native');
 var { View, ScrollView, Text } = React;
 var TimeHeaderView = require('./timeHeaderView');
 var MedsView = require('./medsView');
-var Scheduler = require('../scheduler');
+var Scheduler = require('../services/scheduler');
 
 var DayView = React.createClass({
     onStatus(patient, tod) {

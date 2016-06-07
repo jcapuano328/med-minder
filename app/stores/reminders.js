@@ -1,26 +1,24 @@
 'use strict'
-var DB = require('./db');
-var Scheduler = require('../scheduler');
+var Scheduler = require('../services/scheduler');
 var Notifications = require('./notifications');
 var moment = require('moment');
 
-let sorter = (l,r) => {
-    var lon = moment(l.on);
-    var ron = moment(r.on);
-    if (l.status < r.status) {
-        return 1;
-    } else if (l.status > r.status) {
-        return -1;
-    } else if (lon.isBefore(ron)) {
-        return 1;
-    } else if (lon.isAfter(ron)) {
-        return -1;
-    } else if (l.name < r.name) {
-        return -1;
-    } else if (l.name > r.name) {
-        return 1;
-    }
-    return 0;
+let create = (patient, med, last) => {
+    return {
+        "patient": {
+            "id": patient._id || patient.id,
+            "name": patient.name
+        },
+        "med": {
+            "name": med.name,
+            "dosage": med.dosage,
+            "instructions": med.instructions
+        },
+        "status": 'pending',
+        "on": Scheduler.next(med.schedule, last),
+        "created": null,
+        "modified": null
+    };
 }
 
 let comparer = (filter) => {
@@ -42,29 +40,6 @@ let comparer = (filter) => {
     }
 }
 
-let select = (filter) => {
-    let query = null;
-    /*
-    if (filter) {
-        query = {
-            where = {
-                and: []
-            }
-        };
-        if (filter.status) {
-            query.where.and.push({status: {eq: filter.status}});
-        }
-        if (filter.on) {
-            query.where.and.push({status: {on: moment(filter.on).format('YYYY-MM-DD')}});
-        }
-    }
-    */
-    return DB.reminders.find(query)
-    .then((data) => {
-        return (data || []).filter(comparer(filter)).sort(sorter);
-    });
-}
-
 let addReminder = (patient, med, i, tods) => {
     if (i < tods.length) {
         var tod = tods[i++];
@@ -80,20 +55,12 @@ let addReminder = (patient, med, i, tods) => {
             }
         });
 
-        return DB.reminders.add(reminder)
-        .then((r) => {
-            return Notifications.create(r)
-            .then(() => {
-                let id = r._id;
-                return DB.reminders.updateById(r, id)
-                .then(() => {
-                    r._id = id;
-                    return r;
-                });
-            });
-        })
+        return Notifications.create(reminder)
         .then(() => {
             return addReminder(patient, med, i, tods);
+        })
+        .catch((err) => {
+            console.error(err);
         });
     }
     return new Promise((accept,reject) => accept());
@@ -102,44 +69,42 @@ let addReminder = (patient, med, i, tods) => {
 let addMedReminder = (patient, i, meds) => {
     if (i < meds.length) {
         var med = meds[i++];
-        return addReminder(patient, med, 0, med.schedule.tod)
-        .then(() => {
-            return addMedReminder(patient, i, meds);
-        });
+        if (med.status == 'active') {
+            return addReminder(patient, med, 0, med.schedule.tod)
+            .then(() => {
+                return addMedReminder(patient, i, meds);
+            });
+        }
+        return addMedReminder(patient, i, meds);
     }
     return new Promise((accept,reject) => accept());
 }
 
-let create = (patient, med, last) => {
-    return {
-        "patient": {
-            "id": patient._id,
-            "name": patient.name
-        },
-        "med": {
-            "name": med.name,
-            "dosage": med.dosage,
-            "instructions": med.instructions
-        },
-        "status": 'pending',
-        "on": Scheduler.next(med.schedule, last),
-        "created": null,
-        "modified": null
-    };
-}
-
 module.exports = {
     getAll() {
-        return select();
+        return Notifications.get();
     },
     getPatient(patient) {
-        return select({patient: patient._id});
-    },
-    getActive() {
-        return select({status: 'pending'});
+        return Notifications.get()
+        .then((notifications) => {
+            return notifications.filter((n) => {
+                return n.payload.patient.id == patient._id;
+            }).map((n) => {
+                let reminder = n.payload;
+                reminder.notificationid = n.id;
+                return reminder;
+            });
+        });
     },
     getToday() {
-        return select({/*status: 'pending', */on: new Date(), day: true})
+        return Notifications.get()
+        .then((notifications) => {
+            return notifications.filter(comparer({on: new Date(), day: true})).map((n) => {
+                let reminder = n.payload;
+                reminder.notificationid = n.id;
+                return reminder;
+            });
+        })
         .then((data) => {
             let schedule = {
                 morning: {},
@@ -159,7 +124,14 @@ module.exports = {
         });
     },
     getThisWeek() {
-        return select({/*status: 'pending', */on: new Date(), week: true})
+        return Notifications.get()
+        .then((notifications) => {
+            return notifications.filter(comparer({on: new Date(), week: true})).map((n) => {
+                let reminder = n.payload;
+                reminder.notificationid = n.id;
+                return reminder;
+            });
+        })
         .then((data) => {
             let schedule = {
                 sunday: {morning: [], noon: [], evening: [], bedtime: []},
@@ -181,85 +153,53 @@ module.exports = {
         });
     },
     getThisMonth() {
-        return select({/*status: 'pending', */on: new Date(), month: true});
-    },
-    add(reminder) {
-        reminder.created = new Date();
-        return DB.reminders.add(reminder);
-    },
-    update(reminder) {
-        reminder.modified = new Date();
-		let id = reminder._id;
-        return DB.reminders.updateById(reminder, id)
-		.then(() => {
-			reminder._id = id;
-		});
-    },
-    remove(reminder) {
-        if (reminder._id) {
-            return DB.reminders.removeById(reminder._id);
-        }
-        return new Promise((accept,reject) => accept());
-    },
-    removePatient(patient) {
-        let filter = {
-            where: {
-                patient: {
-                    id: patient._id
-                }
-            }
-        };
-        return DB.reminders.remove(filter);
-    },
-    removeAll() {
-        return DB.reminders.remove()
-        .then(() => {
-            return Notifications.cancel();
+        return Notifications.get()
+        .then((notifications) => {
+            return notifications.filter(comparer({on: new Date(), month: true})).map((n) => {
+                let reminder = n.payload;
+                reminder.notificationid = n.id;
+                return reminder;
+            });
         });
     },
     create(patient, med, last) {
         return create(patient, med, last);
     },
-
-    /*
-    get all
-    return Reminders.getPatient(patient)
-    .then((reminders) => {
-        return get(reminders.map(() => {return r.notificationid;}), []);
-    });
-
-    cancel all
-    return Reminders.getPatient(patient)
-    .then((reminders) => {
-        reminders.forEach((r) => {
-            Notification.delete(r.notificationid);
-        });
-    });
-
-    */
     schedule(patient) {
-        return addMedReminder(patient, 0, patient.meds);
+        if (patient.status == 'active') {
+            return addMedReminder(patient, 0, patient.meds);
+        }
+        return new Promise((a,r) => a());
     },
-    reschedule(patient) {
-        return this.getPatient(patient)
-        .then((reminders) => {
-            return Notifications.cancel(reminders);
-        })
+    reschedule(patient, med, last) {
+        return addReminder(patient, med, last);
+    },
+    reschedulePatient(patient) {
+        return this.removePatient(patient)
         .then(() => {
-            return this.removePatient(patient)
-        })
-        .then(() => {
-            return addMedReminder(patient, 0, patient.meds)
+            if (patient.status == 'active') {
+                return addMedReminder(patient, 0, patient.meds);
+            }
         });
     },
     complete(reminder) {
-        return DB.reminders.findById(reminder._id)
-        .then((r) => {
-            return Notifications.clear(r)
-            .then(() => {
-                r.status = 'complete';
-                return this.update(r);                
-            });
+        return Notifications.clear(reminder.notificationid);
+    },
+    removePatient(patient) {
+        return this.getPatient(patient)
+        .then((reminders) => {
+            let ids = reminders.map((r) => {return r.notificationid;});
+            console.log('-- remove reminders for ' + patient.name);
+            return Notifications.cancel(ids);
         });
+    },
+    removeAll() {
+        return Notifications.cancel();
+    },
+    start(cb) {
+        return Notifications.start(cb);
+    },
+    stop() {
+        return Notifications.stop();
     }
 };

@@ -22,9 +22,9 @@ module.exports = {
     getById(id) {
         return Notification.find(id);
     },
-    get(reminders) {
-        if (reminders) {
-            return get(reminders.map((r) => {return r.notificationid;}), []);
+    get(ids) {
+        if (ids) {
+            return get(ids, []);
         }
         return Notification.getIDs()
         .then((ids) => {
@@ -47,28 +47,28 @@ module.exports = {
         return Notification.create(n)
         .then((notification) => {
             console.log('***********   ' + notification.subject + ' @ ' + moment(notification.sendAt).format('MMM DD, YYYY HH:mm') + ' (' + notification.id + ')');
-            reminder.notificationid = notification.id;
             return notification;
         })
         .catch((err) => {
             console.error(err);
         });
     },
-    cancel(reminders) {
-        if (!reminders || reminders.length < 1) {
+    cancel(ids) {
+        if (!ids || ids.length < 1) {
             return Notification.deleteAll();
         }
-        reminders.forEach((r) => {
-            if (r.notificationid) {
-                return Notification.delete(r.notificationid);
-            }
+        let a = [];
+        ids.forEach((id) => {
+            let p = Notification.delete(id);
+            a.push(p);
         });
+        return Promise.all(a);
     },
-    clear(reminder) {
-        if (!reminder) {
+    clear(id) {
+        if (!id) {
             return Notification.clearAll();
         }
-        return Notification.clear(reminder.notificationid);
+        return Notification.clear(id);
     },
     start(cb) {
         Notification.addListener('press', cb);

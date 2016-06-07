@@ -5,7 +5,7 @@ var { View, ScrollView, Switch, Text, TextInput, Alert } = React;
 var DateTimePicker = require('./widgets/datetimePicker');
 var IconButton = require('./widgets/iconButton');
 var PatientMedsView = require('./widgets/patientMedsView');
-var PatientsStore = require('./stores/patients');
+var Patients = require('./stores/patients');
 
 var PatientDetailView = React.createClass({
     getInitialState() {
@@ -42,7 +42,7 @@ var PatientDetailView = React.createClass({
         //this.props.onSelected && this.props.onSelected(med);
     },
     onMedAdd() {
-        let med = PatientsStore.createNewMed('');
+        let med = Patients.createNewMed('');
         this.state.currentMed = med;
         this.props.events.once('savemed', this.onAcceptMed);
         this.props.events.emit('changeroute','med', med);

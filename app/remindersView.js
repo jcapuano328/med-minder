@@ -2,84 +2,10 @@
 
 var React = require('react-native');
 var { View, ScrollView, Text, TouchableOpacity, Alert } = React;
+var RemindersItemView = require('./widgets/remindersItemView');
 var moment = require('moment');
-var RemindersStore = require('./stores/reminders');
-var Notifications = require('./stores/notifications');
-
-var ReminderItem = React.createClass({
-    onSelected() {        
-        Notifications.getById(this.props.reminder.notificationid)
-        .then((notification) => {
-            notification = notification || {subject: 'Notification', message: 'Not found?'};
-            Alert.alert('Notification ' + notification.subject, notification.message, [
-                {text: 'OK', style: 'cancel'}
-            ]);
-        })
-        .catch((err) => {
-            console.error(err);
-        });
-    },
-    render() {
-        return (
-            <TouchableOpacity style={{flex: 1}} onPress={this.onSelected}>
-                <View style={{
-                    alignItems: 'center',
-                    justifyContent: 'flex-start',
-                    flex: 1,
-                    flexDirection: 'row',
-                    margin: 5,
-                    padding: 5,
-                    backgroundColor: '#eaeaea',
-                    //backgroundColor: 'gray',
-                    borderColor: 'gray',
-                    borderStyle: 'solid',
-                    borderWidth: 1,
-                    borderRadius: 10
-                }}>
-                    <View style={{flex: 1}}>
-                        <Text style={{fontSize: 24, fontWeight: 'bold', textAlign: 'left',marginLeft: 20}}>{this.props.reminder.patient.name}</Text>
-                        <Text style={{fontSize: 15,textAlign: 'left',marginLeft: 20}}>{this.props.reminder.med.name + ' ' + this.props.reminder.med.dosage}</Text>
-                    </View>
-                    <View style={{flex: 1}}>
-                        <Text style={{fontSize: 15,textAlign: 'left',marginLeft: 20}}>{moment(this.props.reminder.on).format('MMM DD, YYYY HH:mm')}</Text>
-                        <Text style={{fontSize: 12,textAlign: 'left',marginLeft: 20}}>{this.props.reminder.notificationid}</Text>
-                    </View>
-                </View>
-            </TouchableOpacity>
-        );
-    }
-});
-
-var NotificationItem = React.createClass({
-    render() {
-        return (
-            <View style={{
-                alignItems: 'center',
-                justifyContent: 'flex-start',
-                flex: 1,
-                flexDirection: 'row',
-                margin: 5,
-                padding: 5,
-                backgroundColor: '#eaeaea',
-                //backgroundColor: 'gray',
-                borderColor: 'gray',
-                borderStyle: 'solid',
-                borderWidth: 1,
-                borderRadius: 10
-            }}>
-                <View style={{flex: 1}}>
-                    <Text style={{fontSize: 24, fontWeight: 'bold', textAlign: 'left',marginLeft: 20}}>{this.props.notification.subject}</Text>
-                    <Text style={{fontSize: 12,textAlign: 'left',marginLeft: 20}}>{this.props.notification.id}</Text>
-                </View>
-                <View style={{flex: 1}}>
-                    <Text style={{fontSize: 15,textAlign: 'left',marginLeft: 20}}>{moment(this.props.notification.sendAt).format('MMM DD, YYYY HH:mm')}</Text>
-                    <Text style={{fontSize: 15, fontWeight: 'bold',textAlign: 'left',marginLeft: 20}}>{this.props.notification.message}</Text>
-                </View>
-            </View>
-        );
-    }
-});
-
+var Reminder = require('./services/reminder');
+var Reminders = require('./stores/reminders');
 
 var RemindersView = React.createClass({
     getInitialState() {
@@ -88,15 +14,44 @@ var RemindersView = React.createClass({
         };
     },
     componentWillMount() {
-        return RemindersStore.getAll()
-        //return Notifications.get()
+        return Reminders.getAll()
         .then((data) => {
-            this.setState({data: data || []});
-            return data;
+            data = data || [];
+            /*
+            if (this.props.filter) {
+                data = data.filter((d) => {
+                    return d.payload.patient.id == d.value;
+                });
+            }
+            */
+            this.setState({data: data});
         })
         .catch((e) => {
             console.error(e);
         });
+    },
+    onRemove(reminder) {
+        return () => {
+            Alert.alert('Remove Reminder ' + reminder.subject + '?', 'The reminder will be permanently removed and rescheduled', [
+                {text: 'No', style: 'cancel'},
+                {text: 'Yes', onPress: () => {
+                    console.log('*********** remove reminder ' + reminder.subject);
+                    var idx = this.state.data.indexOf(reminder);
+                    if (idx > -1) {
+                        Reminder.complete(reminder, true)
+                        .then(() => {
+                            this.state.data.splice(idx,1);
+                            this.setState({data: this.state.data});
+                            console.log('+++++++++++ Notification rescheduled');
+                            this.props.events && this.props.events.emit('notificationrescheduled');
+                        })
+                        .catch((err) => {
+                            console.log(err);
+                        });
+                    }
+                }}
+            ]);
+        }
     },
     render() {
         return (
@@ -112,8 +67,7 @@ var RemindersView = React.createClass({
                             scrollEventThrottle={200}
                             style={{flex: 1,backgroundColor: 'transparent'}}>
                             {this.state.data.map((item, i) => {
-                                return (<ReminderItem key={i} reminder={item} />);
-                                //return (<NotificationItem key={i} notification={item} />);
+                                return (<RemindersItemView key={i} notification={item} onRemove={this.onRemove(item)} />);
                             })}
                         </ScrollView>
                     )

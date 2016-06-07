@@ -10,7 +10,7 @@ var PatientsItemView = React.createClass({
         let s = this.props.patient.status == 'active' ? 'inactive' : 'active';
         this.props.onChanged && this.props.onChanged(this.props.patient, {field: 'status', value: s});
     },
-    render() {
+    render() {        
         return (
             <View style={{
                 alignItems: 'center',

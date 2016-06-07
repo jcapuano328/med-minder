@@ -3,7 +3,7 @@
 var React = require('react-native');
 var { View, Text } = React;
 var TimeView = require('./timeView');
-var Scheduler = require('../scheduler');
+var Scheduler = require('../services/scheduler');
 
 var WeekHeader = React.createClass({
     dayHeader(s) {

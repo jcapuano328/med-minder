@@ -79,6 +79,18 @@ let mapTOD = (tod) => {
 
 let scheduler = (schedule, last) => {
     schedule = schedule || {};
+    let now = moment();
+    let tod = mapTOD(schedule.tod || 'Morning');
+    if (!last && now.hour() > tod.hour) {
+        last = moment({
+            year: now.year(),
+            month: now.month(),
+            day: now.date(),
+            hour: tod.hour,
+            minute: tod.minute,
+            second: tod.second
+        });
+    }
 
     if (last) {
         let freq = schedule.frequency || 'Daily';
@@ -87,8 +99,6 @@ let scheduler = (schedule, last) => {
         return next;
     }
     let dow = mapDOW(schedule.dow || 'Today');
-    let tod = mapTOD(schedule.tod || 'Morning');
-    let now = moment();
     let next = moment({
         year: now.year(),
         month: now.month(),

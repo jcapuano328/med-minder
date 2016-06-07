@@ -7,6 +7,11 @@ var Icons = require('../resources/icons');
 
 var FilterMenu = React.createClass({
     render() {
+        /*
+        <MenuOption value={'today'}><Text style={{fontSize: 20}}>Today</Text></MenuOption>
+        <MenuOption value={'week'}><Text style={{fontSize: 20}}>This Week</Text></MenuOption>
+        <MenuOption value={'month'}><Text style={{fontSize: 20}}>This Month</Text></MenuOption>
+        */
         return (
             <Menu onSelect={this.props.onSelect}>
                 <MenuTrigger>
@@ -16,9 +21,11 @@ var FilterMenu = React.createClass({
                     }
                 </MenuTrigger>
                 <MenuOptions>
-                    <MenuOption value={'today'}><Text style={{fontSize: 20}}>Today</Text></MenuOption>
-                    <MenuOption value={'week'}><Text style={{fontSize: 20}}>This Week</Text></MenuOption>
-                    <MenuOption value={'month'}><Text style={{fontSize: 20}}>This Month</Text></MenuOption>
+                    {this.props.items.map((item, i) => {
+                        return (
+                            <MenuOption key={i} value={item}><Text style={{fontSize: 20}}>{item.label}</Text></MenuOption>
+                        );
+                    })}
                 </MenuOptions>
             </Menu>
         );

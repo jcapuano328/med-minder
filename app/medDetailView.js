@@ -2,8 +2,9 @@
 
 var React = require('react-native');
 var { View, Switch, Text, TextInput, Picker } = React;
+var TypeAhead = require('./widgets/typeahead');
 var IconButton = require('./widgets/iconButton');
-var Subscribable = require('Subscribable');
+var RxNav = require('./services/rxnav');
 var moment = require('moment');
 
 let frequencies = [
@@ -34,8 +35,6 @@ let times = [
 ];
 
 var MedDetailView = React.createClass({
-    mixins: [Subscribable.Mixin],
-
     getInitialState() {
         return {
             name: this.props.med.name,
@@ -55,7 +54,7 @@ var MedDetailView = React.createClass({
         this.props.events.once('discardmed', this.onDiscard);
     },
     filterDOW(frequency) {
-        var f = frequencies.find((f) => { return frequency == f.value; });
+        var f = frequencies.find((f) => { return frequency == f.value; }) || {filter: 1};
         return days.filter((day) => { return f.filter == day.filter; });
     },
     onChangeName(v) {
@@ -95,7 +94,7 @@ var MedDetailView = React.createClass({
             schedule: {
                 frequency: this.state.frequency,
                 dow: this.state.dow,
-                tod: this.state.tod
+                tod: [this.state.tod]
             },
             status: this.state.status,
             created: this.state.created,
@@ -106,6 +105,7 @@ var MedDetailView = React.createClass({
 
     },
     render() {
+        //<TextInput style={{flex: 2, margin: 10, fontSize: 20}} placeholder={'Name'} onChangeText={this.onChangeName}>{this.state.name}</TextInput>
         return (
             <View style={{
                 //flex: 1,
@@ -113,7 +113,9 @@ var MedDetailView = React.createClass({
                 //backgroundColor: 'rgba(0,0,0,0.01)',
             }}>
                 <View style={{flex: 1, flexDirection: 'row'}}>
-                    <TextInput style={{flex: 2, margin: 10, fontSize: 20}} placeholder={'Name'} onChangeText={this.onChangeName}>{this.state.name}</TextInput>
+                    <View style={{flex: 2, margin: 10}}>
+                        <TypeAhead value={this.state.name} placeholder={'Name'} onChangeValue={this.onChangeName} find={RxNav.find} />
+                    </View>
                     <TextInput style={{flex: 1, margin: 10, fontSize: 20}} placeholder={'Dosage'} onChangeText={this.onChangeDosage}>{this.state.dosage}</TextInput>
                 </View>
                 <TextInput style={{margin: 10, fontSize: 20}} placeholder={'Instructions'} multiline={true} onChangeText={this.onChangeInstructions}>{this.state.instructions}</TextInput>

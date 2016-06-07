@@ -52,7 +52,7 @@ var TitleBar = (props) => {
                     {route.onAccept ? <IconButton border={true} image={'accept'} height={iconHeight} width={iconWidth} onPress={route.onAccept} /> : null}
                     {route.onDiscard ? <IconButton image={'discard'} height={iconHeight} width={iconWidth} onPress={route.onDiscard} /> : null}
                     {route.onAdd ? <IconButton image={'add'} height={iconHeight} width={iconWidth} onPress={route.onAdd} /> : null}
-                    {route.onFilter ? <FilterMenu image={'filter'} height={iconHeight} width={iconWidth} onSelect={route.onFilter} /> : null}
+                    {route.onFilter ? <FilterMenu image={'filter'} items={route.filterItems} height={iconHeight} width={iconWidth} onSelect={route.onFilter} /> : null}
                 </View>
             );
         }

@@ -61,4 +61,8 @@ _____ Example 2
 store to db
 remove all reminders for patient
 schedule reminders for patient
-		
+
+-----------------
+Scheduler:
+	handle array of tod
+	daily, alternating days, 3rd day, 4th day, 5th, 6th

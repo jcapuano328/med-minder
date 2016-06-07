@@ -54,6 +54,7 @@ var NavMenu = React.createClass({
                     <NavMenuItem image={'home'} name={'Home'} onPress={this.onPress} />
                     <NavMenuItem image={'calendar'} name={'Schedule'} onPress={this.onPress} />
                     <NavMenuItem image={'patients'} name={'Patients'} onPress={this.onPress} />
+                    <NavMenuItem image={'notifications'} name={'Reminders'} onPress={this.onPress} />
                     <NavMenuItem image={'info'} name={'About'} onPress={this.onPress}/>
                 </ScrollView>
             </View>

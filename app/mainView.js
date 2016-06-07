@@ -14,9 +14,23 @@ var PatientDetailView = require('./patientDetailView');
 var MedDetailView = require('./medDetailView');
 var RemindersView = require('./remindersView');
 var EventEmitter = require('EventEmitter');
+var Patients = require('./stores/patients');
 var Reminders = require('./stores/reminders');
-var Notifications = require('./stores/notifications');
 var Sample = require('./stores/sample.js');
+
+var scheduleFilterItems = [
+    {type: 'schedule', label: 'Today', value: 'today'},
+    {type: 'schedule', label: 'This Week', value: 'week'},
+    {type: 'schedule', label: 'This Month', value: 'month'}
+];
+var remindersFilterItems = () => {
+    return Patients.getAll()
+    .then((patients) => {
+        return (patients || []).map((patient) => {
+            return {type: 'reminder', label: patient.name, value: patient._id};
+        });
+    });
+}
 
 var MainView = React.createClass({
     getInitialState() {
@@ -24,33 +38,34 @@ var MainView = React.createClass({
             drawer: false,
             routes: {
                 landing: {index: 0, name: 'landing', onMenu: this.navMenuHandler},
-                schedule: {index: 1, name: 'schedule', title: 'Schedule', onMenu: this.navMenuHandler, onFilter: this.onFilter},
+                schedule: {index: 1, name: 'schedule', title: 'Schedule', onMenu: this.navMenuHandler, onFilter: this.onFilter, filterItems: scheduleFilterItems},
                 patients: {index: 2, name: 'patients', title: 'Patients', onMenu: this.navMenuHandler, onAdd: this.onAdd('patient')},
                 patient: {index: 3, name: 'patient', title: 'Patient', onMenu: this.navMenuHandler, onAccept: this.onAccept('patient'), onDiscard: this.onDiscard('patient')},
                 med: {index: 4, name: 'med', title: 'Medication', onMenu: this.navMenuHandler, onAccept: this.onAccept('med'), onDiscard: this.onDiscard('med')},
-                reminders: {index: 5, name: 'reminders', title: 'Reminders', onMenu: this.navMenuHandler},
+                reminders: {index: 5, name: 'reminders', title: 'Reminders', onMenu: this.navMenuHandler},// onFilter: this.onFilter, filterItems: remindersFilterItems},
                 about: {index: 6, name: 'about'}
             },
             version: '0.0.1',
-            filter: 'today'
+            scheduleFilter: scheduleFilterItems[0],
+            reminderFilter: {}
         };
     },
     componentWillMount() {
-        Notifications.start(this.onNotification);
+        Reminders.start(this.onNotification);
         this.eventEmitter = new EventEmitter();
         this.eventEmitter.addListener('changeroute', this.onChangeRoute);
         this.state.initialRoute = this.state.routes.landing;
         //return Sample.load()
         return new Promise((a,r) => a())
         .then(() => {
-            this.refs.navigator.push(this.state.routes.schedule);
-            //this.refs.navigator.push(this.state.routes.patients);
-            //this.refs.navigator.push(this.state.routes.reminders);
+            //this.refs.navigator.resetTo(this.state.routes.schedule);
+            this.refs.navigator.resetTo(this.state.routes.patients);
+            //this.refs.navigator.resetTo(this.state.routes.reminders);
         })
         .done();
     },
     componentWillUnmount() {
-        Notifications.stop();
+        Reminders.stop();
     },
     toggleDrawer() {
         if (!this.state.drawer) {
@@ -68,11 +83,13 @@ var MainView = React.createClass({
     navMenuHandler(e) {
         //console.log(e);
         if (e == 'Home') {
-            this.refs.navigator.popToRoute(this.state.routes.landing);
+            this.refs.navigator.resetTo(this.state.routes.landing);
         } else if (e == 'Schedule') {
-            this.refs.navigator.push(this.state.routes.schedule);
+            this.refs.navigator.resetTo(this.state.routes.schedule);
         } else if (e == 'Patients') {
-            this.refs.navigator.push(this.state.routes.patients);
+            this.refs.navigator.resetTo(this.state.routes.patients);
+        } else if (e == 'Reminders') {
+            this.refs.navigator.resetTo(this.state.routes.reminders);
         } else if (e == 'About') {
             this.refs.navigator.push(this.state.routes.about);
         }
@@ -86,17 +103,11 @@ var MainView = React.createClass({
     },
     onFilter(filter) {
         console.log('filter ' + filter);
-        this.setState({filter: filter});
-    },
-    filterTitle() {
-        if (this.state.filter == 'today') {
-            return 'Today';
+        if (filter.type == 'schedule') {
+            this.setState({scheduleFilter: filter});
         }
-        if (this.state.filter == 'week') {
-            return 'This Week';
-        }
-        if (this.state.filter == 'month') {
-            return 'This Month';
+        if (filter.type == 'reminder') {
+            this.setState({reminderFilter: filter});
         }
     },
     onAdd(type) {
@@ -133,6 +144,18 @@ var MainView = React.createClass({
                 Reminders.complete(notification.payload)
                 .then(() => {
                     console.log('+++++++++++ Notification acknowledged');
+                    this.eventEmitter.emit('notificationacknowledged', notification.payload);
+                    return Patients.get(notification.payload.patient.id);
+                })
+                .then((patient) => {
+                    let med = patient.meds.find((m) => {
+                        return notification.payload.med.name == m.name;
+                    });
+                    return Reminders.reschedule(patient, med, notification.sendAt);
+                })
+                .then((n) => {
+                    console.log('+++++++++++ Notification rescheduled');
+                    this.eventEmitter.emit('notificationrescheduled');
                 })
                 .catch((err) => {
                     console.log(err);
@@ -154,9 +177,9 @@ var MainView = React.createClass({
             );
         }
         if (route.name == 'schedule') {
-            this.state.routes.schedule.title = this.filterTitle();
+            this.state.routes.schedule.title = this.state.scheduleFilter.label;
             return (
-                <ScheduleView filter={this.state.filter} events={this.eventEmitter} />
+                <ScheduleView filter={this.state.scheduleFilter.value} events={this.eventEmitter} />
             );
         }
 
@@ -180,7 +203,7 @@ var MainView = React.createClass({
 
         if (route.name == 'reminders') {
             return (
-                <RemindersView events={this.eventEmitter} />
+                <RemindersView filter={this.state.reminderFilter.value} events={this.eventEmitter} />
             );
         }
 

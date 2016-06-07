@@ -5,6 +5,7 @@ module.exports = {
 	"back": require('./ic_action_previous_item.png'),
 	"home": require('./home.png'),
 	"patients": require('./patients.png'),
+	"notifications": require('./notifications.png'),
 	"info": require('./info.png'),
 
 	"refreshButton": require('./ic_action_refresh.png'),

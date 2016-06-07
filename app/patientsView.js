@@ -4,8 +4,8 @@ var React = require('react-native');
 var { View, ScrollView, Text, Alert } = React;
 var Icons = require('./resources/icons');
 var PatientsItemView = require('./widgets/patientsItemView');
-var PatientsStore = require('./stores/patients');
-var RemindersStore = require('./stores/reminders');
+var Patients = require('./stores/patients');
+var Reminders = require('./stores/reminders');
 
 var PatientsView = React.createClass({
     getInitialState() {
@@ -16,7 +16,7 @@ var PatientsView = React.createClass({
     componentWillMount() {
         //console.log('subscribe to addpatient');
         this.props.events.once('addpatient', this.onAdd);
-        return PatientsStore.getAll()
+        return Patients.getAll()
         .then((data) => {
             this.setState({patients: data || []});
 //this.props.events.emit('changeroute','med', data[0].meds[0]);
@@ -36,7 +36,7 @@ var PatientsView = React.createClass({
         }
     },
     onAdd() {
-        let patient = PatientsStore.createNewPatient('');
+        let patient = Patients.createNewPatient('');
         //console.log('subscribe to addpatient ' + patient.name);
         this.props.events.once('addpatient', this.onAdd);
         //console.log('subscribe to savepatient for ' + patient.name);
@@ -52,7 +52,7 @@ var PatientsView = React.createClass({
                     console.log('*********** remove patient ' + patient.name);
                     var idx = this.state.patients.indexOf(patient);
                     if (idx > -1) {
-                        PatientsStore.remove(patient)
+                        Patients.remove(patient)
                         .then(() => {
                             //console.log('patient removed');
                             this.state.patients.splice(idx,1);
@@ -79,10 +79,10 @@ var PatientsView = React.createClass({
         if (idx < 0) {
             //console.log('adding new patient');
             this.state.patients.push(patient);
-            PatientsStore.add(patient)
+            Patients.add(patient)
             .then(() => {
                 console.log('patient added');
-                return RemindersStore.schedule(patient);
+                return Reminders.reschedulePatient(patient);
             })
             .catch((e) => {
                 console.error(e);
@@ -90,17 +90,17 @@ var PatientsView = React.createClass({
         } else {
             //console.log('updating existing patient');
             Object.assign(this.state.patients[idx], patient);
-            PatientsStore.update(this.state.patients[idx])
+            Patients.update(this.state.patients[idx])
             .then(() => {
                 console.log('patient updated');
                 //console.log('  updated: ' + this.state.patients[idx].name + ' (' + this.state.patients[idx]._id + ')');
-                return RemindersStore.schedule(patient);
+                return Reminders.reschedulePatient(patient);
             })
             .catch((e) => {
                 console.error(e);
             });
         }
-        this.setState({patients: PatientsStore.sort(this.state.patients)});
+        this.setState({patients: Patients.sort(this.state.patients)});
     },
     render() {
         return (

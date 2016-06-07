@@ -49,6 +49,9 @@ module.exports = {
     getActive() {
         return select({status: 'active'});
     },
+    get(id) {
+        return DB.patients.findById(id);
+    },
     add(patient) {
         patient.created = new Date();
         return DB.patients.add(patient);
