@@ -26,6 +26,9 @@ var TypeAhead = React.createClass({
         this.props.onChangeValue && this.props.onChangeValue(v);
         this.fetchValues(v);
     },
+    onEndEditing() {
+        this.setState({values: []});
+    },
     onSelect(value) {
         return () => {
             console.log('Select ' + value);
@@ -34,14 +37,15 @@ var TypeAhead = React.createClass({
         }
     },
     render() {
-        console.log('render typeahead ' + this.state.value);
         return (
             <View style={{flex: 1}}>
                 <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
                     {this.renderLabel()}
                     <TextInput style={{flex: 1, fontSize: 20}}
                         placeholder={this.props.placeholder || ''}
-                        onChangeText={this.onChangeValue}>
+                        onChangeText={this.onChangeValue}
+                        onEndEditing={this.onEndEditing}
+                    >
                         {this.state.value}
                     </TextInput>
                 </View>
