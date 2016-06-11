@@ -192,8 +192,10 @@ module.exports = {
         return this.getPatient(patient)
         .then((reminders) => {
             let ids = reminders.map((r) => {return r.notificationid;});
-            console.log('-- remove reminders for ' + patient.name);
-            return Notifications.cancel(ids);
+            if (ids && ids.length > 0) {
+                console.log('-- remove reminders for ' + patient.name);
+                return Notifications.cancel(ids);                
+            }
         });
     },
     removeAll() {

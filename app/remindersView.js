@@ -24,6 +24,24 @@ var RemindersView = React.createClass({
                 });
             }
             */
+            data.sort((l,r) => {
+                let lon = moment(l.sendAt);
+                let ron = moment(r.sendAt);
+                if (lon.isBefore(ron)) {
+                    return -1;
+                } else if (lon.isAfter(ron)) {
+                    return 1;
+                } else if (l.payload.patient.name < r.payload.patient.name) {
+                    return -1;
+                } else if (l.payload.patient.name > r.payload.patient.name) {
+                    return 1;
+                } else if (l.payload.med.name < r.payload.med.name) {
+                    return -1;
+                } else if (l.payload.med.name > r.payload.med.name) {
+                    return 1;
+                }
+                return 0;
+            });
             this.setState({data: data});
         })
         .catch((e) => {
