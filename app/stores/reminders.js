@@ -86,9 +86,11 @@ module.exports = {
         return Notifications.get();
     },
     getPatient(patient) {
+        console.log('*********** get reminders for patient ' + patient.name);
         return Notifications.get()
         .then((notifications) => {
             return notifications.filter((n) => {
+                //console.log(n.payload.patient.name + ' (' + n.payload.patient.id + ' == ' + patient._id + ')');
                 return n.payload.patient.id == patient._id;
             }).map((n) => {
                 let reminder = n.payload;

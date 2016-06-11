@@ -54,15 +54,21 @@ module.exports = {
         });
     },
     cancel(ids) {
+        console.log('***********   cancel');
+        console.log(ids);
         if (!ids || ids.length < 1) {
             return Notification.deleteAll();
         }
         let a = [];
         ids.forEach((id) => {
+            console.log('***********   cancel ' + id);
             let p = Notification.delete(id);
             a.push(p);
         });
-        return Promise.all(a);
+        return Promise.all(a)
+        .then(() => {
+            console.log('***********   canceled');
+        });
     },
     clear(id) {
         if (!id) {

@@ -44,6 +44,7 @@ var AboutView = React.createClass({
                 borderColor: 'black',
                 borderWidth: 5,
                 margin: 50,
+                marginTop: 60,
                 paddingLeft: 25,
                 paddingRight: 25,
                 paddingBottom: 25,
@@ -52,7 +53,7 @@ var AboutView = React.createClass({
                 <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
                     <Image style={{width: 96,height: 96,resizeMode: 'stretch'}} source={Icons.logo}/>
                     <View style={{flex:1}}>
-                        <Text style={{fontSize: 18,fontWeight: 'bold',marginLeft: 15}}>{'Aw? Boc!'}</Text>
+                        <Text style={{fontSize: 18,fontWeight: 'bold',marginLeft: 15}}>{'Med Minder'}</Text>
                         <Text style={{fontSize: 14,marginLeft: 15}}>{'Version: ' + this.props.version}</Text>
                         <Text style={{fontSize: 14,marginLeft: 15}}>{'Release: ????'}</Text>
                     </View>
