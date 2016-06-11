@@ -43,16 +43,16 @@ var AboutView = React.createClass({
                 borderRadius: 10,
                 borderColor: 'black',
                 borderWidth: 5,
-                margin: 50,
-                marginTop: 60,
+                margin: 5,
+                marginTop: 70,
                 paddingLeft: 25,
                 paddingRight: 25,
                 paddingBottom: 25,
                 paddingTop: 25
             }}>
                 <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-                    <Image style={{width: 96,height: 96,resizeMode: 'stretch'}} source={Icons.logo}/>
-                    <View style={{flex:1}}>
+                    <Image style={{flex: 1, width: 96,height: 96,resizeMode: 'contain'}} source={Icons.logo}/>
+                    <View style={{flex:1, justifyContent: 'flex-start'}}>
                         <Text style={{fontSize: 18,fontWeight: 'bold',marginLeft: 15}}>{'Med Minder'}</Text>
                         <Text style={{fontSize: 14,marginLeft: 15}}>{'Version: ' + this.props.version}</Text>
                         <Text style={{fontSize: 14,marginLeft: 15}}>{'Release: ????'}</Text>
@@ -63,9 +63,12 @@ var AboutView = React.createClass({
                 </View>
                 <View style={{flex: 1}}>
                     <Text style={{fontSize: 14}}>{'Built with React Native and these helpful modules:'}</Text>
-                    <Text style={{fontSize: 12}}>{'react-native-store'}</Text>
-                    <Text style={{fontSize: 12}}>{'apsl-react-native-button'}</Text>
-                    <Text style={{fontSize: 12}}>{'react-native-audioplayer'}</Text>
+                    <Text style={{fontSize: 12, marginLeft: 10}}>{'react-native-store'}</Text>
+                    <Text style={{fontSize: 12, marginLeft: 10}}>{'apsl-react-native-button'}</Text>
+                    <Text style={{fontSize: 12, marginLeft: 10}}>{'react-native-menu'}</Text>
+                    <Text style={{fontSize: 12, marginLeft: 10}}>{'react-native-system-notification'}</Text>
+                    <Text style={{fontSize: 12, marginLeft: 10}}>{'react-native-gcm-android'}</Text>
+                    <Text style={{fontSize: 12, marginLeft: 10}}>{'moment'}</Text>
                 </View>
                 <Button onPress={this.props.onClose}>{'Close'}</Button>
             </View>
