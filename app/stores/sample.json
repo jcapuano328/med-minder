@@ -11,7 +11,12 @@
                     "schedule": {
                         "frequency": 'Daily',
                         "dow": 'Today',
-                        "tod": ['Morning']
+                        "tod": {
+							morning: true,
+							noon: false,
+							evening: false,
+							bedtime: false
+						}
                     },
                     "status": 'active'
                 },
@@ -22,7 +27,12 @@
                     "schedule": {
                         "frequency": 'Alternating Days',
                         "dow": 'Today',
-                        "tod": ['Evening']
+                        "tod": {
+							morning: false,
+							noon: false,
+							evening: true,
+							bedtime: false
+						}
                     },
                     "status": 'active'
                 },
@@ -33,7 +43,12 @@
                     "schedule": {
                         "frequency": 'Alternating Days',
                         "dow": 'Today',
-                        "tod": ['Bedtime']
+                        "tod": {
+							morning: false,
+							noon: false,
+							evening: false,
+							bedtime: true
+						}
                     },
                     "status": 'active'
                 },
@@ -44,7 +59,12 @@
                     "schedule": {
                         "frequency": 'Daily',
                         "dow": 'Today',
-                        "tod": ['Morning']
+                        "tod": {
+							morning: true,
+							noon: false,
+							evening: false,
+							bedtime: false
+						}
                     },
                     "status": 'active'
                 }
@@ -65,7 +85,12 @@
                     "schedule": {
                         "frequency": 'Alternating Days',
                         "dow": 'Today',
-                        "tod": ['Morning']
+                        "tod": {
+							morning: true,
+							noon: false,
+							evening: false,
+							bedtime: false
+						}
                     },
                     "status": 'active'
                 },
@@ -76,7 +101,12 @@
                     "schedule": {
                         "frequency": 'Daily',
                         "dow": 'Today',
-                        "tod": ['Morning']
+                        "tod": {
+							morning: true,
+							noon: false,
+							evening: false,
+							bedtime: false
+						}
                     },
                     "status": 'active'
                 },
@@ -87,7 +117,12 @@
                     "schedule": {
                         "frequency": 'Daily',
                         "dow": 'Today',
-                        "tod": ['Evening']
+                        "tod": {
+							morning: false,
+							noon: false,
+							evening: true,
+							bedtime: false
+						}
                     },
                     "status": 'active'
                 }
@@ -108,7 +143,12 @@
                     "schedule": {
                         "frequency": 'Daily',
                         "dow": 'Today',
-                        "tod": ['Morning','Evening']
+                        "tod": {
+							morning: true,
+							noon: false,
+							evening: true,
+							bedtime: false
+						}
                     },
                     "status": 'active'
                 },
@@ -119,7 +159,12 @@
                     "schedule": {
                         "frequency": 'Daily',
                         "dow": 'Today',
-                        "tod": ['Evening']
+                        "tod": {
+							morning: false,
+							noon: false,
+							evening: true,
+							bedtime: false
+						}
                     },
                     "status": 'active'
                 },
@@ -130,7 +175,12 @@
                     "schedule": {
                         "frequency": 'Daily',
                         "dow": 'Today',
-                        "tod": ['Evening']
+                        "tod": {
+							morning: false,
+							noon: false,
+							evening: true,
+							bedtime: false
+						}
                     },
                     "status": 'active'
                 },
@@ -141,7 +191,12 @@
                     "schedule": {
                         "frequency": 'Daily',
                         "dow": 'Today',
-                        "tod": ['Evening']
+                        "tod": {
+							morning: false,
+							noon: false,
+							evening: true,
+							bedtime: false
+						}
                     },
                     "status": 'active'
                 }

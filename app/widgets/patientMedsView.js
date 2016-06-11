@@ -8,7 +8,7 @@ var PatientMedView = require('./patientMedView');
 var PatientMedsView = React.createClass({
     onSelected(med) {
         return () => {
-            console.log('--- med ' + med.name + ' selected');
+            console.log('--- med ' + med.name + ' selected');            
             this.props.onSelected && this.props.onSelected(med);
         }
     },
@@ -40,7 +40,7 @@ var PatientMedsView = React.createClass({
                         automaticallyAdjustContentInsets={false}
                         scrollEventThrottle={200}
                         style={{flex: 1, backgroundColor: 'transparent'}}>
-                        {this.props.meds.map((med, i) => {                            
+                        {this.props.meds.map((med, i) => {
                             return (
                                 <PatientMedView key={i} med={med} events={this.props.events}
                                     onChanged={this.onChanged(med)}

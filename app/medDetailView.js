@@ -3,7 +3,7 @@
 var React = require('react-native');
 var { View, Switch, Text, TextInput, Picker } = React;
 var TypeAhead = require('./widgets/typeahead');
-var IconButton = require('./widgets/iconButton');
+var TimeOfDay = require('./widgets/timeOfDay');
 var RxNav = require('./services/rxnav');
 var moment = require('moment');
 
@@ -25,13 +25,6 @@ let days = [
     {name: 'Thursday', value: 'Thursday', filter: 2},
     {name: 'Friday', value: 'Friday', filter: 2},
     {name: 'Saturday', value: 'Saturday', filter: 2}
-];
-
-let times = [
-    {name: 'Morning', value: 'Morning'},
-    {name: 'Noon', value: 'Noon'},
-    {name: 'Evening', value: 'Evening'},
-    {name: 'Bedtime', value: 'Bedtime'}
 ];
 
 var MedDetailView = React.createClass({
@@ -82,9 +75,11 @@ var MedDetailView = React.createClass({
         this.setState({dow: v});
         this.props.events && this.props.events.emit('medchanged', this.props.med, {field: 'dow', value: v});
     },
-    onTimeOfDayChanged(v) {
-        this.setState({tod: v});
-        this.props.events && this.props.events.emit('medchanged', this.props.med, {field: 'tod', value: v});
+    onTimeOfDayChanged(tod, v) {
+        let s = this.state.tod;
+        s[tod] = v;
+        this.setState({tod: s});
+        this.props.events && this.props.events.emit('medchanged', this.props.med, {field: 'tod', value: s});
     },
     onAccept() {
         this.props.events.emit('savemed', {
@@ -94,7 +89,7 @@ var MedDetailView = React.createClass({
             schedule: {
                 frequency: this.state.frequency,
                 dow: this.state.dow,
-                tod: [this.state.tod]
+                tod: this.state.tod
             },
             status: this.state.status,
             created: this.state.created,
@@ -147,14 +142,11 @@ var MedDetailView = React.createClass({
                         </Picker>
                     </View>
 
-                    <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                    <View style={{flex: 1, justifyContent: 'center'}}>
                         <Text style={{flex: 1, fontSize: 16,fontWeight: 'bold', marginLeft: 15, marginTop: 13}}>Time of Day</Text>
-                        <Picker style={{flex: 3}}
-                            selectedValue={this.state.tod}
-                            onValueChange={this.onTimeOfDayChanged}
-                        >
-                            {times.map((f,i) => {return (<Picker.Item key={i} label={f.name} value={f.value} />);})}
-                        </Picker>
+                        <View style={{flex: 1}}>
+                            <TimeOfDay tod={this.state.tod} onSelect={this.onTimeOfDayChanged}/>
+                        </View>
                     </View>
                 </View>
             </View>

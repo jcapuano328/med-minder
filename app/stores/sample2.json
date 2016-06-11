@@ -11,7 +11,12 @@
                     "schedule": {
                         "frequency": 'Daily',
                         "dow": 'Today',
-                        "tod": ['Morning']
+                        "tod": {
+							morning: true,
+							noon: false,
+							evening: false,
+							bedtime: false
+						}
                     },
                     "status": 'active'
                 }

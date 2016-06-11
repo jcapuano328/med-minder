@@ -11,7 +11,12 @@
 					"schedule": {
 						"frequency": string, //Daily,Alternating Days,Weekly,Alternating Weeks,Monthly
 						"dow": string, //Today,Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday
-						"tod": array // Morning,Noon,Evening,Bedtime
+						"tod": {
+							morning: bool,
+							noon: bool,
+							evening: bool,
+							bedtime: bool
+						}
 					},
 					"status": string,
 					"created": datetime,

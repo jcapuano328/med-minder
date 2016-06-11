@@ -1,7 +1,7 @@
 'use strict'
 
-var Patients = require('./stores/patients');
-var Reminders = require('./stores/reminders');
+var Patients = require('../stores/patients');
+var Reminders = require('../stores/reminders');
 
 module.exports = {
     complete(reminder, reschedule) {
@@ -14,8 +14,8 @@ module.exports = {
                         return reminder.payload.med.name == m.name;
                     });
                     return Reminders.reschedule(patient, med, reminder.sendAt);
-                })
+                });
             }
-        });        
+        });
     }
 };

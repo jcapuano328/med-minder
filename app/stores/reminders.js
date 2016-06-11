@@ -70,7 +70,8 @@ let addMedReminder = (patient, i, meds) => {
     if (i < meds.length) {
         var med = meds[i++];
         if (med.status == 'active') {
-            return addReminder(patient, med, 0, med.schedule.tod)
+            let tod = Object.keys(med.schedule.tod).filter((k) => med.schedule.tod[k]);
+            return addReminder(patient, med, 0, tod)
             .then(() => {
                 return addMedReminder(patient, i, meds);
             });
