@@ -7,13 +7,13 @@ let getMeds = (ids, i, meds) => {
     if (i < ids.length) {
         let id = ids[i++];
         let url = rxnavPropertiesURL.replace('{0}', id);
-        console.log('Search rxnav for ' + id + ' @ ' + url);
+        //console.log('Search rxnav for ' + id + ' @ ' + url);
         return fetch(url)
         .then((response) => response.json())
         .then((result) => {
             //console.log(result);
             if (result && result.properties && result.properties.name) {
-                console.log('   ' + result.properties.name);
+                //console.log('   ' + result.properties.name);
                 meds.push(result.properties.name);
             }
             return getMeds(ids, i, meds);
@@ -25,7 +25,7 @@ let getMeds = (ids, i, meds) => {
 module.exports = {
     find(name) {
         let url = rxnavSearchURL.replace('{0}', name);
-        console.log('Search rxnav for ' + name + ' @ ' + url);
+        //console.log('Search rxnav for ' + name + ' @ ' + url);
         return fetch(url)
         .then((response) => response.json())
         .then((result) => {

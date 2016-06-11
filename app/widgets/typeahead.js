@@ -7,7 +7,8 @@ var TypeAhead = React.createClass({
     getInitialState() {
         return {
             value: this.props.value,
-            values: []
+            values: [],
+            focused: false
         };
     },
     fetchValues(v) {
@@ -26,8 +27,8 @@ var TypeAhead = React.createClass({
         this.props.onChangeValue && this.props.onChangeValue(v);
         this.fetchValues(v);
     },
-    onEndEditing() {
-        this.setState({values: []});
+    onFocusName() {
+        this.setState({focused: true});
     },
     onSelect(value) {
         return () => {
@@ -43,6 +44,7 @@ var TypeAhead = React.createClass({
                     {this.renderLabel()}
                     <TextInput style={{flex: 1, fontSize: 20}}
                         placeholder={this.props.placeholder || ''}
+                        onFocus={this.onFocusName}
                         onChangeText={this.onChangeValue}
                         onEndEditing={this.onEndEditing}
                     >
@@ -64,7 +66,7 @@ var TypeAhead = React.createClass({
         );
     },
     renderList() {
-        if (!this.state.values || this.state.values.length < 1) {
+        if (!this.props.focused || !this.state.values || this.state.values.length < 1) {
             return null;
         }
         let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});

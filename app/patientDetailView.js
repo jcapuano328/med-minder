@@ -102,7 +102,7 @@ var PatientDetailView = React.createClass({
     onDiscard() {
         //console.log('unsubscribing from savepatient for ' + this.state.name);
         this.props.events.removeAllListeners('savepatient');
-        this.props.events.removeAllListeners('acceptpatient');        
+        this.props.events.removeAllListeners('acceptpatient');
     },
     render() {
         return (
@@ -112,7 +112,7 @@ var PatientDetailView = React.createClass({
                 //backgroundColor: 'rgba(0,0,0,0.01)',
             }}>
                 <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                    <TextInput style={{flex: 3, margin: 10, fontSize: 20}} placeholder={'Description'} onChangeText={this.onChangeName}>{this.state.name}</TextInput>
+                    <TextInput style={{flex: 3, margin: 10, fontSize: 20}} placeholder={'Name'} onChangeText={this.onChangeName}>{this.state.name}</TextInput>
                     <View style={{flex:1, alignItems: 'center', justifyContent: 'center'}}>
                         <Text>Active</Text>
                         <Switch value={this.state.status == 'active'} onValueChange={this.onStatusChanged} />

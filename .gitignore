@@ -41,3 +41,4 @@ android/keystores/debug.keystore
 *.keystore
 
 doc/icons
+doc/logo

@@ -35,6 +35,7 @@ var MedDetailView = React.createClass({
     getInitialState() {
         return {
             name: this.props.med.name,
+            nameFocused: false,
             dosage: this.props.med.dosage,
             instructions: this.props.med.instructions,
             frequency: this.props.med.schedule.frequency,
@@ -55,35 +56,38 @@ var MedDetailView = React.createClass({
         return days.filter((day) => { return f.filter == day.filter; });
     },
     onChangeName(v) {
-        this.setState({name: v});
+        this.setState({name: v, nameFocused: true});
         this.props.events && this.props.events.emit('medchanged', this.props.med, {field: 'name', value: v});
     },
     onChangeDosage(v) {
-        this.setState({dosage: v});
+        this.setState({dosage: v, nameFocused: false});
         this.props.events && this.props.events.emit('medchanged', this.props.med, {field: 'dosage', value: v});
     },
     onChangeInstructions(v) {
-        this.setState({instructions: v});
+        this.setState({instructions: v, nameFocused: false});
         this.props.events && this.props.events.emit('medchanged', this.props.med, {field: 'instructions', value: v});
     },
     onStatusChanged(v) {
         let status = v ? 'active' : 'inactive';
-        this.setState({status: status});
+        this.setState({status: status, nameFocused: false});
         this.props.events && this.props.events.emit('medchanged', this.props.med, {field: 'status', value: v});
     },
     onFrequencyChanged(v) {
-        this.setState({frequency: v, dows: this.filterDOW(v)});
+        this.setState({frequency: v, dows: this.filterDOW(v), nameFocused: false});
         this.props.events && this.props.events.emit('medchanged', this.props.med, {field: 'frequency', value: v});
     },
     onDayOfWeekChanged(v) {
-        this.setState({dow: v});
+        this.setState({dow: v, nameFocused: false});
         this.props.events && this.props.events.emit('medchanged', this.props.med, {field: 'dow', value: v});
     },
     onTimeOfDayChanged(tod, v) {
         let s = this.state.tod;
         s[tod] = v;
-        this.setState({tod: s});
+        this.setState({tod: s, nameFocused: false});
         this.props.events && this.props.events.emit('medchanged', this.props.med, {field: 'tod', value: s});
+    },
+    onFocus() {
+        this.setState({nameFocused: false});
     },
     onAccept() {
         this.props.events.emit('savemed', {
@@ -113,11 +117,11 @@ var MedDetailView = React.createClass({
             }}>
                 <View style={{flex: 1, flexDirection: 'row'}}>
                     <View style={{flex: 2, margin: 10}}>
-                        <TypeAhead value={this.state.name} placeholder={'Name'} onChangeValue={this.onChangeName} find={RxNav.find} />
+                        <TypeAhead value={this.state.name} placeholder={'Name'} onChangeValue={this.onChangeName} find={RxNav.find} focused={this.state.nameFocused}/>
                     </View>
-                    <TextInput style={{flex: 1, margin: 10, fontSize: 20}} placeholder={'Dosage'} onChangeText={this.onChangeDosage}>{this.state.dosage}</TextInput>
+                    <TextInput style={{flex: 1, margin: 10, fontSize: 20}} placeholder={'Dosage'} onChangeText={this.onChangeDosage} onFocus={this.onFocus}>{this.state.dosage}</TextInput>
                 </View>
-                <TextInput style={{margin: 10, fontSize: 20}} placeholder={'Instructions'} multiline={true} onChangeText={this.onChangeInstructions}>{this.state.instructions}</TextInput>
+                <TextInput style={{margin: 10, fontSize: 20}} placeholder={'Instructions'} multiline={true} onChangeText={this.onChangeInstructions} onFocus={this.onFocus}>{this.state.instructions}</TextInput>
                 <View style={{margin: 10}}>
                     <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                         <Text style={{flex: 3, fontSize: 20,fontWeight: 'bold', fontStyle: 'italic', marginLeft: 5, marginTop: 10}}>Schedule</Text>

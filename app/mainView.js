@@ -43,7 +43,7 @@ var MainView = React.createClass({
                 patient: {index: 3, name: 'patient', title: 'Patient', onMenu: this.navMenuHandler, onAccept: this.onAccept('patient'), onDiscard: this.onDiscard('patient')},
                 med: {index: 4, name: 'med', title: 'Medication', onMenu: this.navMenuHandler, onAccept: this.onAccept('med'), onDiscard: this.onDiscard('med')},
                 reminders: {index: 5, name: 'reminders', title: 'Reminders', onMenu: this.navMenuHandler},// onFilter: this.onFilter, filterItems: remindersFilterItems},
-                about: {index: 6, name: 'about'}
+                about: {index: 6, name: 'about', title: 'About'}
             },
             version: '0.0.1',
             scheduleFilter: scheduleFilterItems[0],

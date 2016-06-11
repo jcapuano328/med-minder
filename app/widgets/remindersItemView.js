@@ -28,11 +28,11 @@ var RemindersItemView = React.createClass({
                 </View>
                 <View style={{flex: 1}}>
                     <Text style={{fontSize: 15, fontWeight: 'bold',textAlign: 'left',marginLeft: 20}}>{this.props.notification.message}</Text>
-                    <Text style={{fontSize: 12,textAlign: 'left',marginLeft: 20}}>{this.props.notification.id}</Text>
                 </View>
                 <IconButton image={'remove'} onPress={this.props.onRemove} />
             </View>
         );
+        //<Text style={{fontSize: 12,textAlign: 'left',marginLeft: 20}}>{this.props.notification.id}</Text>
     }
 });
 
