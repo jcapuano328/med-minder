@@ -5,7 +5,7 @@ let _days = ['sunday','monday','tuesday','wednesday','thursday','friday','saturd
 let _times = ['morning','noon','evening','bedtime'];
 
 let increment = (dt, freq) => {
-    //Daily,Alternating Days,Weekly,Alternating Weeks,Monthly
+    //Daily,Alternating Days,Every 3 Days,Every 4 Days,Every 5 Days,Every 6 Days,Weekly,Alternating Weeks,Monthly
     let t = 'd';
     let i = 1;
     switch(freq.toLowerCase()) {
@@ -17,6 +17,22 @@ let increment = (dt, freq) => {
             t = 'd';
             i = 2;
             break;
+        case 'every 3 days':
+            t = 'd';
+            i = 3;
+            break;
+        case 'every 4 days':
+            t = 'd';
+            i = 4;
+            break;
+        case 'every 5 days':
+            t = 'd';
+            i = 5;
+            break;
+        case 'every 6 days':
+            t = 'd';
+            i = 6;
+            break;            
         case 'weekly':
             t = 'w';
             i = 1;

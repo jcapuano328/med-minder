@@ -4,6 +4,14 @@
 		DOW: Today,Tomorrow
 	Alternating Days
 		DOW: Today,Tomorrow
+	Every 3 Days
+		DOW: Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday
+	Every 4 Days
+		DOW: Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday
+	Every 5 Days
+		DOW: Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday
+	Every 6 Days
+		DOW: Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday
 	Weekly
 		DOW: Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday
 	Alternating Weeks
@@ -13,6 +21,7 @@
 
 ---- Day of Week
 	Today
+	Tomorrow
 	Sunday
 	Monday
 	Tuesday

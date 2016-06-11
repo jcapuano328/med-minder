@@ -10,6 +10,10 @@ var moment = require('moment');
 let frequencies = [
     {name: 'Daily', value: 'Daily', filter: 1},
     {name: 'Alternating Days', value: 'Alternating Days', filter: 1},
+    {name: 'Every 3 Days', value: 'Every 3 Days', filter: 2},
+    {name: 'Every 4 Days', value: 'Every 4 Days', filter: 2},
+    {name: 'Every 5 Days', value: 'Every 5 Days', filter: 2},
+    {name: 'Every 6 Days', value: 'Every 6 Days', filter: 2},
     {name: 'Weekly', value: 'Weekly', filter: 2},
     {name: 'Alternating Weeks', value: 'Alternating Weeks', filter: 2},
     {name: 'Monthly', value: 'Monthly', filter: 2}
