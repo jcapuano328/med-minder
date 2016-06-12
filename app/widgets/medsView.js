@@ -15,7 +15,7 @@ var MedsView = React.createClass({
         //console.log(this.props.data);
         return (
             <View style={{flex:1, flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'flex-start'}}>
-                <Text style={{flex: 1, fontSize: 18, fontWeight: 'bold', fontStyle: 'italic'}}>{this.props.name}</Text>
+                <Text style={{flex: 1, marginLeft: 5, fontSize: 18, fontWeight: 'bold', fontStyle: 'italic'}}>{this.props.name}</Text>
                 <View style={{flex: 5}}>
                     {this.props.data.map((d, i) => {
                         let med = d.med;
@@ -33,7 +33,6 @@ var MedsView = React.createClass({
                     })}
                 </View>
             </View>
-
         );
     }
 });
