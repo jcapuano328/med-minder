@@ -24,6 +24,10 @@ module.exports = {
 	"remove": require('./remove.png'),
 	"accept": require('./accept.png'),
 	"discard": require('./reject.png'),
+	"done": require('./complete.png'),
+	"delay": require('./hourglass.png'),
+	"notify": require('./notify-5.png'),
+	"reschedule": require('./reschedule.png'),
 
 	"calendar": require('./calendar.png'),
 	"clockAM": require('./clock-am.png'),

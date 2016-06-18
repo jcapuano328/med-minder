@@ -13,6 +13,7 @@ var PatientsView = require('./patientsView');
 var PatientDetailView = require('./patientDetailView');
 var MedDetailView = require('./medDetailView');
 var RemindersView = require('./remindersView');
+var ReminderDetailView = require('./reminderDetailView');
 var EventEmitter = require('EventEmitter');
 var Patients = require('./stores/patients');
 var Reminders = require('./stores/reminders');
@@ -43,7 +44,8 @@ var MainView = React.createClass({
                 patient: {index: 3, name: 'patient', title: 'Patient', onMenu: this.navMenuHandler, onAccept: this.onAccept('patient'), onDiscard: this.onDiscard('patient')},
                 med: {index: 4, name: 'med', title: 'Medication', onMenu: this.navMenuHandler, onAccept: this.onAccept('med'), onDiscard: this.onDiscard('med')},
                 reminders: {index: 5, name: 'reminders', title: 'Reminders', onMenu: this.navMenuHandler},// onFilter: this.onFilter, filterItems: remindersFilterItems},
-                about: {index: 6, name: 'about', title: 'About'}
+                reminder: {index: 6, name: 'reminder', title: 'Reminder'},
+                about: {index: 7, name: 'about', title: 'About'}
             },
             version: '0.0.1',
             scheduleFilter: scheduleFilterItems[0],
@@ -54,6 +56,7 @@ var MainView = React.createClass({
         Reminders.start(this.onNotification);
         this.eventEmitter = new EventEmitter();
         this.eventEmitter.addListener('changeroute', this.onChangeRoute);
+        this.eventEmitter.addListener('raisenotification', this.onNotification);
         this.state.initialRoute = this.state.routes.landing;
         //return Sample.load()
         return new Promise((a,r) => a())
@@ -133,9 +136,9 @@ var MainView = React.createClass({
         }
     },
     onNotification(notification) {
-        //console.log('+++++++++++ Notification');
         //console.log(notification);
-        //ToastAndroid.show(notification.subject, ToastAndroid.LONG);
+        this.onChangeRoute('reminder', notification);
+        /*
         let subject = notification.payload.patient.name + ' has a medication due';
         let message = 'Give ' + notification.payload.patient.name + ' ' + notification.payload.med.name + ' ' + notification.payload.med.dosage + ' ' + notification.payload.med.instructions;
         Alert.alert(subject, message, [
@@ -162,6 +165,7 @@ var MainView = React.createClass({
                 });
             }}
         ]);
+        */
     },
     renderScene(route, navigator) {
         route = route || {};
@@ -204,6 +208,67 @@ var MainView = React.createClass({
         if (route.name == 'reminders') {
             return (
                 <RemindersView filter={this.state.reminderFilter.value} events={this.eventEmitter} />
+            );
+            /*
+            onComplete={route.data ? (notification) => {
+                    Reminders.complete(notification.payload)
+                    .then(() => {
+                        console.log('+++++++++++ Notification acknowledged');
+                        this.eventEmitter.emit('notificationacknowledged', notification.payload);
+                        return Patients.get(notification.payload.patient.id);
+                    })
+                    .then((patient) => {
+                        let med = patient.meds.find((m) => {
+                            return notification.payload.med.name == m.name;
+                        });
+                        return Reminders.reschedule(patient, med, notification.sendAt);
+                    })
+                    .then((n) => {
+                        console.log('+++++++++++ Notification rescheduled');
+                        this.eventEmitter.emit('notificationrescheduled');
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
+                } : null}
+            onDelay={route.data ? (notification) => {
+                    console.log('+++++++++++ Notification delayed');
+                } : null}
+            */
+        }
+
+        if (route.name == 'reminder') {
+            //console.log(route.data);
+            this.state.routes.reminder.title = route.data.payload.patient.name + ' has a medication due';
+            return (
+                <ReminderDetailView notification={route.data} events={this.eventEmitter}
+                    onComplete={(notification) => {
+                        Reminders.complete(notification.payload)
+                        .then(() => {
+                            console.log('+++++++++++ Notification acknowledged');
+                            this.eventEmitter.emit('notificationacknowledged', notification.payload);
+                            return Patients.get(notification.payload.patient.id);
+                        })
+                        .then((patient) => {
+                            let med = patient.meds.find((m) => {
+                                return notification.payload.med.name == m.name;
+                            });
+                            return Reminders.reschedule(patient, med, notification.sendAt);
+                        })
+                        .then((n) => {
+                            console.log('+++++++++++ Notification rescheduled');
+                            this.eventEmitter.emit('notificationrescheduled');
+                            navigator.pop();
+                        })
+                        .catch((err) => {
+                            console.log(err);
+                        });
+                    }}
+                    onDelay={(notification) => {
+                        console.log('+++++++++++ Notification delayed');
+                        navigator.pop();
+                    }}
+                />
             );
         }
 

@@ -6,6 +6,18 @@ var IconButton = require('./iconButton');
 var moment = require('moment');
 
 var RemindersItemView = React.createClass({
+    onNotify() {
+        this.props.onNotify && this.props.onNotify(this.props.notification);
+    },
+    onDelay() {
+        this.props.onDelay && this.props.onDelay(this.props.notification);
+    },
+    onComplete() {
+        this.props.onComplete && this.props.onComplete(this.props.notification);
+    },
+    onRemove() {
+        this.props.onRemove && this.props.onRemove(this.props.notification);
+    },
     render() {
         return (
             <View style={{
@@ -29,7 +41,21 @@ var RemindersItemView = React.createClass({
                 <View style={{flex: 1}}>
                     <Text style={{fontSize: 15, fontWeight: 'bold',textAlign: 'left',marginLeft: 20}}>{this.props.notification.message}</Text>
                 </View>
-                <IconButton image={'remove'} onPress={this.props.onRemove} />
+                <View>
+                    {this.props.onNotify ? (
+                        <View style={{marginBottom: 5}} >
+                            <IconButton image={'notify'} onPress={this.onNotify} />
+                        </View>
+                    ) : null}
+                    {this.props.onRemove ? <IconButton image={'remove'} onPress={this.onRemove} /> : null}
+                    {this.props.onComplete ? (
+                        <View style={{marginBottom: 5}} >
+                            <IconButton image={'done'} onPress={this.onComplete} />
+                        </View>
+                    ) : null
+                    }
+                    {this.props.onDelay ? <IconButton image={'delay'} onPress={this.onDelay} /> : null}
+                </View>
             </View>
         );
         //<Text style={{fontSize: 12,textAlign: 'left',marginLeft: 20}}>{this.props.notification.id}</Text>

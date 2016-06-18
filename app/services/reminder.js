@@ -4,6 +4,9 @@ var Patients = require('../stores/patients');
 var Reminders = require('../stores/reminders');
 
 module.exports = {
+    cancel(reminder) {
+        return Reminders.complete(reminder.id);
+    },
     complete(reminder, reschedule) {
         return Reminders.complete(reminder.id)
         .then(() => {

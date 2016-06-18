@@ -40,7 +40,7 @@ let comparer = (filter) => {
     }
 }
 
-let addReminder = (patient, med, i, tods) => {
+let addReminder = (patient, med, i, tods, last) => {
     if (i < tods.length) {
         var tod = tods[i++];
         console.log('*********** scheduling reminder for ' + med.name + ' for patient ' + patient.name + ' @ ' + tod);
@@ -53,7 +53,7 @@ let addReminder = (patient, med, i, tods) => {
                 "dow": med.schedule.dow,
                 "tod": tod
             }
-        });
+        }, last);
 
         return Notifications.create(reminder)
         .then(() => {
@@ -70,7 +70,7 @@ let addMedReminder = (patient, i, meds) => {
     if (i < meds.length) {
         var med = meds[i++];
         if (med.status == 'active') {
-            let tod = Object.keys(med.schedule.tod).filter((k) => med.schedule.tod[k]);
+            let tod = makeTOD(med.schedule.tod);
             return addReminder(patient, med, 0, tod)
             .then(() => {
                 return addMedReminder(patient, i, meds);
@@ -80,6 +80,11 @@ let addMedReminder = (patient, i, meds) => {
     }
     return new Promise((accept,reject) => accept());
 }
+
+let makeTOD = (tod) => {
+    return Object.keys(tod).filter((k) => tod[k]);
+}
+
 
 module.exports = {
     getAll() {
@@ -174,8 +179,9 @@ module.exports = {
         }
         return new Promise((a,r) => a());
     },
-    reschedule(patient, med, last) {
-        return addReminder(patient, med, last);
+    reschedule(patient, med, last) {        
+        let tod = makeTOD(med.schedule.tod);
+        return addReminder(patient, med, 0, tod, last);
     },
     reschedulePatient(patient) {
         return this.removePatient(patient)
@@ -194,7 +200,7 @@ module.exports = {
             let ids = reminders.map((r) => {return r.notificationid;});
             if (ids && ids.length > 0) {
                 console.log('-- remove reminders for ' + patient.name);
-                return Notifications.cancel(ids);                
+                return Notifications.cancel(ids);
             }
         });
     },

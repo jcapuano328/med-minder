@@ -91,7 +91,6 @@ var ScheduleView = React.createClass({
         );
     },
     renderToday() {
-        console.log('render today');
         return (
             <DayView data={this.state.schedule} onStatus={this.onStatus}/>
         );
@@ -104,7 +103,6 @@ var ScheduleView = React.createClass({
         */
     },
     renderThisWeek() {
-        console.log('render this week');
         return (
             <WeekView data={this.state.schedule} />
         );
@@ -116,8 +114,7 @@ var ScheduleView = React.createClass({
         );
         */
     },
-    renderThisMonth() {
-        console.log('render this month');
+    renderThisMonth() {        
         return (
             <View style={{flex:1, marginTop: 250, alignItems: 'center'}}>
                 <Text style={{fontSize: 28, fontWeight: 'bold'}}>WTH does This Month look like?</Text>

@@ -18,6 +18,7 @@ var LandingView = React.createClass({
                     width: null,
                     height: null,
                     backgroundColor: 'transparent',
+                    resizeMode: 'stretch'
                 }} />
             </View>
         );

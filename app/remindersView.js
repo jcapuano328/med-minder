@@ -14,6 +14,10 @@ var RemindersView = React.createClass({
         };
     },
     componentWillMount() {
+        return this.reload();
+    },
+    reload() {
+        this.props.events && this.props.events.once('notificationrescheduled', this.reload);        
         return Reminders.getAll()
         .then((data) => {
             data = data || [];
@@ -48,9 +52,10 @@ var RemindersView = React.createClass({
             console.error(e);
         });
     },
-    onRemove(reminder) {
+    /*
+    onComplete(reminder) => {
         return () => {
-            Alert.alert('Remove Reminder ' + reminder.subject + '?', 'The reminder will be permanently removed and rescheduled', [
+            Alert.alert('Accept Reminder "' + reminder.subject + '"?', 'The reminder will be accepted and rescheduled', [
                 {text: 'No', style: 'cancel'},
                 {text: 'Yes', onPress: () => {
                     console.log('*********** remove reminder ' + reminder.subject);
@@ -71,7 +76,37 @@ var RemindersView = React.createClass({
             ]);
         }
     },
+    */
+    onNotify(reminder) {
+        return () => {
+            //console.log(reminder);
+            this.props.events && this.props.events.emit('changeroute', 'reminder', reminder);
+        }
+    },
+    onRemove(reminder) {
+        return () => {
+            //this.props.events && this.props.events.emit('raisenotification', reminder);
+            Alert.alert('Remove Reminder "' + reminder.subject + '"?', 'The reminder will be permanently removed', [
+                {text: 'No', style: 'cancel'},
+                {text: 'Yes', onPress: () => {
+                    console.log('*********** remove reminder ' + reminder.subject);
+                    var idx = this.state.data.indexOf(reminder);
+                    if (idx > -1) {
+                        Reminder.cancel(reminder)
+                        .then(() => {
+                            this.state.data.splice(idx,1);
+                            this.setState({data: this.state.data});
+                        })
+                        .catch((err) => {
+                            console.log(err);
+                        });
+                    }
+                }}
+            ]);
+        }
+    },
     render() {
+        //onComplete={this.onComplete(item)}
         return (
             <View style={{
                 flex: 1,
@@ -85,7 +120,13 @@ var RemindersView = React.createClass({
                             scrollEventThrottle={200}
                             style={{flex: 1,backgroundColor: 'transparent'}}>
                             {this.state.data.map((item, i) => {
-                                return (<RemindersItemView key={i} notification={item} onRemove={this.onRemove(item)} />);
+                                return (
+                                    <RemindersItemView key={i} notification={item}
+                                        onNotify={this.onNotify(item)}
+                                        onRemove={!this.props.onComplete ? this.onRemove(item) : null}
+                                        onComplete={this.props.onComplete}
+                                        onDelay={this.props.onDelay} />
+                                );
                             })}
                         </ScrollView>
                     )
