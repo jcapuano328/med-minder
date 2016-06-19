@@ -87,6 +87,9 @@ let makeTOD = (tod) => {
 
 
 module.exports = {
+    get(id) {
+        return Notifications.getById(id);
+    },
     getAll() {
         return Notifications.get();
     },
@@ -179,7 +182,7 @@ module.exports = {
         }
         return new Promise((a,r) => a());
     },
-    reschedule(patient, med, last) {        
+    reschedule(patient, med, last) {
         let tod = makeTOD(med.schedule.tod);
         return addReminder(patient, med, 0, tod, last);
     },

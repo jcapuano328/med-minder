@@ -4,7 +4,8 @@ var React = require('react-native');
 var { View, Text } = React;
 var DayView = require('./widgets/dayView');
 var WeekView = require('./widgets/weekView');
-var RemindersStore = require('./stores/reminders');
+var Reminder  = require('./services/reminder');
+var Reminders = require('./stores/reminders');
 
 var ScheduleView = React.createClass({
     getInitialState() {
@@ -16,11 +17,11 @@ var ScheduleView = React.createClass({
         this.props.events.once('notificationacknowledged', this.onNotification);
         let f = null;
         if (!this.props.filter || this.props.filter == 'today') {
-            f = RemindersStore.getToday;
+            f = Reminders.getToday;
         } else if (this.props.filter == 'week') {
-            f = RemindersStore.getThisWeek;
+            f = Reminders.getThisWeek;
         } else if (this.props.filter == 'month') {
-            f = RemindersStore.getThisMonth;
+            f = Reminders.getThisMonth;
         }
         return f()
         .then((data) => {
@@ -38,7 +39,10 @@ var ScheduleView = React.createClass({
         });
         if (r) {
             r.status = med.status;
-            RemindersStore.update(r)
+            return Reminders.get(r.notificationid)
+            .then((n) => {                
+                return Reminder.complete(n, true);
+            })
             .then(() => {
                 this.setState({schedule: this.state.schedule});
             })
@@ -114,7 +118,7 @@ var ScheduleView = React.createClass({
         );
         */
     },
-    renderThisMonth() {        
+    renderThisMonth() {
         return (
             <View style={{flex:1, marginTop: 250, alignItems: 'center'}}>
                 <Text style={{fontSize: 28, fontWeight: 'bold'}}>WTH does This Month look like?</Text>
