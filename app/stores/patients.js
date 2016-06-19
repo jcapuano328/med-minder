@@ -96,7 +96,7 @@ module.exports = {
             "schedule": {
                 "frequency": '',
                 "dow": '',
-                "tod": []
+                "tod": {}
             },
             "status": 'active',
             "created": new Date(),

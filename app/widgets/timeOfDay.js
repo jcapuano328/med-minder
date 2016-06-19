@@ -6,7 +6,7 @@ var Icons = require('../resources/icons');
 var Scheduler = require('../services/scheduler');
 
 var TimeOfDayView = React.createClass({
-    getInitialState() {
+    getInitialState() {        
         return {
             morning: this.props.tod.morning,
             noon: this.props.tod.noon,

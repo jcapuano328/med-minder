@@ -36,14 +36,14 @@ var PatientDetailView = React.createClass({
         this.props.events && this.props.events.emit('patientchanged', this.props.patient, {field: 'status', value: status});
     },
     onMedSelected(med) {
-        this.state.currentMed = med;
+        this.setState({currentMed: med});
         this.props.events.once('savemed', this.onAcceptMed);
         this.props.events.emit('changeroute','med', med);
         //this.props.onSelected && this.props.onSelected(med);
     },
     onMedAdd() {
         let med = Patients.createNewMed('');
-        this.state.currentMed = med;
+        this.setState({currentMed: med});
         this.props.events.once('savemed', this.onAcceptMed);
         this.props.events.emit('changeroute','med', med);
     },
@@ -72,6 +72,7 @@ var PatientDetailView = React.createClass({
         //this.props.onChanged && this.props.onChanged({name: f, value: v});
     },
     onAcceptMed(med) {
+        console.log(med);
         let idx = this.state.meds.indexOf(this.state.currentMed);
         if (idx < 0) {
             //console.log('adding new med');
@@ -84,7 +85,7 @@ var PatientDetailView = React.createClass({
         this.props.events && this.props.events.emit('patientchanged', this.props.patient, {field: 'meds', value: this.state.meds});
     },
     onDiscardMed(med) {
-        //this.props.events.removeListener('savemed', this.onAcceptMed);
+        this.props.events.removeListener('savemed', this.onAcceptMed);
     },
     onAccept() {
         console.log('======= patient detail saving patient ' + this.state.name);
@@ -98,11 +99,13 @@ var PatientDetailView = React.createClass({
             meds: this.state.meds
         });
         this.props.events.removeAllListeners('discardpatient');
+        this.props.events.removeAllListeners('savemed');
     },
     onDiscard() {
         //console.log('unsubscribing from savepatient for ' + this.state.name);
         this.props.events.removeAllListeners('savepatient');
         this.props.events.removeAllListeners('acceptpatient');
+        this.props.events.removeAllListeners('savemed');
     },
     render() {
         return (

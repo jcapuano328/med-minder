@@ -30,11 +30,13 @@ module.exports = {
         .then((response) => response.json())
         .then((result) => {
             let ids = [];
-            result.approximateGroup.candidate.forEach((c) => {
-                if (ids.length <= 11 && ids.indexOf(c.rxcui) < 0) {
-                    ids.push(c.rxcui);
-                }
-            });
+            if (result && result.approximateGroup && result.approximateGroup.candidate && result.approximateGroup.candidate.length) {
+                result.approximateGroup.candidate.forEach((c) => {
+                    if (ids.length <= 11 && ids.indexOf(c.rxcui) < 0) {
+                        ids.push(c.rxcui);
+                    }
+                });                
+            }
             //console.log(ids);
             return getMeds(ids, 0, []);
         });

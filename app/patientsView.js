@@ -84,6 +84,9 @@ var PatientsView = React.createClass({
                 console.log('patient added');
                 return Reminders.reschedulePatient(patient);
             })
+            .then(() => {
+                this.setState({patients: Patients.sort(this.state.patients)});
+            })            
             .catch((e) => {
                 console.error(e);
             });
@@ -96,11 +99,13 @@ var PatientsView = React.createClass({
                 //console.log('  updated: ' + this.state.patients[idx].name + ' (' + this.state.patients[idx]._id + ')');
                 return Reminders.reschedulePatient(patient);
             })
+            .then(() => {
+                this.setState({patients: Patients.sort(this.state.patients)});
+            })
             .catch((e) => {
                 console.error(e);
             });
         }
-        this.setState({patients: Patients.sort(this.state.patients)});
     },
     render() {
         return (

@@ -103,9 +103,11 @@ var MedDetailView = React.createClass({
             created: this.state.created,
             modified: this.state.modified
         });
+        this.props.events.removeAllListeners('discardmed');
     },
     onDiscard() {
-
+        this.props.events.removeAllListeners('acceptmed');
+        this.props.events.removeAllListeners('savemed');
     },
     render() {
         //<TextInput style={{flex: 2, margin: 10, fontSize: 20}} placeholder={'Name'} onChangeText={this.onChangeName}>{this.state.name}</TextInput>
