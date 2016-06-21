@@ -16,7 +16,7 @@ var MedView = React.createClass({
 
 var TimeView = React.createClass({
     render() {
-        //console.log(this.props.data);
+        //log.debug(this.props.data);
         return (
             <View style={{flex:1}}>
                 {this.props.data.map((med,i) => {

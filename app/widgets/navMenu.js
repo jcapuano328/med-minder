@@ -3,6 +3,7 @@
 var React = require('react-native');
 var { View, Image, ScrollView, Text, TouchableOpacity } = React;
 var Icons = require('../resources/icons');
+var log = require('../services/log');
 
 var NavMenuItem = React.createClass({
     onPress() {
@@ -41,7 +42,7 @@ var NavMenuItem = React.createClass({
 
 var NavMenu = React.createClass({
     onPress(e) {
-        //console.log(this.props);
+        //log.debug(this.props);
         this.props.onSelected && this.props.onSelected(e);
     },
     render() {

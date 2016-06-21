@@ -10,7 +10,7 @@
 #import <UIKit/UIKit.h>
 #import <XCTest/XCTest.h>
 
-#import "RCTLog.h"
+#import "RCTlog.h"
 #import "RCTRootView.h"
 
 #define TIMEOUT_SECONDS 600

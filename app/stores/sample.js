@@ -2,6 +2,7 @@
 
 var Patients = require('./patients');
 var Reminders = require('./reminders');
+var log = require('../services/log');
 
 let addPatient = (patients, i) => {
     if (i < patients.length) {
@@ -12,8 +13,8 @@ let addPatient = (patients, i) => {
             med.created = new Date();
             med.modified = new Date();
         });
-        console.log('*********** add patient ' + patient.name);
-        //console.log(l);
+        log.debug('*********** add patient ' + patient.name);
+        //log.debug(l);
         return Patients.add(patient)
         .then(() => {
             return Reminders.schedule(patient);
@@ -28,7 +29,7 @@ let addPatient = (patients, i) => {
 module.exports = {
     load() {
         let sample = require('./sample.json');
-        console.log ('************* Load Sample Data');
+        log.debug ('************* Load Sample Data');
         return Patients.removeAll()
         .then(() => {
             return Reminders.removeAll();

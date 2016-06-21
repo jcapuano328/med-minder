@@ -6,6 +6,7 @@ var RemindersItemView = require('./widgets/remindersItemView');
 var moment = require('moment');
 var Reminder = require('./services/reminder');
 var Reminders = require('./stores/reminders');
+var log = require('./services/log');
 
 var RemindersView = React.createClass({
     getInitialState() {
@@ -17,7 +18,7 @@ var RemindersView = React.createClass({
         return this.reload();
     },
     reload() {
-        this.props.events && this.props.events.once('notificationrescheduled', this.reload);        
+        this.props.events && this.props.events.once('notificationrescheduled', this.reload);
         return Reminders.getAll()
         .then((data) => {
             data = data || [];
@@ -49,7 +50,7 @@ var RemindersView = React.createClass({
             this.setState({data: data});
         })
         .catch((e) => {
-            console.error(e);
+            log.error(e);
         });
     },
     /*
@@ -58,18 +59,18 @@ var RemindersView = React.createClass({
             Alert.alert('Accept Reminder "' + reminder.subject + '"?', 'The reminder will be accepted and rescheduled', [
                 {text: 'No', style: 'cancel'},
                 {text: 'Yes', onPress: () => {
-                    console.log('*********** remove reminder ' + reminder.subject);
+                    log.debug('*********** remove reminder ' + reminder.subject);
                     var idx = this.state.data.indexOf(reminder);
                     if (idx > -1) {
                         Reminder.complete(reminder, true)
                         .then(() => {
                             this.state.data.splice(idx,1);
                             this.setState({data: this.state.data});
-                            console.log('+++++++++++ Notification rescheduled');
+                            log.debug('+++++++++++ Notification rescheduled');
                             this.props.events && this.props.events.emit('notificationrescheduled');
                         })
                         .catch((err) => {
-                            console.log(err);
+                            log.debug(err);
                         });
                     }
                 }}
@@ -79,7 +80,7 @@ var RemindersView = React.createClass({
     */
     onNotify(reminder) {
         return () => {
-            //console.log(reminder);
+            //log.debug(reminder);
             this.props.events && this.props.events.emit('changeroute', 'reminder', reminder);
         }
     },
@@ -89,16 +90,16 @@ var RemindersView = React.createClass({
             Alert.alert('Remove Reminder "' + reminder.subject + '"?', 'The reminder will be permanently removed', [
                 {text: 'No', style: 'cancel'},
                 {text: 'Yes', onPress: () => {
-                    console.log('*********** remove reminder ' + reminder.subject);
+                    log.debug('*********** remove reminder ' + reminder.subject);
                     var idx = this.state.data.indexOf(reminder);
-                    if (idx > -1) {
+                    if (idx > -1) {                        
                         Reminder.cancel(reminder)
                         .then(() => {
                             this.state.data.splice(idx,1);
                             this.setState({data: this.state.data});
                         })
                         .catch((err) => {
-                            console.log(err);
+                            log.debug(err);
                         });
                     }
                 }}

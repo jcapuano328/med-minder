@@ -4,11 +4,12 @@ var React = require('react-native');
 var { View, ScrollView, Switch, Text } = React;
 var IconButton = require('./iconButton');
 var PatientMedView = require('./patientMedView');
+var log = require('../services/log');
 
 var PatientMedsView = React.createClass({
     onSelected(med) {
         return () => {
-            console.log('--- med ' + med.name + ' selected');            
+            log.debug('--- med ' + med.name + ' selected');
             this.props.onSelected && this.props.onSelected(med);
         }
     },

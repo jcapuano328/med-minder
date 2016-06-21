@@ -2,6 +2,7 @@
 var Scheduler = require('../services/scheduler');
 var Notifications = require('./notifications');
 var moment = require('moment');
+var log = require('../services/log');
 
 let create = (patient, med, last) => {
     return {
@@ -43,7 +44,7 @@ let comparer = (filter) => {
 let addReminder = (patient, med, i, tods, last) => {
     if (i < tods.length) {
         var tod = tods[i++];
-        console.log('*********** scheduling reminder for ' + med.name + ' for patient ' + patient.name + ' @ ' + tod);
+        log.debug('*********** scheduling reminder for ' + med.name + ' for patient ' + patient.name + ' @ ' + tod);
         let reminder = create(patient, {
             "name": med.name,
             "dosage": med.dosage,
@@ -60,7 +61,7 @@ let addReminder = (patient, med, i, tods, last) => {
             return addReminder(patient, med, i, tods);
         })
         .catch((err) => {
-            console.error(err);
+            log.error(err);
         });
     }
     return new Promise((accept,reject) => accept());
@@ -94,11 +95,11 @@ module.exports = {
         return Notifications.get();
     },
     getPatient(patient) {
-        console.log('*********** get reminders for patient ' + patient.name);
+        log.debug('*********** get reminders for patient ' + patient.name);
         return Notifications.get()
         .then((notifications) => {
             return notifications.filter((n) => {
-                //console.log(n.payload.patient.name + ' (' + n.payload.patient.id + ' == ' + patient._id + ')');
+                //log.debug(n.payload.patient.name + ' (' + n.payload.patient.id + ' == ' + patient._id + ')');
                 return n.payload.patient.id == patient._id;
             }).map((n) => {
                 let reminder = n.payload;
@@ -195,14 +196,18 @@ module.exports = {
         });
     },
     complete(reminder) {
-        return Notifications.clear(reminder.notificationid);
+        //return Notifications.clear(reminder.notificationid);
+        return this.remove(reminder);
+    },
+    remove(reminder) {
+        return Notifications.cancel([reminder.notificationid]);
     },
     removePatient(patient) {
         return this.getPatient(patient)
         .then((reminders) => {
             let ids = reminders.map((r) => {return r.notificationid;});
             if (ids && ids.length > 0) {
-                console.log('-- remove reminders for ' + patient.name);
+                log.debug('-- remove reminders for ' + patient.name);
                 return Notifications.cancel(ids);
             }
         });

@@ -4,6 +4,7 @@ var React = require('react-native');
 var { View, Text } = React;
 var TimeView = require('./timeView');
 var Scheduler = require('../services/scheduler');
+var log = require('../services/log');
 
 var WeekHeader = React.createClass({
     dayHeader(s) {
@@ -55,7 +56,7 @@ var WeekView = React.createClass({
                 <WeekHeader style={{flex: 1}}/>
                 <View style={{flex: 10}}>
                 {Scheduler.times().map((t,i) => {
-                    console.log('render time ' + t);
+                    log.debug('render time ' + t);
                     return (
                         <View key={i} style={{
                             flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start',
@@ -67,8 +68,8 @@ var WeekView = React.createClass({
                                 </Text>
                             </View>
                             {Scheduler.days().map((d,j) => {
-                                console.log(d + ' / ' + t);
-                                console.log(this.props.data[d][t]);
+                                log.debug(d + ' / ' + t);
+                                log.debug(this.props.data[d][t]);
                                 return (
                                     <TimeView key={i+j} data={this.props.data[d][t]} onPress={this.onSelected} />
                                 );

@@ -6,6 +6,7 @@ var DateTimePicker = require('./widgets/datetimePicker');
 var IconButton = require('./widgets/iconButton');
 var PatientMedsView = require('./widgets/patientMedsView');
 var Patients = require('./stores/patients');
+var log = require('./services/log');
 
 var PatientDetailView = React.createClass({
     getInitialState() {
@@ -51,7 +52,7 @@ var PatientDetailView = React.createClass({
         Alert.alert('Remove Medication ' + med.name + '?', 'The medication will be permanently removed', [
             {text: 'No', style: 'cancel'},
             {text: 'Yes', onPress: () => {
-                console.log('*********** remove medication ' + med.name);
+                log.debug('*********** remove medication ' + med.name);
                 var idx = this.state.meds.indexOf(med);
                 if (idx > -1) {
                     this.state.meds.splice(idx,1);
@@ -72,13 +73,13 @@ var PatientDetailView = React.createClass({
         //this.props.onChanged && this.props.onChanged({name: f, value: v});
     },
     onAcceptMed(med) {
-        console.log(med);
+        log.debug(med);
         let idx = this.state.meds.indexOf(this.state.currentMed);
         if (idx < 0) {
-            //console.log('adding new med');
+            //log.debug('adding new med');
             this.state.meds.push(med);
         } else {
-            //console.log('updating existing med');
+            //log.debug('updating existing med');
             Object.assign(this.state.meds[idx], med);
         }
         this.setState({meds: this.state.meds, currentMed: null});
@@ -88,7 +89,7 @@ var PatientDetailView = React.createClass({
         this.props.events.removeListener('savemed', this.onAcceptMed);
     },
     onAccept() {
-        console.log('======= patient detail saving patient ' + this.state.name);
+        log.debug('======= patient detail saving patient ' + this.state.name);
         this.props.events.emit('savepatient', {
             _id: this.props.patient._id,
             name: this.state.name,
@@ -102,7 +103,7 @@ var PatientDetailView = React.createClass({
         this.props.events.removeAllListeners('savemed');
     },
     onDiscard() {
-        //console.log('unsubscribing from savepatient for ' + this.state.name);
+        //log.debug('unsubscribing from savepatient for ' + this.state.name);
         this.props.events.removeAllListeners('savepatient');
         this.props.events.removeAllListeners('acceptpatient');
         this.props.events.removeAllListeners('savemed');

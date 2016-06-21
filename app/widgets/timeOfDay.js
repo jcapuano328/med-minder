@@ -4,9 +4,10 @@ var { View, Text, Image } = React;
 var IconButton = require('./iconButton');
 var Icons = require('../resources/icons');
 var Scheduler = require('../services/scheduler');
+var log = require('../services/log');
 
 var TimeOfDayView = React.createClass({
-    getInitialState() {        
+    getInitialState() {
         return {
             morning: this.props.tod.morning,
             noon: this.props.tod.noon,
@@ -16,7 +17,7 @@ var TimeOfDayView = React.createClass({
     },
     onSelect(i, tod) {
         return () => {
-            console.log('pressed ' + i + ' ' + tod);
+            log.debug('pressed ' + i + ' ' + tod);
             let v = !this.state[tod];
             this.props.onSelect && this.props.onSelect(tod, v);
             let s = {};

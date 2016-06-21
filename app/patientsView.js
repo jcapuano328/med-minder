@@ -6,6 +6,7 @@ var Icons = require('./resources/icons');
 var PatientsItemView = require('./widgets/patientsItemView');
 var Patients = require('./stores/patients');
 var Reminders = require('./stores/reminders');
+var log = require('./services/log');
 
 var PatientsView = React.createClass({
     getInitialState() {
@@ -14,7 +15,7 @@ var PatientsView = React.createClass({
         };
     },
     componentWillMount() {
-        //console.log('subscribe to addpatient');
+        //log.debug('subscribe to addpatient');
         this.props.events.once('addpatient', this.onAdd);
         return Patients.getAll()
         .then((data) => {
@@ -23,13 +24,13 @@ var PatientsView = React.createClass({
             return data;
         })
         .catch((e) => {
-            console.error(e);
+            log.error(e);
         });
     },
     onSelected(patient) {
         return () => {
-            //console.log('selected: ' + patient.name + ' (' + patient._id + ')');
-            //console.log('subscribe to savepatient for ' + patient.name);
+            //log.debug('selected: ' + patient.name + ' (' + patient._id + ')');
+            //log.debug('subscribe to savepatient for ' + patient.name);
             this.props.events.once('savepatient', this.onSave);
             this.props.events.emit('changeroute','patient', patient);
             //this.props.onSelected && this.props.onSelected(patient);
@@ -37,9 +38,9 @@ var PatientsView = React.createClass({
     },
     onAdd() {
         let patient = Patients.createNewPatient('');
-        //console.log('subscribe to addpatient ' + patient.name);
+        //log.debug('subscribe to addpatient ' + patient.name);
         this.props.events.once('addpatient', this.onAdd);
-        //console.log('subscribe to savepatient for ' + patient.name);
+        //log.debug('subscribe to savepatient for ' + patient.name);
         this.props.events.once('savepatient', this.onSave);
 
         this.props.events.emit('changeroute','patient', patient);
@@ -49,17 +50,17 @@ var PatientsView = React.createClass({
             Alert.alert('Remove Patient ' + patient.name + '?', 'The patient and all of their medications will be permanently removed', [
                 {text: 'No', style: 'cancel'},
                 {text: 'Yes', onPress: () => {
-                    console.log('*********** remove patient ' + patient.name);
+                    log.debug('*********** remove patient ' + patient.name);
                     var idx = this.state.patients.indexOf(patient);
                     if (idx > -1) {
                         Patients.remove(patient)
                         .then(() => {
-                            //console.log('patient removed');
+                            //log.debug('patient removed');
                             this.state.patients.splice(idx,1);
                             this.setState({patients: this.state.patients});
                         })
                         .catch((err) => {
-                            console.log(err);
+                            log.debug(err);
                         });
                     }
                 }}
@@ -72,38 +73,38 @@ var PatientsView = React.createClass({
         this.onSave(patient);
     },
     onSave(patient) {
-        console.log('*********** save patient ' + patient.name + ' (' + patient._id + ')');
+        log.debug('*********** save patient ' + patient.name + ' (' + patient._id + ')');
         var idx = this.state.patients.findIndex((p) => {
             return p._id == patient._id;
         });
         if (idx < 0) {
-            //console.log('adding new patient');
+            //log.debug('adding new patient');
             this.state.patients.push(patient);
             Patients.add(patient)
             .then(() => {
-                console.log('patient added');
+                log.debug('patient added');
                 return Reminders.reschedulePatient(patient);
             })
             .then(() => {
                 this.setState({patients: Patients.sort(this.state.patients)});
-            })            
+            })
             .catch((e) => {
-                console.error(e);
+                log.error(e);
             });
         } else {
-            //console.log('updating existing patient');
+            //log.debug('updating existing patient');
             Object.assign(this.state.patients[idx], patient);
             Patients.update(this.state.patients[idx])
             .then(() => {
-                console.log('patient updated');
-                //console.log('  updated: ' + this.state.patients[idx].name + ' (' + this.state.patients[idx]._id + ')');
+                log.debug('patient updated');
+                //log.debug('  updated: ' + this.state.patients[idx].name + ' (' + this.state.patients[idx]._id + ')');
                 return Reminders.reschedulePatient(patient);
             })
             .then(() => {
                 this.setState({patients: Patients.sort(this.state.patients)});
             })
             .catch((e) => {
-                console.error(e);
+                log.error(e);
             });
         }
     },

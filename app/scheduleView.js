@@ -6,6 +6,7 @@ var DayView = require('./widgets/dayView');
 var WeekView = require('./widgets/weekView');
 var Reminder  = require('./services/reminder');
 var Reminders = require('./stores/reminders');
+var log = require('./services/log');
 
 var ScheduleView = React.createClass({
     getInitialState() {
@@ -25,11 +26,11 @@ var ScheduleView = React.createClass({
         }
         return f()
         .then((data) => {
-            //console.log(data);
+            //log.debug(data);
             this.setState({schedule: data});
         })
         .catch((err) => {
-            console.log(err)
+            log.debug(err)
         })
         .done();
     },
@@ -40,14 +41,14 @@ var ScheduleView = React.createClass({
         if (r) {
             r.status = med.status;
             return Reminders.get(r.notificationid)
-            .then((n) => {                
+            .then((n) => {
                 return Reminder.complete(n, true);
             })
             .then(() => {
                 this.setState({schedule: this.state.schedule});
             })
             .catch((err) => {
-                console.log(err);
+                log.debug(err);
             });
         }
     },

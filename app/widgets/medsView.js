@@ -3,6 +3,7 @@
 var React = require('react-native');
 var { View, Text } = React;
 var IconButton = require('./iconButton');
+var log = require('../services/log');
 
 var MedsView = React.createClass({
     onStatus(r) {
@@ -12,7 +13,7 @@ var MedsView = React.createClass({
         }
     },
     render() {
-        //console.log(this.props.data);
+        //log.debug(this.props.data);
         return (
             <View style={{flex:1, flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'flex-start'}}>
                 <Text style={{flex: 1, marginLeft: 5, fontSize: 18, fontWeight: 'bold', fontStyle: 'italic'}}>{this.props.name}</Text>
@@ -20,7 +21,7 @@ var MedsView = React.createClass({
                     {this.props.data.map((d, i) => {
                         let med = d.med;
                         let textdec = d.status == 'pending' ? 'none' : 'line-through';
-                        //console.log(med.name);
+                        //log.debug(med.name);
                         return (
                             <View key={i} style={{flex: 1, flexDirection: 'row'}}>
                                 <View style={{marginTop: 5}}>

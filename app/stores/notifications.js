@@ -1,4 +1,6 @@
+'use strict'
 import Notification from 'react-native-system-notification';
+var log = require('../services/log');
 var moment = require('moment');
 let FIVE_MINUTES = (5 * 60 * 1000);
 
@@ -11,7 +13,7 @@ let get = (ids, notifications) => {
             return get(ids, notifications);
         })
         .catch((err) => {
-            console.error(err);
+            log.error(err);
             return get(ids, notifications);
         });
     }
@@ -46,34 +48,36 @@ module.exports = {
 
         return Notification.create(n)
         .then((notification) => {
-            console.log('***********   ' + notification.subject + ' @ ' + moment(notification.sendAt).format('MMM DD, YYYY HH:mm') + ' (' + notification.id + ')');
+            log.debug('***********   ' + notification.subject + ' @ ' + moment(notification.sendAt).format('MMM DD, YYYY HH:mm') + ' (' + notification.id + ')');
             return notification;
         })
         .catch((err) => {
-            console.error(err);
+            log.error(err);
         });
     },
     cancel(ids) {
-        console.log('***********   cancel');
-        console.log(ids);
+        log.debug('***********   cancel');
+        log.debug(ids);
         if (!ids || ids.length < 1) {
             return Notification.deleteAll();
         }
         let a = [];
         ids.forEach((id) => {
-            console.log('***********   cancel ' + id);
+            log.debug('***********   cancel ' + id);
             let p = Notification.delete(id);
             a.push(p);
         });
         return Promise.all(a)
         .then(() => {
-            console.log('***********   canceled');
+            log.debug('***********   canceled');
         });
     },
     clear(id) {
         if (!id) {
+            log.info('*********** clear all notifications');
             return Notification.clearAll();
         }
+        log.info('*********** clear notification ' + id);
         return Notification.clear(id);
     },
     start(cb) {

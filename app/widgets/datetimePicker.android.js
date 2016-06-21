@@ -2,6 +2,7 @@ var React = require('react-native');
 var {View, Text, Image, DatePickerAndroid, TimePickerAndroid, StyleSheet} = React;
 var IconButton = require('./iconButton');
 var moment = require('moment');
+var log = require('../services/log');
 
 var styles = StyleSheet.create({
     container: {

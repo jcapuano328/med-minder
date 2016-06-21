@@ -18,6 +18,7 @@ var EventEmitter = require('EventEmitter');
 var Patients = require('./stores/patients');
 var Reminders = require('./stores/reminders');
 var Sample = require('./stores/sample.js');
+var log = require('./services/log');
 
 var scheduleFilterItems = [
     {type: 'schedule', label: 'Today', value: 'today'},
@@ -84,7 +85,7 @@ var MainView = React.createClass({
         this.toggleDrawer();
     },
     navMenuHandler(e) {
-        //console.log(e);
+        //log.debug(e);
         if (e == 'Home') {
             this.refs.navigator.resetTo(this.state.routes.landing);
         } else if (e == 'Schedule') {
@@ -105,7 +106,7 @@ var MainView = React.createClass({
         }
     },
     onFilter(filter) {
-        console.log('filter ' + filter);
+        log.debug('filter ' + filter);
         if (filter.type == 'schedule') {
             this.setState({scheduleFilter: filter});
         }
@@ -115,13 +116,13 @@ var MainView = React.createClass({
     },
     onAdd(type) {
         return () => {
-            console.log('Add ' + type);
+            log.debug('Add ' + type);
             this.eventEmitter.emit('add' + type);
         }
     },
     onAccept(type) {
         return () => {
-            console.log('Accept ' + type);
+            log.debug('Accept ' + type);
             this.eventEmitter.emit('accept' + type);
             //this.state.routes[type].data = null;
             this.refs.navigator.pop();
@@ -129,14 +130,14 @@ var MainView = React.createClass({
     },
     onDiscard(type) {
         return () => {
-            console.log('Discard ' + type);
+            log.debug('Discard ' + type);
             this.eventEmitter.emit('discard' + type);
             this.state.routes[type].data = null;
             this.refs.navigator.pop();
         }
     },
     onNotification(notification) {
-        //console.log(notification);
+        //log.debug(notification);
         this.onChangeRoute('reminder', notification);
         /*
         let subject = notification.payload.patient.name + ' has a medication due';
@@ -146,7 +147,7 @@ var MainView = React.createClass({
             {text: 'Complete', onPress: () => {
                 Reminders.complete(notification.payload)
                 .then(() => {
-                    console.log('+++++++++++ Notification acknowledged');
+                    log.debug('+++++++++++ Notification acknowledged');
                     this.eventEmitter.emit('notificationacknowledged', notification.payload);
                     return Patients.get(notification.payload.patient.id);
                 })
@@ -157,11 +158,11 @@ var MainView = React.createClass({
                     return Reminders.reschedule(patient, med, notification.sendAt);
                 })
                 .then((n) => {
-                    console.log('+++++++++++ Notification rescheduled');
+                    log.debug('+++++++++++ Notification rescheduled');
                     this.eventEmitter.emit('notificationrescheduled');
                 })
                 .catch((err) => {
-                    console.log(err);
+                    log.debug(err);
                 });
             }}
         ]);
@@ -169,7 +170,7 @@ var MainView = React.createClass({
     },
     renderScene(route, navigator) {
         route = route || {};
-        //console.log('render scene ' + route.name);
+        //log.debug('render scene ' + route.name);
         if (route.name == 'landing') {
             return (
                 <LandingView events={this.eventEmitter} />
@@ -213,7 +214,7 @@ var MainView = React.createClass({
             onComplete={route.data ? (notification) => {
                     Reminders.complete(notification.payload)
                     .then(() => {
-                        console.log('+++++++++++ Notification acknowledged');
+                        log.debug('+++++++++++ Notification acknowledged');
                         this.eventEmitter.emit('notificationacknowledged', notification.payload);
                         return Patients.get(notification.payload.patient.id);
                     })
@@ -224,28 +225,28 @@ var MainView = React.createClass({
                         return Reminders.reschedule(patient, med, notification.sendAt);
                     })
                     .then((n) => {
-                        console.log('+++++++++++ Notification rescheduled');
+                        log.debug('+++++++++++ Notification rescheduled');
                         this.eventEmitter.emit('notificationrescheduled');
                     })
                     .catch((err) => {
-                        console.log(err);
+                        log.error(err);
                     });
                 } : null}
             onDelay={route.data ? (notification) => {
-                    console.log('+++++++++++ Notification delayed');
+                    log.debug('+++++++++++ Notification delayed');
                 } : null}
             */
         }
 
         if (route.name == 'reminder') {
-            //console.log(route.data);
+            //log.debug(route.data);
             this.state.routes.reminder.title = route.data.payload.patient.name + ' has a medication due';
             return (
                 <ReminderDetailView notification={route.data} events={this.eventEmitter}
                     onComplete={(notification) => {
                         Reminders.complete(notification.payload)
                         .then(() => {
-                            console.log('+++++++++++ Notification acknowledged');
+                            log.debug('+++++++++++ Notification acknowledged');
                             this.eventEmitter.emit('notificationacknowledged', notification.payload);
                             return Patients.get(notification.payload.patient.id);
                         })
@@ -256,16 +257,16 @@ var MainView = React.createClass({
                             return Reminders.reschedule(patient, med, notification.sendAt);
                         })
                         .then((n) => {
-                            console.log('+++++++++++ Notification rescheduled');
+                            log.debug('+++++++++++ Notification rescheduled');
                             this.eventEmitter.emit('notificationrescheduled');
                             navigator.pop();
                         })
                         .catch((err) => {
-                            console.log(err);
+                            log.error(err);
                         });
                     }}
                     onDelay={(notification) => {
-                        console.log('+++++++++++ Notification delayed');
+                        log.debug('+++++++++++ Notification delayed');
                         navigator.pop();
                     }}
                 />

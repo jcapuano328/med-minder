@@ -18,7 +18,7 @@ var TypeAhead = React.createClass({
                 this.setState({values: values});
             })
             .catch((err) => {
-                console.log(err);
+                log.error(err);
             });
         }
     },
@@ -32,7 +32,7 @@ var TypeAhead = React.createClass({
     },
     onSelect(value) {
         return () => {
-            console.log('Select ' + value);
+            log.error('Select ' + value);
             this.setState({value: value, values: []});
             this.props.onChangeValue && this.props.onChangeValue(value);
         }

@@ -5,6 +5,7 @@ var { View, ScrollView, Image, Text } = React;
 var MedsView = require('./medsView');
 var Scheduler = require('../services/scheduler');
 var Icons = require('../resources/icons');
+var log = require('../services/log');
 
 let opacity = 0.20;
 
@@ -36,7 +37,7 @@ var DayView = React.createClass({
                     scrollEventThrottle={200}
                     style={{flex: 1, backgroundColor: 'transparent'}}>
                     {patients.map((patient,j) => {
-                        //console.log(patient);
+                        //log.debug(patient);
                         return (
                             <View key={i+j} style={{borderStyle: 'dotted', borderBottomColor: 'lightgray', borderBottomWidth: j<patients.length-1 ? 1 : 0}}>
                                 <MedsView name={patient} data={this.props.data[tod][patient]} onStatus={this.onStatus(patient, tod)}/>

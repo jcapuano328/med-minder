@@ -3,6 +3,7 @@ var React = require('react-native');
 var { View, Text, Image, TouchableNativeFeedback, Linking } = React;
 var Button = require('apsl-react-native-button');
 var Icons = require('./resources/icons');
+var log = require('./services/log');
 
 var OpenURLButton = React.createClass({
   propTypes: {
@@ -15,7 +16,7 @@ var OpenURLButton = React.createClass({
           if (supported) {
               Linking.openURL(this.props.url);
           } else {
-              console.log('Don\'t know how to open URI: ' + this.props.url);
+              log.debug('Don\'t know how to open URI: ' + this.props.url);
           }
       });
   },

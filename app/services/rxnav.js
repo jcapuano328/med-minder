@@ -1,4 +1,6 @@
 'use strict'
+var log = require('./log');
+
 //https://rxnav.nlm.nih.gov/PrescribableAPIs.html#
 let rxnavSearchURL = 'https://rxnav.nlm.nih.gov/REST/Prescribe/approximateTerm.json?term={0}&maxEntries=10'
 let rxnavPropertiesURL = 'https://rxnav.nlm.nih.gov/REST/Prescribe/rxcui/{0}/properties.json'
@@ -7,13 +9,13 @@ let getMeds = (ids, i, meds) => {
     if (i < ids.length) {
         let id = ids[i++];
         let url = rxnavPropertiesURL.replace('{0}', id);
-        //console.log('Search rxnav for ' + id + ' @ ' + url);
+        //log.debug('Search rxnav for ' + id + ' @ ' + url);
         return fetch(url)
         .then((response) => response.json())
         .then((result) => {
-            //console.log(result);
+            //log.debug(result);
             if (result && result.properties && result.properties.name) {
-                //console.log('   ' + result.properties.name);
+                //log.debug('   ' + result.properties.name);
                 meds.push(result.properties.name);
             }
             return getMeds(ids, i, meds);
@@ -25,7 +27,7 @@ let getMeds = (ids, i, meds) => {
 module.exports = {
     find(name) {
         let url = rxnavSearchURL.replace('{0}', name);
-        //console.log('Search rxnav for ' + name + ' @ ' + url);
+        //log.debug('Search rxnav for ' + name + ' @ ' + url);
         return fetch(url)
         .then((response) => response.json())
         .then((result) => {
@@ -35,9 +37,9 @@ module.exports = {
                     if (ids.length <= 11 && ids.indexOf(c.rxcui) < 0) {
                         ids.push(c.rxcui);
                     }
-                });                
+                });
             }
-            //console.log(ids);
+            //log.debug(ids);
             return getMeds(ids, 0, []);
         });
     }
