@@ -26,7 +26,8 @@ let comparer = (filter) => {
     filter = filter || {};
     return (item) => {
         let fdt = moment(filter.on);
-        let idt = moment(item.on);
+        let idt = moment(item.sendAt);
+
         return (
             (!filter.patient || item.patient.id == filter.patient)
             &&
