@@ -15,20 +15,6 @@ var ReminderDetailView = React.createClass({
         this.props.onDelay && this.props.onDelay(this.props.notification);
     },
     render() {
-        //let subject = this.props.notification.payload.patient.name + ' has a medication due';
-        //<Text style={{fontSize: 22, fontWeight: 'bold'}}>{subject}</Text>
-        /*
-        <IconButton image={'done'} width={72} height={72} resizeMode={'contain'} border={true} onPress={this.onComplete} />
-        <IconButton image={'delay'} width={72} height={72} resizeMode={'contain'} border={true} onPress={this.onDelay} />
-
-        <Button style={{flex: 1, height: 92, marginRight: 10, backgroundColor: 'green'}} onPress={this.onComplete}>
-            <Image style={{width: 72, height: 72, resizeMode: 'stretch', marginLeft: 5, marginRight: 5}}
-                source={Icons['done']} />
-        </Button>
-        <Button style={{flex: 1, height: 92, marginLeft: 10}} onPress={this.onDelay}>
-            <Image style={{width: 72, height: 72, resizeMode: 'contain'}} source={Icons['delay']} />
-        </Button>
-        */        
         let message = 'Give ' + this.props.notification.payload.patient.name + ' ' + this.props.notification.payload.med.name + ' ' + this.props.notification.payload.med.dosage + ' ' + this.props.notification.payload.med.instructions;
         let at = moment(this.props.notification.payload.on).format('MMM DD, YYYY HH:mm');
         return (

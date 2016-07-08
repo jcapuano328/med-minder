@@ -16,7 +16,7 @@ var RemindersView = require('./remindersView');
 var ReminderDetailView = require('./reminderDetailView');
 var EventEmitter = require('EventEmitter');
 var Patients = require('./stores/patients');
-var Reminders = require('./stores/reminders');
+var Reminder = require('./services/reminder');
 var Sample = require('./stores/sample.js');
 var log = require('./services/log');
 
@@ -54,7 +54,7 @@ var MainView = React.createClass({
         };
     },
     componentWillMount() {
-        Reminders.start(this.onNotification);
+        Reminder.start(this.onNotification);
         this.eventEmitter = new EventEmitter();
         this.eventEmitter.addListener('changeroute', this.onChangeRoute);
         this.eventEmitter.addListener('raisenotification', this.onNotification);
@@ -69,7 +69,7 @@ var MainView = React.createClass({
         .done();
     },
     componentWillUnmount() {
-        Reminders.stop();
+        Reminder.stop();
     },
     toggleDrawer() {
         if (!this.state.drawer) {
@@ -137,36 +137,8 @@ var MainView = React.createClass({
         }
     },
     onNotification(notification) {
-        //log.debug(notification);
+        //console.log(notification);
         this.onChangeRoute('reminder', notification);
-        /*
-        let subject = notification.payload.patient.name + ' has a medication due';
-        let message = 'Give ' + notification.payload.patient.name + ' ' + notification.payload.med.name + ' ' + notification.payload.med.dosage + ' ' + notification.payload.med.instructions;
-        Alert.alert(subject, message, [
-            {text: 'Later', style: 'cancel'},
-            {text: 'Complete', onPress: () => {
-                Reminders.complete(notification.payload)
-                .then(() => {
-                    log.debug('+++++++++++ Notification acknowledged');
-                    this.eventEmitter.emit('notificationacknowledged', notification.payload);
-                    return Patients.get(notification.payload.patient.id);
-                })
-                .then((patient) => {
-                    let med = patient.meds.find((m) => {
-                        return notification.payload.med.name == m.name;
-                    });
-                    return Reminders.reschedule(patient, med, notification.sendAt);
-                })
-                .then((n) => {
-                    log.debug('+++++++++++ Notification rescheduled');
-                    this.eventEmitter.emit('notificationrescheduled');
-                })
-                .catch((err) => {
-                    log.debug(err);
-                });
-            }}
-        ]);
-        */
     },
     renderScene(route, navigator) {
         route = route || {};
@@ -210,54 +182,18 @@ var MainView = React.createClass({
             return (
                 <RemindersView filter={this.state.reminderFilter.value} events={this.eventEmitter} />
             );
-            /*
-            onComplete={route.data ? (notification) => {
-                    Reminders.complete(notification.payload)
-                    .then(() => {
-                        log.debug('+++++++++++ Notification acknowledged');
-                        this.eventEmitter.emit('notificationacknowledged', notification.payload);
-                        return Patients.get(notification.payload.patient.id);
-                    })
-                    .then((patient) => {
-                        let med = patient.meds.find((m) => {
-                            return notification.payload.med.name == m.name;
-                        });
-                        return Reminders.reschedule(patient, med, notification.sendAt);
-                    })
-                    .then((n) => {
-                        log.debug('+++++++++++ Notification rescheduled');
-                        this.eventEmitter.emit('notificationrescheduled');
-                    })
-                    .catch((err) => {
-                        log.error(err);
-                    });
-                } : null}
-            onDelay={route.data ? (notification) => {
-                    log.debug('+++++++++++ Notification delayed');
-                } : null}
-            */
         }
 
         if (route.name == 'reminder') {
-            //log.debug(route.data);
+            //console.log(route.data);
             this.state.routes.reminder.title = route.data.payload.patient.name + ' has a medication due';
             return (
                 <ReminderDetailView notification={route.data} events={this.eventEmitter}
                     onComplete={(notification) => {
-                        Reminders.complete(notification.payload)
+                        Reminder.complete(notification, true)
                         .then(() => {
                             log.debug('+++++++++++ Notification acknowledged');
                             this.eventEmitter.emit('notificationacknowledged', notification.payload);
-                            return Patients.get(notification.payload.patient.id);
-                        })
-                        .then((patient) => {
-                            let med = patient.meds.find((m) => {
-                                return notification.payload.med.name == m.name;
-                            });
-                            return Reminders.reschedule(patient, med, notification.sendAt);
-                        })
-                        .then((n) => {
-                            log.debug('+++++++++++ Notification rescheduled');
                             this.eventEmitter.emit('notificationrescheduled');
                             navigator.pop();
                         })
@@ -266,8 +202,14 @@ var MainView = React.createClass({
                         });
                     }}
                     onDelay={(notification) => {
-                        log.debug('+++++++++++ Notification delayed');
-                        navigator.pop();
+                        Reminder.schedule(notification.payload)
+                        .then(() => {
+                            log.debug('+++++++++++ Notification delayed');
+                            navigator.pop();
+                        })
+                        .catch((err) => {
+                            log.error(err);
+                        });
                     }}
                 />
             );

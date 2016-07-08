@@ -40,7 +40,10 @@ var DayView = React.createClass({
                         //log.debug(patient);
                         return (
                             <View key={i+j} style={{borderStyle: 'dotted', borderBottomColor: 'lightgray', borderBottomWidth: j<patients.length-1 ? 1 : 0}}>
-                                <MedsView name={patient} data={this.props.data[tod][patient]} onStatus={this.onStatus(patient, tod)}/>
+                                <MedsView name={patient} data={this.props.data[tod][patient]}
+                                    onSelect={this.props.onSelect} 
+                                    onStatus={this.onStatus(patient, tod)}
+                                />
                             </View>
                         );
                     })}

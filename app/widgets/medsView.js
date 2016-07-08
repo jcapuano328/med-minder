@@ -1,11 +1,17 @@
 'use strict'
 
 var React = require('react-native');
-var { View, Text } = React;
+var { View, TouchableOpacity, Text } = React;
 var IconButton = require('./iconButton');
 var log = require('../services/log');
 
 var MedsView = React.createClass({
+    onSelect(r) {
+        return () => {
+            console.log(r);
+            this.props.onSelect && this.props.onSelect({payload: r});
+        }
+    },
     onStatus(r) {
         return () => {
             r.status = r.status == 'pending' ? 'complete' : 'pending';
@@ -23,13 +29,15 @@ var MedsView = React.createClass({
                         let textdec = d.status == 'pending' ? 'none' : 'line-through';
                         //log.debug(med.name);
                         return (
-                            <View key={i} style={{flex: 1, flexDirection: 'row'}}>
-                                <View style={{marginTop: 5}}>
-                                    <IconButton image={d.status == 'pending' ? 'open' : 'complete'} width={16} height={16} onPress={this.onStatus(d)}/>
+                            <TouchableOpacity key={i} onPress={this.onSelect(d)}>
+                                <View style={{flex: 1, flexDirection: 'row'}}>
+                                    <View style={{marginTop: 5}}>
+                                        <IconButton image={d.status == 'pending' ? 'open' : 'complete'} width={16} height={16} onPress={this.onStatus(d)}/>
+                                    </View>
+                                    <Text style={{flex: 1, fontSize: 16, fontWeight: 'bold', textDecorationLine: textdec}}>{med.name} {med.dosage}</Text>
+                                    <Text style={{flex: 2, fontSize: 16, textDecorationLine: textdec}}>{med.instructions}</Text>
                                 </View>
-                                <Text style={{flex: 1, fontSize: 16, fontWeight: 'bold', textDecorationLine: textdec}}>{med.name} {med.dosage}</Text>
-                                <Text style={{flex: 2, fontSize: 16, textDecorationLine: textdec}}>{med.instructions}</Text>
-                            </View>
+                            </TouchableOpacity>
                         );
                     })}
                 </View>

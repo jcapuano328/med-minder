@@ -56,7 +56,7 @@ var WeekView = React.createClass({
                 <WeekHeader style={{flex: 1}}/>
                 <View style={{flex: 10}}>
                 {Scheduler.times().map((t,i) => {
-                    log.debug('render time ' + t);
+                    log.debug('>>>>> render time ' + t);
                     return (
                         <View key={i} style={{
                             flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start',
@@ -68,10 +68,9 @@ var WeekView = React.createClass({
                                 </Text>
                             </View>
                             {Scheduler.days().map((d,j) => {
-                                log.debug(d + ' / ' + t);
-                                log.debug(this.props.data[d][t]);
+                                log.debug('>>>>> ' + d + ' / ' + t);
                                 return (
-                                    <TimeView key={i+j} data={this.props.data[d][t]} onPress={this.onSelected} />
+                                    <TimeView key={i+j} data={this.props.data[d][t]} onPress={this.props.onSelected} />
                                 );
                             })}
                         </View>

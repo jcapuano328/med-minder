@@ -40,7 +40,7 @@ module.exports = {
             sendAt: reminder.on.toDate(),
             repeatEvery: FIVE_MINUTES,
             repeatCount: 12,    // repeat for an hour
-            autoClear: false,
+            autoClear: true,
             onlyAlertOnce: false,
             category: 'reminder',
             payload: reminder
@@ -74,10 +74,10 @@ module.exports = {
     },
     clear(id) {
         if (!id) {
-            log.info('*********** clear all notifications');
+            log.debug('*********** clear all notifications');
             return Notification.clearAll();
         }
-        log.info('*********** clear notification ' + id);
+        log.debug('*********** clear notification ' + id);
         return Notification.clear(id);
     },
     start(cb) {

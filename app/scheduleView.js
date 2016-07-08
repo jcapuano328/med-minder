@@ -15,6 +15,9 @@ var ScheduleView = React.createClass({
         };
     },
     componentWillMount() {
+        return this.fetch().done();
+    },
+    fetch() {
         this.props.events.once('notificationacknowledged', this.onNotification);
         let f = null;
         if (!this.props.filter || this.props.filter == 'today') {
@@ -30,9 +33,11 @@ var ScheduleView = React.createClass({
             this.setState({schedule: data});
         })
         .catch((err) => {
-            log.debug(err)
-        })
-        .done();
+            log.error(err);
+        });
+    },
+    onSelect(reminder) {
+        this.props.events.emit('changeroute', 'reminder', reminder);
     },
     onStatus(patient, tod, med) {
         var r = this.state.schedule[tod][patient].find((r) => {
@@ -53,8 +58,8 @@ var ScheduleView = React.createClass({
         }
     },
     onNotification(reminder) {
-
-        this.props.events.once('notificationacknowledged', onNotification);
+        this.props.events.once('notificationacknowledged', this.onNotification);
+        this.fetch();
     },
     render() {
         return (
@@ -97,7 +102,7 @@ var ScheduleView = React.createClass({
     },
     renderToday() {
         return (
-            <DayView data={this.state.schedule} onStatus={this.onStatus}/>
+            <DayView data={this.state.schedule} onStatus={this.onStatus} onSelect={this.onSelect}/>
         );
         /*
         return (
@@ -109,7 +114,7 @@ var ScheduleView = React.createClass({
     },
     renderThisWeek() {
         return (
-            <WeekView data={this.state.schedule} />
+            <WeekView data={this.state.schedule} onStatus={this.onStatus} onSelect={this.onSelect} />
         );
         /*
         return (
