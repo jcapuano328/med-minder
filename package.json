@@ -4,30 +4,31 @@
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
-    "run": "node node_modules/react-native/local-cli/cli.js run-android",
-    "assemble": "cd android && gradlew assembleRelease && cd ..",
+    "debug": "node node_modules/react-native/local-cli/cli.js run-android",
+    "build-rel": "cd android && gradlew assembleRelease && cd ..",
+    "build-dbg": "cd android && gradlew assembleDebug && cd ..",
     "install-dbg": "adb install -r android/app/build/outputs/apk/mm-debug-1.0.apk",
     "install-rel": "adb install -r android/app/build/outputs/apk/mm-release-1.0.apk",
     "bridge": "adb reverse tcp:8081 tcp:8081",
     "menu": "adb shell input keyevent 82",
     "logs": "adb logcat *:S ReactNative:V ReactNativeJS:V",
-    "generate-key": " keytool -genkey -v -keystore mm.keystore -alias mm -keyalg RSA -keysize 2048 -validity 10000"
+    "genkey": " keytool -genkey -v -keystore mm.keystore -alias mm -keyalg RSA -keysize 2048 -validity 10000"
   },
   "dependencies": {
-    "apsl-react-native-button": "^2.5.0",
-    "moment": "^2.13.0",
-    "react": "^0.14.8",
-    "react-native": "^0.25.1",
-    "react-native-gcm-android": "^0.2.0",
-    "react-native-menu": "^0.19.0",
-    "react-native-store": "^0.4.1",
-    "react-native-system-notification": "^0.1.11"
+    "apsl-react-native-button": "^3.0.0",
+    "moment": "^2.14.1",
+    "react": "15.3.1",
+    "react-native": "^0.33.0",
+    "react-native-fs": "^1.5.1",
+    "react-native-menu": "^0.20.1",
+    "react-native-system-notification": "^0.2.1",
+    "react-native-uuid": "^1.4.8"
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "mocha": "^2.4.5",
+    "mocha": "^3.0.2",
     "sandboxed-module": "^2.0.3",
-    "sinon": "^1.17.4",
+    "sinon": "^1.17.5",
     "sinon-chai": "^2.8.0"
   }
 }

@@ -1,6 +1,5 @@
 'use strict';
-import React, {AppRegistry} from 'react-native';
-var { View } = React;
-let medminder = require('./app/mainView');
+import {AppRegistry} from 'react-native';
+let main = require('./src/mainView');
 
-AppRegistry.registerComponent('medminder', () => medminder);
+AppRegistry.registerComponent('medminder', () => main);

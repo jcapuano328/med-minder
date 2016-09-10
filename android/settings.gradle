@@ -2,4 +2,6 @@ rootProject.name = 'Med Minder'
 
 include ':app'
 include ':react-native-system-notification'
+include ':react-native-fs'
 project(':react-native-system-notification').projectDir = new File(settingsDir, '../node_modules/react-native-system-notification/android')
+project(':react-native-fs').projectDir = new File(settingsDir, '../node_modules/react-native-fs/android')
