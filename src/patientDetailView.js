@@ -1,15 +1,16 @@
 'use strict'
 
 var React = require('react');
-import { View, ScrollView, Switch, Text, TextInput, Alert } from 'react-native';
+import { View, Switch, Text, TextInput, Alert } from 'react-native';
 var DateTimePicker = require('./widgets/datetimePicker');
 var IconButton = require('./widgets/iconButton');
 var PatientMedsView = require('./patientMedsView');
-var Patients = require('./stores/patients');
+var Patients = require('./services/patients');
 var log = require('./services/log');
 
 var PatientDetailView = React.createClass({
     getInitialState() {
+        console.log(this.props.patient);
         return {
             name: this.props.patient.name,
             dob: this.props.patient.dob,

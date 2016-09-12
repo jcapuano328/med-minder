@@ -5,12 +5,18 @@ import { View, TouchableOpacity, Text, Image } from 'react-native';
 var IconButton = require('./widgets/iconButton');
 var moment = require('moment');
 
-var PatientsItemView = React.createClass({
+var PatientListItemView = React.createClass({
     onStatus() {
         let s = this.props.patient.status == 'active' ? 'inactive' : 'active';
-        this.props.onChanged && this.props.onChanged(this.props.patient, {field: 'status', value: s});
+        this.props.onStatus && this.props.onStatus(this.props.patient, {field: 'status', value: s});
     },
-    render() {        
+    onSelect() {
+        this.props.onSelect && this.props.onSelect(this.props.patient);
+    },
+    onRemove() {
+        this.props.onRemove && this.props.onRemove(this.props.patient);
+    },
+    render() {
         return (
             <View style={{
                 alignItems: 'center',
@@ -27,17 +33,17 @@ var PatientsItemView = React.createClass({
                 borderRadius: 10
             }}>
                 <IconButton image={this.props.patient.status} onPress={this.onStatus}/>
-                <TouchableOpacity style={{flex: 2}} onPress={this.props.onSelected}>
+                <TouchableOpacity style={{flex: 2}} onPress={this.onSelect}>
                     <View style={{flex: 1}}>
                         <Text style={{fontSize: 24, fontWeight: 'bold', textAlign: 'left',marginLeft: 20}}>{this.props.patient.name}</Text>
                         <Text style={{fontSize: 15,textAlign: 'left',marginLeft: 20}}>{moment(this.props.patient.dob).format('MMM DD, YYYY')}</Text>
                     </View>
                 </TouchableOpacity>
-                <IconButton image={'select'} onPress={this.props.onSelected} />
-                <IconButton image={'remove'} onPress={this.props.onRemove} />
+                <IconButton image={'select'} onPress={this.onSelect} />
+                <IconButton image={'remove'} onPress={this.onRemove} />
             </View>
         );
     }
 });
 
-module.exports = PatientsItemView;
+module.exports = PatientListItemView;

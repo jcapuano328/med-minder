@@ -11,12 +11,7 @@ var LandingView = require('./landingView');
 var AboutView = require('./aboutView');
 //var ScheduleView = require('./scheduleView');
 var PatientsView = require('./patientsView');
-//var PatientDetailView = require('./patientDetailView');
-//var MedDetailView = require('./medDetailView');
 //var RemindersView = require('./remindersView');
-//var ReminderDetailView = require('./reminderDetailView');
-//var Patients = require('./services/patients');
-//var Reminder = require('./services/reminder');
 var Sample = require('./services/sample.js');
 var log = require('./services/log');
 
@@ -41,13 +36,10 @@ var MainView = React.createClass({
         return {
             drawer: false,
             routes: {
-                landing: {index: 0, name: 'landing', onMenu: this.navMenuHandler},
+                landing: {index: 0, name: 'landing', title: 'Med Minder', onMenu: this.navMenuHandler},
                 schedule: {index: 1, name: 'schedule', title: 'Schedule', onMenu: this.navMenuHandler, onFilter: this.onFilter, filterItems: scheduleFilterItems},
-                patients: {index: 2, name: 'patients', title: 'Patients', onMenu: this.navMenuHandler, onAdd: this.onAdd('patient')},
-                patient: {index: 3, name: 'patient', title: 'Patient', onMenu: this.navMenuHandler, onAccept: this.onAccept('patient'), onDiscard: this.onDiscard('patient')},
-                med: {index: 4, name: 'med', title: 'Medication', onMenu: this.navMenuHandler, onAccept: this.onAccept('med'), onDiscard: this.onDiscard('med')},
+                patients: {index: 2, name: 'patients', title: 'Med Minder', onMenu: this.navMenuHandler},
                 reminders: {index: 5, name: 'reminders', title: 'Reminders', onMenu: this.navMenuHandler},// onFilter: this.onFilter, filterItems: remindersFilterItems},
-                reminder: {index: 6, name: 'reminder', title: 'Reminder'},
                 about: {index: 7, name: 'about', title: 'About'}
             },
             version: '0.0.1',
@@ -58,7 +50,6 @@ var MainView = React.createClass({
     componentWillMount() {
         //Reminder.start(this.onNotification);
         this.eventEmitter = new EventEmitter();
-        this.eventEmitter.addListener('changeroute', this.onChangeRoute);
         this.eventEmitter.addListener('raisenotification', this.onNotification);
         this.state.initialRoute = this.state.routes.landing;
         //return Sample.load()
@@ -116,28 +107,6 @@ var MainView = React.createClass({
             this.setState({reminderFilter: filter});
         }
     },
-    onAdd(type) {
-        return () => {
-            log.debug('Add ' + type);
-            this.eventEmitter.emit('add' + type);
-        }
-    },
-    onAccept(type) {
-        return () => {
-            log.debug('Accept ' + type);
-            this.eventEmitter.emit('accept' + type);
-            //this.state.routes[type].data = null;
-            this.refs.navigator.pop();
-        }
-    },
-    onDiscard(type) {
-        return () => {
-            log.debug('Discard ' + type);
-            this.eventEmitter.emit('discard' + type);
-            this.state.routes[type].data = null;
-            this.refs.navigator.pop();
-        }
-    },
     onNotification(notification) {
         //console.log(notification);
         this.onChangeRoute('reminder', notification);
@@ -170,53 +139,10 @@ var MainView = React.createClass({
             );
         }
 
-        if (route.name == 'patient') {
-            return (
-                <PatientDetailView patient={route.data} events={this.eventEmitter} />
-            );
-        }
-
-        if (route.name == 'med') {
-            return (
-                <MedDetailView med={route.data} events={this.eventEmitter} />
-            );
-        }
-
         /*
         if (route.name == 'reminders') {
             return (
                 <RemindersView filter={this.state.reminderFilter.value} events={this.eventEmitter} />
-            );
-        }
-
-        if (route.name == 'reminder') {
-            //console.log(route.data);
-            this.state.routes.reminder.title = route.data.payload.patient.name + ' has a medication due';
-            return (
-                <ReminderDetailView notification={route.data} events={this.eventEmitter}
-                    onComplete={(notification) => {
-                        Reminder.complete(notification, true)
-                        .then(() => {
-                            log.debug('+++++++++++ Notification acknowledged');
-                            this.eventEmitter.emit('notificationacknowledged', notification.payload);
-                            this.eventEmitter.emit('notificationrescheduled');
-                            navigator.pop();
-                        })
-                        .catch((err) => {
-                            log.error(err);
-                        });
-                    }}
-                    onDelay={(notification) => {
-                        Reminder.schedule(notification.payload)
-                        .then(() => {
-                            log.debug('+++++++++++ Notification delayed');
-                            navigator.pop();
-                        })
-                        .catch((err) => {
-                            log.error(err);
-                        });
-                    }}
-                />
             );
         }
         */
