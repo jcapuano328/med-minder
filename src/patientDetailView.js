@@ -4,13 +4,12 @@ var React = require('react');
 import { View, Switch, Text, TextInput, Alert } from 'react-native';
 var DateTimePicker = require('./widgets/datetimePicker');
 var IconButton = require('./widgets/iconButton');
-var PatientMedsView = require('./patientMedsView');
+var ActionListView = require('./widgets/actionListView');
 var Patients = require('./services/patients');
 var log = require('./services/log');
 
 var PatientDetailView = React.createClass({
     getInitialState() {
-        console.log(this.props.patient);
         return {
             name: this.props.patient.name,
             dob: this.props.patient.dob,
@@ -20,34 +19,41 @@ var PatientDetailView = React.createClass({
             meds: this.props.patient.meds
         };
     },
-    componentWillMount() {
-        this.props.events.once('acceptpatient', this.onAccept);
-        this.props.events.once('discardpatient', this.onDiscard);
-    },
     onChangeName(v) {
         this.setState({name: v});
-        this.props.events && this.props.events.emit('patientchanged', this.props.patient, {field: 'name', value: v});
+        this.props.onChanged && this.props.onChanged(this.props.patient, {field: 'name', value: v});
     },
     onChangeDob(v) {
         this.setState({dob: v});
-        this.props.events && this.props.events.emit('patientchanged', this.props.patient, {field: 'dob', value: v});
+        this.props.onChanged && this.props.onChanged(this.props.patient, {field: 'dob', value: v});
     },
     onStatusChanged(v) {
         let status = v ? 'active' : 'inactive';
         this.setState({status: status});
-        this.props.events && this.props.events.emit('patientchanged', this.props.patient, {field: 'status', value: status});
+        this.props.onChanged && this.props.onChanged(this.props.patient, {field: 'status', value: status});
     },
     onMedSelected(med) {
         this.setState({currentMed: med});
-        this.props.events.once('savemed', this.onAcceptMed);
-        this.props.events.emit('changeroute','med', med);
-        //this.props.onSelected && this.props.onSelected(med);
+        this.props.events.emit('changeroute', 'med', {
+            name: 'med',
+            title: med.name,
+            data: med,
+            onChanged: this.onMedChanged,
+            onAccept: this.onMedAccept,
+            onDiscard: this.onMedDiscard
+        });
     },
     onMedAdd() {
         let med = Patients.createNewMed('');
         this.setState({currentMed: med});
-        this.props.events.once('savemed', this.onAcceptMed);
-        this.props.events.emit('changeroute','med', med);
+        this.props.events.emit('changeroute', 'med', {
+            name: 'med',
+            title: 'New Medication',
+            data: med,
+            onChanged: this.onMedChanged,
+            onAccept: this.onMedAccept,
+            onDiscard: this.onMedDiscard
+        });
     },
     onMedRemove(med) {
         Alert.alert('Remove Medication ' + med.name + '?', 'The medication will be permanently removed', [
@@ -58,7 +64,7 @@ var PatientDetailView = React.createClass({
                 if (idx > -1) {
                     this.state.meds.splice(idx,1);
                     this.setState({meds: this.state.meds});
-                    this.props.events && this.props.events.emit('patientchanged', this.props.patient, {field: 'meds', value: this.state.meds});
+                    this.props.onChanged && this.props.onChanged(this.props.patient, {field: 'meds', value: this.state.meds});
                 }
             }}
         ]);
@@ -71,11 +77,16 @@ var PatientDetailView = React.createClass({
             this.state.meds[idx][f] = v;
             this.setState({meds: this.state.meds});
         }
-        //this.props.onChanged && this.props.onChanged({name: f, value: v});
+        //this.props.onChanged && this.props.onChanged(this.props.patient, {fields: meds, value: this.state.meds});
     },
-    onAcceptMed(med) {
-        log.debug(med);
-        let idx = this.state.meds.indexOf(this.state.currentMed);
+    onMedChanged(med, props) {
+        if (this.state.currentMed) {
+            this.state.currentMed[props.field] = props.value;
+        }
+    },
+    onMedAccept() {
+        let med = this.state.currentMed;
+        let idx = this.state.meds.findIndex((m) => m.id == med.id);
         if (idx < 0) {
             //log.debug('adding new med');
             this.state.meds.push(med);
@@ -84,38 +95,15 @@ var PatientDetailView = React.createClass({
             Object.assign(this.state.meds[idx], med);
         }
         this.setState({meds: this.state.meds, currentMed: null});
-        this.props.events && this.props.events.emit('patientchanged', this.props.patient, {field: 'meds', value: this.state.meds});
+        this.props.onChanged && this.props.onChanged(this.props.patient, {field: 'meds', value: this.state.meds});
+        this.props.events.emit('poproute');
     },
-    onDiscardMed(med) {
-        this.props.events.removeListener('savemed', this.onAcceptMed);
-    },
-    onAccept() {
-        log.debug('======= patient detail saving patient ' + this.state.name);
-        this.props.events.emit('savepatient', {
-            _id: this.props.patient._id,
-            name: this.state.name,
-            dob: this.state.dob,
-            status: this.state.status,
-            created: this.state.created,
-            modified: this.state.modified,
-            meds: this.state.meds
-        });
-        this.props.events.removeAllListeners('discardpatient');
-        this.props.events.removeAllListeners('savemed');
-    },
-    onDiscard() {
-        //log.debug('unsubscribing from savepatient for ' + this.state.name);
-        this.props.events.removeAllListeners('savepatient');
-        this.props.events.removeAllListeners('acceptpatient');
-        this.props.events.removeAllListeners('savemed');
+    onMedDiscard(med) {
+        this.props.events.emit('poproute');
     },
     render() {
         return (
-            <View style={{
-                flex: 1,
-                marginTop: 50,
-                //backgroundColor: 'rgba(0,0,0,0.01)',
-            }}>
+            <View style={{flex: 1,marginTop: 50}}>
                 <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
                     <TextInput style={{flex: 3, margin: 10, fontSize: 20}} placeholder={'Name'} onChangeText={this.onChangeName}>{this.state.name}</TextInput>
                     <View style={{flex:1, alignItems: 'center', justifyContent: 'center'}}>
@@ -127,11 +115,16 @@ var PatientDetailView = React.createClass({
                     <DateTimePicker label={'DOB'} value={this.state.dob} date={true} time={false} onChanged={this.onChangeDob} />
                 </View>
                 <View style={{flex: 8}}>
-                    <PatientMedsView meds={this.state.meds} events={this.props.events}
+                    <ActionListView items={this.state.meds} events={this.props.events}
+                        marginTop={0}
+                        backgroundColor={'goldenrod'}
+                        formatStatus={(m) => m.status}
+                        formatTitle={(m) => m.name}
+                        formatSubtitle={(m) => m.dosage}
+                        onStatus={this.onMedStatusChanged}
                         onAdd={this.onMedAdd}
                         onRemove={this.onMedRemove}
-                        onSelected={this.onMedSelected}
-                        onChanged={this.onMedStatusChanged}
+                        onSelect={this.onMedSelected}
                         />
                 </View>
             </View>

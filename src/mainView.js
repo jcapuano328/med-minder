@@ -9,9 +9,12 @@ import { MenuContext } from 'react-native-menu';
 var EventEmitter = require('EventEmitter');
 var LandingView = require('./landingView');
 var AboutView = require('./aboutView');
-//var ScheduleView = require('./scheduleView');
+var ScheduleView = require('./scheduleView');
 var PatientsView = require('./patientsView');
-//var RemindersView = require('./remindersView');
+var PatientDetailView = require('./patientDetailView');
+var MedDetailView = require('./medDetailView');
+var RemindersView = require('./remindersView');
+var ReminderDetailView = require('./reminderDetailView');
 var Sample = require('./services/sample.js');
 var log = require('./services/log');
 
@@ -36,10 +39,13 @@ var MainView = React.createClass({
         return {
             drawer: false,
             routes: {
-                landing: {index: 0, name: 'landing', title: 'Med Minder', onMenu: this.navMenuHandler},
+                landing: {index: 0, name: 'landing', title: '', onMenu: this.navMenuHandler},
                 schedule: {index: 1, name: 'schedule', title: 'Schedule', onMenu: this.navMenuHandler, onFilter: this.onFilter, filterItems: scheduleFilterItems},
-                patients: {index: 2, name: 'patients', title: 'Med Minder', onMenu: this.navMenuHandler},
+                patients: {index: 2, name: 'patients', title: 'Patients', onMenu: this.navMenuHandler, onAdd: this.onAdd('patient')},
+                patient: {index: 3, name: 'patient', title: 'Patient', onMenu: this.navMenuHandler},
+                med: {index: 4, name: 'med', title: 'Medication', onMenu: this.navMenuHandler},
                 reminders: {index: 5, name: 'reminders', title: 'Reminders', onMenu: this.navMenuHandler},// onFilter: this.onFilter, filterItems: remindersFilterItems},
+                reminder: {index: 6, name: 'reminder', title: 'Reminder'},
                 about: {index: 7, name: 'about', title: 'About'}
             },
             version: '0.0.1',
@@ -50,6 +56,8 @@ var MainView = React.createClass({
     componentWillMount() {
         //Reminder.start(this.onNotification);
         this.eventEmitter = new EventEmitter();
+        this.eventEmitter.addListener('changeroute', this.onChangeRoute);
+        this.eventEmitter.addListener('poproute', () => this.refs.navigator.pop());
         this.eventEmitter.addListener('raisenotification', this.onNotification);
         this.state.initialRoute = this.state.routes.landing;
         //return Sample.load()
@@ -93,9 +101,22 @@ var MainView = React.createClass({
         this.toggleDrawer();
     },
     onChangeRoute(route, data) {
+        log.debug('Change route to ' + route);
         if (this.state.routes[route]) {
-            this.state.routes[route].data = data;
+            this.state.routes[route].title = data.title;
+            this.state.routes[route].data = data.data;
+			this.state.routes[route].onAdd = data.onAdd;
+			this.state.routes[route].onAccept = data.onAccept;
+			this.state.routes[route].onDiscard = data.onDiscard;
+			this.state.routes[route].onFilter = data.onFilter;
             this.refs.navigator.push(this.state.routes[route]);
+        }
+    },
+    onAdd(type) {
+        // now what? don't want to go the eventing route again...
+        return () => {
+            log.debug('Add ' + type);
+            this.eventEmitter.emit('add' + type);
         }
     },
     onFilter(filter) {
@@ -109,7 +130,32 @@ var MainView = React.createClass({
     },
     onNotification(notification) {
         //console.log(notification);
-        this.onChangeRoute('reminder', notification);
+        this.onChangeRoute('reminder', {
+            data: notification,
+            title: notification.payload.patient.name + ' has a medication due',
+            onComplete: (n) => {
+                Reminders.complete(n, true)
+                .then(() => {
+                    log.debug('+++++++++++ Notification acknowledged');
+                    this.eventEmitter.emit('notificationacknowledged', notification.payload);
+                    this.eventEmitter.emit('notificationrescheduled');
+                    this.refs.navigator.pop();
+                })
+                .catch((err) => {
+                    log.error(err);
+                });
+            },
+            onDelay: (n) => {
+                Reminder.schedule(n.payload)
+                .then(() => {
+                    log.debug('+++++++++++ Notification delayed');
+                    this.refs.navigator.pop();
+                })
+                .catch((err) => {
+                    log.error(err);
+                });
+            }
+        });
     },
     renderScene(route, navigator) {
         route = route || {};
@@ -124,14 +170,13 @@ var MainView = React.createClass({
                 <AboutView version={this.state.version} events={this.eventEmitter} onClose={() => {navigator.pop();}} />
             );
         }
-        /*
+
         if (route.name == 'schedule') {
             this.state.routes.schedule.title = this.state.scheduleFilter.label;
             return (
                 <ScheduleView filter={this.state.scheduleFilter.value} events={this.eventEmitter} />
             );
         }
-        */
 
         if (route.name == 'patients') {
             return (
@@ -139,13 +184,29 @@ var MainView = React.createClass({
             );
         }
 
-        /*
+        if (route.name == 'patient') {
+            return (
+                <PatientDetailView patient={route.data} events={this.eventEmitter} onChanged={route.onChanged}/>
+            );
+        }
+
+        if (route.name == 'med') {
+            return (
+                <MedDetailView med={route.data} events={this.eventEmitter} onChanged={route.onChanged} />
+            );
+        }
+
         if (route.name == 'reminders') {
             return (
                 <RemindersView filter={this.state.reminderFilter.value} events={this.eventEmitter} />
             );
         }
-        */
+
+        if (route.name == 'reminder') {
+            return (
+                <ReminderDetailView notification={route.data} events={this.eventEmitter} onComplete={route.onComplete} onDelay={route.onDelay}/>
+            );
+        }
 
         return (
             <LandingView events={this.eventEmitter} />

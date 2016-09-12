@@ -1,24 +1,24 @@
 'use strict'
 
 var React = require('react');
-import { View, Navigator, Alert } from 'react-native';
-var TitleBar = require('./widgets/titleBar');
-var PatientListView = require('./patientListView');
-var PatientDetailView = require('./patientDetailView');
+import { View, Alert } from 'react-native';
+var ActionListView = require('./widgets/actionListView');
 var Patients = require('./services/patients');
+var moment = require('moment');
 var log = require('./services/log');
 
 var PatientsView = React.createClass({
     getInitialState() {
         return {
-            patients: []
+            patients: [],
+            current: null
         };
     },
-    componentDidMount() {
+    componentWillMount() {
+        this.props.events.once('addpatient', this.onAdd);
         return Patients.getAll()
         .then((data) => {
             this.setState({patients: data || []});
-//this.props.events.emit('changeroute','med', data[0].meds[0]);
             return data;
         })
         .catch((e) => {
@@ -37,7 +37,7 @@ var PatientsView = React.createClass({
             Patients.update(this.state.patients[idx])
             .then(() => {
                 log.debug('patient updated');
-                //log.debug('  updated: ' + this.state.patients[idx].name + ' (' + this.state.patients[idx]._id + ')');
+                //log.debug('  updated: ' + this.state.patients[idx].name + ' (' + this.state.patients[idx].id + ')');
                 return Reminders.reschedulePatient(patient);
             })
             .then(() => {
@@ -48,13 +48,34 @@ var PatientsView = React.createClass({
             });
         }
     },
+    onChanged(patient, props) {
+        if (this.state.current) {
+            this.state.current[props.field] = props.value;
+        }
+    },
     onSelect(patient) {
-        console.log('select patient ' + patient.name);
-        this.refs.navigator.push({name: 'patient', index: 1, title: patient.name, patient: patient, onAccept: this.onAccept, onDiscard: this.onDiscard});
+        this.state.current = patient;
+        this.props.events.emit('changeroute', 'patient', {
+            name: 'patient',
+            title: patient.name,
+            data: patient,
+            onChanged: this.onChanged,
+            onAccept: this.onAccept,
+            onDiscard: this.onDiscard
+        });
     },
     onAdd() {
-        let patient = Patients.createNewPatient('');
-        this.refs.navigator.push({name: 'patient', index: 1, title: patient.name, patient: patient, onAccept: this.onAccept, onDiscard: this.onDiscard});
+        // This is a problem: how to get this handler attached to the route in the main view?
+        this.state.current = Patients.createNewPatient('');
+        this.props.events.emit('changeroute', 'patient', {
+            name: 'patient',
+            title: 'New Patient',
+            data: this.state.current,
+            onChanged: this.onChanged,
+            onAccept: this.onAccept,
+            onDiscard: this.onDiscard
+        });
+        this.props.events.once('addpatient', this.onAdd);
     },
     onRemove(patient) {
         Alert.alert('Remove Patient ' + patient.name + '?', 'The patient and all of their medications will be permanently removed', [
@@ -76,11 +97,10 @@ var PatientsView = React.createClass({
             }}
         ]);
     },
-    onAccept(o) {
-        log.debug('*********** save patient ' + patient.name + ' (' + patient._id + ')');
-        var idx = this.state.patients.findIndex((p) => {
-            return p._id == patient._id;
-        });
+    onAccept() {
+        let patient = this.state.current;
+        log.debug('*********** save patient ' + patient.name + ' (' + patient.id + ')');
+        var idx = this.state.patients.findIndex((p) => p.id == patient.id);
         if (idx < 0) {
             //log.debug('adding new patient');
             this.state.patients.push(patient);
@@ -91,11 +111,11 @@ var PatientsView = React.createClass({
             })
             .then(() => {
                 this.setState({patients: Patients.sort(this.state.patients)});
-                this.refs.navigator.pop();
+                this.props.events.emit('poproute');
             })
             .catch((e) => {
                 log.error(e);
-                this.refs.navigator.pop();
+                this.props.events.emit('poproute');
             });
         } else {
             //log.debug('updating existing patient');
@@ -103,45 +123,33 @@ var PatientsView = React.createClass({
             Patients.update(this.state.patients[idx])
             .then(() => {
                 log.debug('patient updated');
-                //log.debug('  updated: ' + this.state.patients[idx].name + ' (' + this.state.patients[idx]._id + ')');
+                //log.debug('  updated: ' + this.state.patients[idx].name + ' (' + this.state.patients[idx].id + ')');
                 return Reminders.reschedulePatient(patient);
             })
             .then(() => {
                 this.setState({patients: Patients.sort(this.state.patients)});
-                this.refs.navigator.pop();
+                this.props.events.emit('poproute');
             })
             .catch((e) => {
                 log.error(e);
-                this.refs.navigator.pop();
+                this.props.events.emit('poproute');
             });
         }
     },
     onDiscard() {
-        this.refs.navigator.pop();
+        this.props.events.emit('poproute');
     },
     render() {
         return (
-            <View style={{flex: 1, marginTop: 60}}>
-                <Navigator
-                  ref="navigator"
-                  initialRoute={{name: 'list', index: 0, title: 'Patients', onAdd: this.onAdd}}
-                  navigationBar={<Navigator.NavigationBar style={{backgroundColor: 'gold'}} routeMapper={TitleBar({nomenu: true})} />}
-                  renderScene={(route, navigator) => {
-                      if (route.name == 'patient') {
-                          return (
-                              <PatientDetailView patient={route.patient} events={this.props.events} />
-                          );
-                      }
-                      return (
-                          <PatientListView patients={this.state.patients} events={this.props.events}
-                            onStatus={this.onStatus}
-                            onSelect={this.onSelect}
-                            onRemove={this.onRemove}
-                          />
-                      );
-                  }}
-                />
-            </View>
+            <ActionListView items={this.state.patients} events={this.props.events}
+                backgroundColor={'goldenrod'}
+                formatStatus={(p) => p.status}
+                formatTitle={(p) => p.name}
+                formatSubtitle={(p) => moment(p.dob).format('MMM DD, YYYY')}
+                onStatus={this.onStatus}
+                onSelect={this.onSelect}
+                onRemove={this.onRemove}
+            />
         );
     }
 });

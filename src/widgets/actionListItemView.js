@@ -1,13 +1,12 @@
 'use strict';
 
 var React = require('react');
-import { View, TouchableOpacity, Text, Image } from 'react-native';
-var IconButton = require('./widgets/iconButton');
-var moment = require('moment');
+import { View, TouchableOpacity, Text } from 'react-native';
+var IconButton = require('./iconButton');
 
 var ActionListItemView = React.createClass({
     onStatus() {
-        let s = this.props.item.status == 'active' ? 'inactive' : 'active';
+        let s = this.props.status == 'active' ? 'inactive' : 'active';
         this.props.onStatus && this.props.onStatus(this.props.item, {field: 'status', value: s});
     },
     onSelect() {
@@ -32,18 +31,18 @@ var ActionListItemView = React.createClass({
                 borderWidth: 1,
                 borderRadius: 10
             }}>
-                <IconButton image={this.props.item.status} onPress={this.onStatus}/>
+                {this.props.onStatus ? <IconButton image={this.props.status} onPress={this.onStatus}/> : null}
                 <TouchableOpacity style={{flex: 2}} onPress={this.onSelect}>
                     <View style={{flex: 1}}>
-                        <Text style={{fontSize: 24, fontWeight: 'bold', textAlign: 'left',marginLeft: 20}}>{this.props.item.title}</Text>
-                        <Text style={{fontSize: 15,textAlign: 'left',marginLeft: 20}}>{moment(this.props.item.subtitle)}</Text>            
+                        <Text style={{fontSize: 24, fontWeight: 'bold', textAlign: 'left',marginLeft: 20}}>{this.props.title}</Text>
+                        <Text style={{fontSize: 15,textAlign: 'left',marginLeft: 20}}>{this.props.subtitle}</Text>
                     </View>
                 </TouchableOpacity>
-                <IconButton image={'select'} onPress={this.onSelect} />
-                <IconButton image={'remove'} onPress={this.onRemove} />
+                {this.props.onSelect ? <IconButton image={'select'} onPress={this.onSelect} /> : null}
+                {this.props.onRemove ? <IconButton image={'remove'} onPress={this.onRemove} /> : null}
             </View>
         );
     }
 });
 
-module.exports = PatientListItemView;
+module.exports = ActionListItemView;
