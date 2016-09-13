@@ -51,9 +51,7 @@ var TypeAhead = React.createClass({
                         {this.state.value}
                     </TextInput>
                 </View>
-                <View style={{flex:1}}>
-                    {this.renderList()}
-                </View>
+                {this.renderList()}
             </View>
         );
     },
@@ -71,9 +69,11 @@ var TypeAhead = React.createClass({
         }
         let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         return (
-            <ListView dataSource={ds.cloneWithRows(this.state.values)}
-                renderRow={this.renderValue}
-             />
+            <View style={{flex:1}}>
+                <ListView dataSource={ds.cloneWithRows(this.state.values)}
+                    renderRow={this.renderValue}
+                 />
+            </View>
         );
         /*
         return (

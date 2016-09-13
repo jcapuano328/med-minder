@@ -36,7 +36,7 @@ var PatientDetailView = React.createClass({
         this.setState({currentMed: med});
         this.props.events.emit('changeroute', 'med', {
             name: 'med',
-            title: med.name,
+            //title: med.name,
             data: med,
             onChanged: this.onMedChanged,
             onAccept: this.onMedAccept,

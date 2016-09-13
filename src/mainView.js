@@ -64,8 +64,8 @@ var MainView = React.createClass({
         return new Promise((a,r) => a())
         .then(() => {
             //this.refs.navigator.resetTo(this.state.routes.schedule);
-            this.refs.navigator.resetTo(this.state.routes.patients);
-            //this.refs.navigator.resetTo(this.state.routes.reminders);
+            //this.refs.navigator.resetTo(this.state.routes.patients);
+            this.refs.navigator.resetTo(this.state.routes.reminders);
         })
         .done();
     },
@@ -103,12 +103,13 @@ var MainView = React.createClass({
     onChangeRoute(route, data) {
         log.debug('Change route to ' + route);
         if (this.state.routes[route]) {
-            this.state.routes[route].title = data.title;
+            this.state.routes[route].title = data.title || this.state.routes[route].title;
             this.state.routes[route].data = data.data;
 			this.state.routes[route].onAdd = data.onAdd;
 			this.state.routes[route].onAccept = data.onAccept;
 			this.state.routes[route].onDiscard = data.onDiscard;
 			this.state.routes[route].onFilter = data.onFilter;
+            this.state.routes[route].onChanged = data.onChanged;
             this.refs.navigator.push(this.state.routes[route]);
         }
     },

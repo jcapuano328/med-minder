@@ -32,7 +32,7 @@ let days = [
 ];
 
 var MedDetailView = React.createClass({
-    getInitialState() {
+    getInitialState() {        
         return {
             name: this.props.med.name,
             nameFocused: false,

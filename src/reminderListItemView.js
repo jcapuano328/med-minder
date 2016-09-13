@@ -35,11 +35,17 @@ var ReminderListItemView = React.createClass({
                 borderRadius: 10
             }}>
                 <View style={{flex: 1}}>
-                    <Text style={{fontSize: 24, fontWeight: 'bold', textAlign: 'left',marginLeft: 20}}>{this.props.notification.subject}</Text>
-                    <Text style={{fontSize: 15,textAlign: 'left',marginLeft: 20}}>{moment(this.props.notification.sendAt).format('MMM DD, YYYY HH:mm')}</Text>
-                </View>
-                <View style={{flex: 1}}>
-                    <Text style={{fontSize: 15, fontWeight: 'bold',textAlign: 'left',marginLeft: 20}}>{this.props.notification.message}</Text>
+                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
+                        <View style={{flex: 2, alignItems: 'flex-start'}}>
+                            <Text style={{fontSize: 24, fontWeight: 'bold', marginLeft: 10}}>{this.props.notification.subject}</Text>
+                        </View>
+                        <View style={{flex: 1, alignItems: 'flex-end'}}>
+                            <Text style={{fontSize: 15,marginRight: 10}}>{moment(this.props.notification.sendAt).format('MMM DD, YYYY HH:mm')}</Text>
+                        </View>
+                    </View>
+                    <View style={{flex: 1}}>
+                        <Text style={{fontSize: 15, fontWeight: 'bold',textAlign: 'left',marginLeft: 10}}>{this.props.notification.message}</Text>
+                    </View>
                 </View>
                 <View>
                     {this.props.onNotify ? (

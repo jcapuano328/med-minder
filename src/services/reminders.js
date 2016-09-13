@@ -1,4 +1,5 @@
 'use strict'
+var Store = require('../stores/store');
 var Patients = require('./patients');
 var Notifications = require('./notifications');
 var Scheduler = require('./scheduler');
@@ -41,6 +42,25 @@ let comparer = (filter) => {
             (!filter.month || (fdt.year()==idt.year() && fdt.month()==idt.month()))
         );
     }
+}
+
+let sorter = (l,r) => {
+    let lon = moment(l.sendAt);
+    let ron = moment(r.sendAt);
+    if (lon.isBefore(ron)) {
+        return -1;
+    } else if (lon.isAfter(ron)) {
+        return 1;
+    } else if (l.payload.patient.name < r.payload.patient.name) {
+        return -1;
+    } else if (l.payload.patient.name > r.payload.patient.name) {
+        return 1;
+    } else if (l.payload.med.name < r.payload.med.name) {
+        return -1;
+    } else if (l.payload.med.name > r.payload.med.name) {
+        return 1;
+    }
+    return 0;
 }
 
 let addReminder = (patient, med, i, tods, last) => {
@@ -92,8 +112,11 @@ module.exports = {
     get(id) {
         return Notifications.getById(id);
     },
-    getAll() {
-        return Notifications.get();
+    getAll() {        
+        return Notifications.get()
+        .then((data) => {
+            return data.sort(sorter);
+        });
     },
     getPatient(patient) {
         log.debug('*********** get reminders for patient ' + patient.name);

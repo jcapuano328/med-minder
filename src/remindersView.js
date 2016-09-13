@@ -30,24 +30,6 @@ var RemindersView = React.createClass({
                 });
             }
             */
-            data.sort((l,r) => {
-                let lon = moment(l.sendAt);
-                let ron = moment(r.sendAt);
-                if (lon.isBefore(ron)) {
-                    return -1;
-                } else if (lon.isAfter(ron)) {
-                    return 1;
-                } else if (l.payload.patient.name < r.payload.patient.name) {
-                    return -1;
-                } else if (l.payload.patient.name > r.payload.patient.name) {
-                    return 1;
-                } else if (l.payload.med.name < r.payload.med.name) {
-                    return -1;
-                } else if (l.payload.med.name > r.payload.med.name) {
-                    return 1;
-                }
-                return 0;
-            });
             this.setState({data: data});
         })
         .catch((e) => {
@@ -111,7 +93,7 @@ var RemindersView = React.createClass({
         return (
             <ActionListView items={this.state.data} events={this.props.events}
                 renderItem={(i, item) =>
-                    <RemindersItemView key={i} notification={item}
+                    <ReminderListItemView key={i} notification={item}
                         onNotify={this.onNotify(item)}
                         onRemove={!this.props.onComplete ? this.onRemove(item) : null}
                         onComplete={this.props.onComplete}

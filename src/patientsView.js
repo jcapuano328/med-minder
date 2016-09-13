@@ -4,6 +4,7 @@ var React = require('react');
 import { View, Alert } from 'react-native';
 var ActionListView = require('./widgets/actionListView');
 var Patients = require('./services/patients');
+var Reminders = require('./services/reminders');
 var moment = require('moment');
 var log = require('./services/log');
 
@@ -57,7 +58,7 @@ var PatientsView = React.createClass({
         this.state.current = patient;
         this.props.events.emit('changeroute', 'patient', {
             name: 'patient',
-            title: patient.name,
+            //title: patient.name,
             data: patient,
             onChanged: this.onChanged,
             onAccept: this.onAccept,
