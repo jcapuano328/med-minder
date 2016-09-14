@@ -63,9 +63,9 @@ var MainView = React.createClass({
         //return Sample.load()
         return new Promise((a,r) => a())
         .then(() => {
-            //this.refs.navigator.resetTo(this.state.routes.schedule);
+            this.refs.navigator.resetTo(this.state.routes.schedule);
             //this.refs.navigator.resetTo(this.state.routes.patients);
-            this.refs.navigator.resetTo(this.state.routes.reminders);
+            //this.refs.navigator.resetTo(this.state.routes.reminders);
             /*
             this.onChangeRoute('med', {
                 name: 'med',

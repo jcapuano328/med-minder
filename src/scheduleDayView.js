@@ -24,7 +24,7 @@ var ScheduleDayView = React.createClass({
         );
     },
     renderTOD(tod, i) {
-        let patients = Object.keys(this.props.data[tod]) || [];
+        let patients = Object.keys(this.props.data[tod]) || [];        
         return (
             <Image key={i} source={this.timeIcon(i)}
                 resizeMode='contain'
@@ -32,11 +32,10 @@ var ScheduleDayView = React.createClass({
                 style={{flex: 1, width:null, height:null, backgroundColor: this.timeColor(i)}}
             >
                 <ActionListView items={patients} events={this.props.events} marginTop={0}
-                    renderItem={(patient,j) => {
-                        //log.debug(patient);
+                    renderItem={(j,patient) => {
                         return (
                             <View key={i+j} style={{borderStyle: 'dotted', borderBottomColor: 'lightgray', borderBottomWidth: j<patients.length-1 ? 1 : 0}}>
-                                <MedListView name={patient} data={this.props.data[tod][patient]}
+                                <ScheduleMedListItemView name={patient} data={this.props.data[tod][patient]}
                                     onSelect={this.props.onSelect}
                                     onStatus={this.onStatus(patient, tod)}
                                 />
