@@ -234,7 +234,7 @@ module.exports = {
                         //log.debug('>>>>>> med');
                         //log.debug(med);
                         return this.reschedule(patient, med, reminder.sendAt);
-                    }                    
+                    }
                 });
             }
             return new Promise((resolve, reject) => resolve());
@@ -243,13 +243,13 @@ module.exports = {
     cancel(reminder) {
         return this.remove(reminder);
     },
-    remove(reminder) {
-        return Notifications.cancel([reminder.notificationid]);
+    remove(reminder) {        
+        return Notifications.cancel([reminder.notificationid||reminder.id]);
     },
     removePatient(patient) {
         return this.getPatient(patient)
         .then((reminders) => {
-            let ids = reminders.map((r) => {return r.notificationid;});
+            let ids = reminders.map((r) => r.notificationid||r.id);
             if (ids && ids.length > 0) {
                 log.debug('-- remove reminders for ' + patient.name);
                 return Notifications.cancel(ids);

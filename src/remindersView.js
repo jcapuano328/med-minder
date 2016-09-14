@@ -45,7 +45,7 @@ var RemindersView = React.createClass({
                     log.debug('*********** remove reminder ' + reminder.subject);
                     var idx = this.state.data.indexOf(reminder);
                     if (idx > -1) {
-                        Reminder.complete(reminder, true)
+                        Reminders.complete(reminder, true)
                         .then(() => {
                             this.state.data.splice(idx,1);
                             this.setState({data: this.state.data});
@@ -80,7 +80,7 @@ var RemindersView = React.createClass({
                     log.debug('*********** remove reminder ' + reminder.subject);
                     var idx = this.state.data.indexOf(reminder);
                     if (idx > -1) {
-                        Reminder.cancel(reminder)
+                        Reminders.cancel(reminder)
                         .then(() => {
                             this.state.data.splice(idx,1);
                             this.setState({data: this.state.data});
