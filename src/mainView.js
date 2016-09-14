@@ -66,6 +66,30 @@ var MainView = React.createClass({
             //this.refs.navigator.resetTo(this.state.routes.schedule);
             //this.refs.navigator.resetTo(this.state.routes.patients);
             this.refs.navigator.resetTo(this.state.routes.reminders);
+            /*
+            this.onChangeRoute('med', {
+                name: 'med',
+                data: {
+                    name: 'Stuff',
+                    dosage: '10 mg',
+                    instructions: 'Take it already',
+                    schedule: {
+                        frequency: 'Daily',
+                        dow: 'Today',
+                        tod: {
+							morning: true,
+							noon: false,
+							evening: true,
+							bedtime: false
+						}
+                    },
+                    status: 'active'
+                },
+                onChanged: (m,p) => console.log(p),
+                onAccept: () => this.refs.navigator.pop(),
+                onDiscard: () => this.refs.navigator.pop()
+            });
+            */
         })
         .done();
     },
@@ -110,6 +134,8 @@ var MainView = React.createClass({
 			this.state.routes[route].onDiscard = data.onDiscard;
 			this.state.routes[route].onFilter = data.onFilter;
             this.state.routes[route].onChanged = data.onChanged;
+            this.state.routes[route].onComplete = data.onComplete;
+            this.state.routes[route].onDelay = data.onDelay;
             this.refs.navigator.push(this.state.routes[route]);
         }
     },
@@ -147,7 +173,7 @@ var MainView = React.createClass({
                 });
             },
             onDelay: (n) => {
-                Reminder.schedule(n.payload)
+                Reminders.schedule(n.payload)
                 .then(() => {
                     log.debug('+++++++++++ Notification delayed');
                     this.refs.navigator.pop();

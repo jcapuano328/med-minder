@@ -14,7 +14,7 @@ var ReminderDetailView = React.createClass({
     onDelay() {
         this.props.onDelay && this.props.onDelay(this.props.notification);
     },
-    render() {
+    render() {        
         let message = 'Give ' + this.props.notification.payload.patient.name + ' ' + this.props.notification.payload.med.name + ' ' + this.props.notification.payload.med.dosage + ' ' + this.props.notification.payload.med.instructions;
         let at = moment(this.props.notification.payload.on).format('MMM DD, YYYY HH:mm');
         return (

@@ -63,8 +63,12 @@ var RemindersView = React.createClass({
     */
     onNotify(reminder) {
         return () => {
-            //log.debug(reminder);
-            this.props.events && this.props.events.emit('changeroute', 'reminder', reminder);
+            this.props.events && this.props.events.emit('changeroute', 'reminder', {
+                data: reminder,
+                title: reminder.payload.patient.name + ' has a medication due',
+                onComplete: this.props.onComplete || this.onComplete,
+                onDelay: this.props.onDelay || this.onDelay
+            });
         }
     },
     onRemove(reminder) {
@@ -88,6 +92,28 @@ var RemindersView = React.createClass({
                 }}
             ]);
         }
+    },
+    onComplete(n) {
+        Reminders.complete(n, true)
+        .then(() => {
+            log.debug('+++++++++++ Notification acknowledged');
+            this.props.events && this.props.events.emit('notificationacknowledged', n.payload);
+            this.props.events && this.props.events.emit('notificationrescheduled');
+            this.props.events && this.props.events.emit('poproute');
+        })
+        .catch((err) => {
+            log.error(err);
+        });
+    },
+    onDelay(n) {
+        Reminders.schedule(n.payload)
+        .then(() => {
+            log.debug('+++++++++++ Notification delayed');
+            this.props.events && this.props.events.emit('poproute');
+        })
+        .catch((err) => {
+            log.error(err);
+        });
     },
     render() {
         return (

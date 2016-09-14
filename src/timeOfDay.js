@@ -3,7 +3,6 @@ var React = require('react');
 import { View, Text, Image } from 'react-native';
 var IconButton = require('./widgets/iconButton');
 var Icons = require('./icons');
-var Scheduler = require('./services/scheduler');
 var log = require('./services/log');
 
 var TimeOfDayView = React.createClass({
@@ -48,7 +47,7 @@ var TimeOfDayView = React.createClass({
     render() {
         return (
             <View style={{flex:1, flexDirection: 'row', marginTop: 15}}>
-                {Scheduler.times().map((tod,i) => {
+                {this.props.tods.map((tod,i) => {
                     return (
                         <View key={i} style={{flex: 1, alignItems: 'center'}}>
                             <IconButton image={this.clockFace(tod)} width={64} height={64} onPress={this.onSelect(i, tod)}/>

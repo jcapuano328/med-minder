@@ -12,7 +12,13 @@ module.exports = {
         return Store.select({status: 'active'}, orderby);
     },
     get(id) {
-        return Store.select({id: id}, orderby);
+        return Store.select({id: id}, orderby)
+        .then((data) => {
+            if (data && data.length > 0) {
+                return data[0];
+            }
+            return null;
+        });
     },
     add(patient) {
         patient.created = new Date();

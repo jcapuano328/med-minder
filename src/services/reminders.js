@@ -112,7 +112,7 @@ module.exports = {
     get(id) {
         return Notifications.getById(id);
     },
-    getAll() {        
+    getAll() {
         return Notifications.get()
         .then((data) => {
             return data.sort(sorter);
@@ -205,7 +205,7 @@ module.exports = {
         if (item.status == 'active') {
             return addMedReminder(item, 0, item.meds);
         } else if (item.patient) {
-            return Notifications.create(reminder);
+            return Notifications.create(item);
         }
         return new Promise((a,r) => a());
     },
@@ -229,13 +229,15 @@ module.exports = {
                 log.debug('>>>>>> rescheduling reminder');
                 return Patients.get(reminder.payload.patient.id)
                 .then((patient) => {
-                    let med = patient.meds.find((m) => reminder.payload.med.name == m.name);
-                    //log.debug('>>>>>> med');
-                    //log.debug(med);
-                    return this.reschedule(patient, med, reminder.sendAt);
+                    let med = (patient.meds||[]).find((m) => reminder.payload.med.name == m.name);
+                    if (med) {
+                        //log.debug('>>>>>> med');
+                        //log.debug(med);
+                        return this.reschedule(patient, med, reminder.sendAt);
+                    }                    
                 });
             }
-            return new new Promise((resolve, reject) => resolve());
+            return new Promise((resolve, reject) => resolve());
         //});
     },
     cancel(reminder) {

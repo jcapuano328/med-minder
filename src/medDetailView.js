@@ -3,11 +3,13 @@
 var React = require('react');
 import { View, Switch, Text, TextInput, Picker } from 'react-native';
 var TypeAhead = require('./widgets/typeahead');
+var SelectList = require('./widgets/selectList');
 var TimeOfDay = require('./timeOfDay');
 var RxNav = require('./services/rxnav');
+var Scheduler = require('./services/scheduler');
 var moment = require('moment');
 
-let frequencies = [
+var frequencies = [
     {name: 'Daily', value: 'Daily', filter: 1},
     {name: 'Alternating Days', value: 'Alternating Days', filter: 1},
     {name: 'Every 3 Days', value: 'Every 3 Days', filter: 2},
@@ -19,7 +21,7 @@ let frequencies = [
     {name: 'Monthly', value: 'Monthly', filter: 2}
 ];
 
-let days = [
+var days = [
     {name: 'Today', value: 'Today', filter: 1},
     {name: 'Tomorrow', value: 'Tomorrow', filter: 1},
     {name: 'Sunday', value: 'Sunday', filter: 2},
@@ -32,7 +34,7 @@ let days = [
 ];
 
 var MedDetailView = React.createClass({
-    getInitialState() {        
+    getInitialState() {
         return {
             name: this.props.med.name,
             nameFocused: false,
@@ -48,8 +50,8 @@ var MedDetailView = React.createClass({
         };
     },
     filterDOW(frequency) {
-        var f = frequencies.find((f) => { return frequency == f.value; }) || {filter: 1};
-        return days.filter((day) => { return f.filter == day.filter; });
+        var f = frequencies.find((f) => frequency == f.value) || {filter: 1};
+        return days.filter((day) => f.filter == day.filter);
     },
     onChangeName(v) {
         this.setState({name: v, nameFocused: true});
@@ -69,7 +71,9 @@ var MedDetailView = React.createClass({
         this.props.onChanged && this.props.onChanged(this.props.med, {field: 'status', value: v});
     },
     onFrequencyChanged(v) {
-        this.setState({frequency: v, dows: this.filterDOW(v), nameFocused: false});
+        let dows = this.filterDOW(v);
+        let dow = dows.find((d) => d.value == this.state.dow) ? this.state.dow : dows[0].value;
+        this.setState({frequency: v, dows: dows, dow: dow, nameFocused: false});
         this.props.onChanged && this.props.onChanged(this.props.med, {field: 'frequency', value: v});
     },
     onDayOfWeekChanged(v) {
@@ -100,37 +104,25 @@ var MedDetailView = React.createClass({
                 </View>
                 <TextInput style={{margin: 10, fontSize: 20}} placeholder={'Instructions'} multiline={true} onChangeText={this.onChangeInstructions} onFocus={this.onFocus}>{this.state.instructions}</TextInput>
                 <View style={{margin: 10}}>
-                    <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                    <View style={{flex: .5, flexDirection: 'row', justifyContent: 'center'}}>
                         <Text style={{flex: 3, fontSize: 20,fontWeight: 'bold', fontStyle: 'italic', marginLeft: 5, marginTop: 10}}>Schedule</Text>
-                        <View style={{flex:1, alignItems: 'center', justifyContent: 'center'}}>
+                        <View style={{flex:1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
                             <Text>Active</Text>
                             <Switch value={this.state.status == 'active'} onValueChange={this.onStatusChanged} />
                         </View>
                     </View>
-                    <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <Text style={{flex: 1, fontSize: 16,fontWeight: 'bold', marginLeft: 15, marginTop: 13}}>Interval</Text>
-                        <Picker style={{flex: 3}}
-                            selectedValue={this.state.frequency}
-                            onValueChange={this.onFrequencyChanged}
-                        >
-                            {frequencies.map((f,i) => {return (<Picker.Item key={i} label={f.name} value={f.value} />);})}
-                        </Picker>
-                    </View>
-
-                    <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <Text style={{flex: 1, fontSize: 16,fontWeight: 'bold', marginLeft: 15, marginTop: 13}}>Day of Week</Text>
-                        <Picker style={{flex: 3}}
-                            selectedValue={this.state.dow}
-                            onValueChange={this.onDayOfWeekChanged}
-                        >
-                            {this.state.dows.map((f,i) => {return (<Picker.Item key={i} label={f.name} value={f.value} />);})}
-                        </Picker>
-                    </View>
-
-                    <View style={{flex: 1, justifyContent: 'center'}}>
-                        <Text style={{flex: 1, fontSize: 16,fontWeight: 'bold', marginLeft: 15, marginTop: 13}}>Time of Day</Text>
+                    <View style={{flex: 4, flexDirection: 'row', justifyContent: 'center'}}>
+                        <View style={{flex: 1, borderRightWidth: 1, borderRightColor: 'gray'}}>
+                            <SelectList title={'Interval'} titleonly={true} items={frequencies.map((f) => {return {label: f.name, value: f.value};})} selected={this.state.frequency} onChanged={this.onFrequencyChanged}/>
+                        </View>
                         <View style={{flex: 1}}>
-                            <TimeOfDay tod={this.state.tod} onSelect={this.onTimeOfDayChanged}/>
+                            <SelectList title={'Day of Week'} titleonly={true} items={this.state.dows.map((f) => {return {label: f.name, value: f.value};})} selected={this.state.dow} onChanged={this.onDayOfWeekChanged}/>
+                        </View>
+                    </View>
+                    <View style={{flex: 1, justifyContent: 'center'}}>
+                        {/*<Text style={{flex: 1, fontSize: 16,fontWeight: 'bold', marginLeft: 15, marginTop: 13}}>Time of Day</Text>*/}
+                        <View style={{flex: 1}}>
+                            <TimeOfDay tods={Scheduler.times()} tod={this.state.tod} onSelect={this.onTimeOfDayChanged}/>
                         </View>
                     </View>
                 </View>

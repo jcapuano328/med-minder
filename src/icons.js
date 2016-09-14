@@ -14,6 +14,8 @@ module.exports = {
 
 	"open":	require('./res/unchecked_checkbox.png'),
 	"complete": require('./res/checked_checkbox.png'),
+	"unchecked": require('./res/unchecked_checkbox.png'),
+	"checked": require('./res/checked_checkbox.png'),
 
 	"inactive":	require('./res/unchecked_checkbox.png'),
 	"active": require('./res/checked_checkbox.png'),
