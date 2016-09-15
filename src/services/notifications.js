@@ -1,5 +1,5 @@
 'use strict'
-import Notification from 'react-native-system-notification';
+var Notification = require('react-native-system-notification');
 var log = require('./log');
 var moment = require('moment');
 let FIVE_MINUTES = (5 * 60 * 1000);

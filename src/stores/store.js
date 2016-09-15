@@ -61,7 +61,7 @@ module.exports = (file) => {
 		            let key = keys.shift();
 		            if (l[key] < r[key]) {
 		                res = -1;
-		            } else if (l[key] < r[key]) {
+		            } else if (l[key] > r[key]) {
 		                res = 1;
 		            }
 		        }
@@ -79,10 +79,7 @@ module.exports = (file) => {
 		    return this.load()
 		    .then((data) => {
 		        return (data || []).filter(this.comparer(filter)).sort(this.sorter(orderby));
-		    })
-			.catch((err) => {
-				console.log(err);
-			});
+		    });
 		}
 	};
 };
