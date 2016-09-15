@@ -16,21 +16,5 @@ into "project/node_modules/react-native-system-notification/android/build.gradle
 after adding as i was getting another Multi-dex related issue, I had to enable multi-dex and app runs without error.
 
 
-##### multidex (though it worked without this)
-
-android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.1"
-
-    defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 22
-        versionCode 1
-        versionName "1.0"
-        ndk {
-            abiFilters "armeabi-v7a", "x86"
-        }
-		// Enabling multidex support.
-        multiDexEnabled true		
-    }
-}
+##### sandboxed-module require react-native dependencies
+must have an "main" entry in the modules' package.json file that includes a default js file

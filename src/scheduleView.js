@@ -2,6 +2,7 @@
 
 var React = require('react');
 import { View, Text } from 'react-native';
+var ScheduleNowView = require('./scheduleNowView');
 var ScheduleDayView = require('./scheduleDayView');
 var ScheduleWeekView = require('./scheduleWeekView');
 var Reminders  = require('./services/reminders');
@@ -19,7 +20,9 @@ var ScheduleView = React.createClass({
     },
     fetch() {
         let f = null;
-        if (!this.props.filter || this.props.filter == 'today') {
+        if (!this.props.filter || this.props.filter == 'now') {
+            f = Reminders.getNow;
+        } else if (this.props.filter == 'today') {
             f = Reminders.getToday;
         } else if (this.props.filter == 'week') {
             f = Reminders.getThisWeek;
@@ -71,7 +74,7 @@ var ScheduleView = React.createClass({
                     )
                     : (
                         <View style={{flex:1, marginTop: 250, alignItems: 'center'}}>
-                            <Text style={{fontSize: 28, fontWeight: 'bold'}}>No Meds</Text>
+                            <Text style={{fontSize: 28, fontWeight: 'bold'}}>Empty</Text>
                         </View>
                     )
                 }
@@ -79,6 +82,9 @@ var ScheduleView = React.createClass({
         );
     },
     renderView() {
+        if (this.props.filter == 'now') {
+            return this.renderNow();
+        }
         if (this.props.filter == 'today') {
             return this.renderToday();
         }
@@ -94,6 +100,18 @@ var ScheduleView = React.createClass({
                 <Text style={{fontSize: 28, fontWeight: 'bold'}}>WTH is the filter? [{this.props.filter}]</Text>
             </View>
         );
+    },
+    renderNow() {
+        return (
+            <ScheduleNowView data={this.state.schedule} onStatus={this.onStatus} onSelect={this.onSelect}/>
+        );
+        /*
+        return (
+            <View style={{flex:1, marginTop: 250, alignItems: 'center'}}>
+                <Text style={{fontSize: 28, fontWeight: 'bold'}}>WTH does Now look like?</Text>
+            </View>
+        );
+        */
     },
     renderToday() {
         return (

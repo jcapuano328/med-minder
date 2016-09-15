@@ -19,6 +19,7 @@ var Sample = require('./services/sample.js');
 var log = require('./services/log');
 
 var scheduleFilterItems = [
+    {type: 'schedule', label: 'Now', value: 'now'},
     {type: 'schedule', label: 'Today', value: 'today'},
     {type: 'schedule', label: 'This Week', value: 'week'},
     {type: 'schedule', label: 'This Month', value: 'month'}
