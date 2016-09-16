@@ -30,12 +30,16 @@ let comparer = (filter) => {
         let fdt = moment(filter.on);
         let idt = moment(item.sendAt);
 
+        let ftod = Scheduler.getTOD(fdt);
+        let itod = Scheduler.getTOD(idt);
+        console.log(ftod + ' / ' + itod);
+
         return (
             (!filter.patient || item.patient.id == filter.patient)
             &&
             (!filter.status || item.status == filter.status)
             &&
-            (!filter.now || (fdt.year()==idt.year() && fdt.month()==idt.month() && fdt.date()==idt.date() && fdt.hour()==idt.hour() && fdt.minute()==idt.minute()))
+            (!filter.now || (fdt.year()==idt.year() && fdt.month()==idt.month() && fdt.date()==idt.date() && ftod==itod))
             &&
             (!filter.day || (fdt.year()==idt.year() && fdt.month()==idt.month() && fdt.date()==idt.date()))
             &&
@@ -138,7 +142,6 @@ module.exports = {
         let tod = Scheduler.getTOD();
         return Notifications.get()
         .then((notifications) => {
-            console.log(tod);
             let t = Scheduler.mapTOD(tod);
             let now = moment({hour: t.hour, minute: t.minute, second: t.second});
             return notifications.filter(comparer({on: now, now: true})).map((n) => {

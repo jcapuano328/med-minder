@@ -7,8 +7,7 @@ var log = require('./services/log');
 
 var ScheduleMedListItemView = React.createClass({
     onSelect(r) {
-        return () => {
-            console.log(r);
+        return () => {            
             this.props.onSelect && this.props.onSelect({payload: r});
         }
     },
