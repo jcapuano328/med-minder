@@ -47,6 +47,8 @@ describe('Notifications', () => {
 			payload: env.reminder
 		};
 
+        env.handler = sinon.stub();
+
 		env.notifications = sandbox.require('../../src/services/notifications', {
 			requires: {
 				"react-native-system-notification": env.rnsn,
@@ -136,9 +138,112 @@ describe('Notifications', () => {
 		});
 	});
 
-	//describe('create');
-	//describe('cancel');
-	//describe('clear');
-	//describe('start');
-	//describe('stop');
+	describe('create', () => {
+        beforeEach((done) => {
+            env.rnsn.create.returns(Promise.accept(env.notification));
+            env.notifications.create(env.reminder)
+            .then((n) => {
+                env.result = n;
+                done();
+            })
+            .catch(done);
+        });
+        it('should create the notification object', () => {
+            expect(env.result).to.deep.equal(env.notification);
+        });
+    });
+
+	describe('cancel', () => {
+        describe('specific', () => {
+            beforeEach((done) => {
+                env.rnsn.delete.returns(Promise.accept());
+                env.notifications.cancel([1,2,3])
+                .then(() => {
+                    done();
+                })
+                .catch(done);
+            });
+
+            it('should cancel each notification', () => {
+                expect(env.rnsn.deleteAll).to.not.have.been.called;
+                expect(env.rnsn.delete).to.have.been.calledThrice;
+                expect(env.rnsn.delete).to.have.been.calledWith(1);
+                expect(env.rnsn.delete).to.have.been.calledWith(2);
+                expect(env.rnsn.delete).to.have.been.calledWith(3);
+            });
+        });
+
+        describe('all', () => {
+            beforeEach((done) => {
+                env.rnsn.deleteAll.returns(Promise.accept());
+                env.notifications.cancel()
+                .then(() => {
+                    done();
+                })
+                .catch(done);
+            });
+
+            it('should cancel all notifications', () => {
+                expect(env.rnsn.deleteAll).to.have.been.calledOnce;
+                expect(env.rnsn.delete).to.not.have.been.called;
+            });
+        });
+    });
+
+    describe('clear', () => {
+        describe('specific', () => {
+            beforeEach((done) => {
+                env.rnsn.clear.returns(Promise.accept());
+                env.notifications.clear(1)
+                .then(() => {
+                    done();
+                })
+                .catch(done);
+            });
+
+            it('should clear the notification', () => {
+                expect(env.rnsn.clearAll).to.not.have.been.called;
+                expect(env.rnsn.clear).to.have.been.calledOnce;
+                expect(env.rnsn.clear).to.have.been.calledWith(1);
+            });
+        });
+
+        describe('all', () => {
+            beforeEach((done) => {
+                env.rnsn.clearAll.returns(Promise.accept());
+                env.notifications.clear()
+                .then(() => {
+                    done();
+                })
+                .catch(done);
+            });
+
+            it('should clear all notifications', () => {
+                expect(env.rnsn.clearAll).to.have.been.calledOnce;
+                expect(env.rnsn.clear).to.not.have.been.called;
+            });
+        });
+    });
+
+	describe('start', () => {
+        beforeEach(() => {
+            env.notifications.start(env.handler);
+        });
+
+        it('should register the handler', () => {
+            expect(env.rnsn.addListener).to.have.been.calledOnce;
+            expect(env.rnsn.addListener).to.have.been.calledWith('press', env.handler);
+        });
+    });
+
+	describe('stop', () => {
+        beforeEach(() => {
+            env.notifications.stop();
+        });
+
+        it('should unregister all handlers', () => {
+            expect(env.rnsn.removeAllListeners).to.have.been.calledOnce;
+            expect(env.rnsn.removeAllListeners).to.have.been.calledWith('press');
+        });
+    });
 });

@@ -15,7 +15,7 @@ describe('Scheduler', () => {
 		env.now = moment();
 		//env.date = moment({year: 2016, month: 5, day: 12, hour: 13, minute: 25});
 		//env.moment = sinon.stub();
-		env.scheduler = sandbox.require('../../app/services/scheduler', {
+		env.scheduler = sandbox.require('../../src/services/scheduler', {
 			requires: {
 				moment: moment
 			}

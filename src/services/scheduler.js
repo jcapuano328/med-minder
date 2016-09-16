@@ -3,6 +3,28 @@ var moment = require('moment');
 
 let _days = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
 let _times = ['morning','noon','evening','bedtime'];
+let _tods = {
+    morning: {
+        hour: 6,
+        minute: 0,
+        second: 0
+    },
+    noon: {
+        hour: 12,
+        minute: 0,
+        second: 0
+    },
+    evening: {
+        hour: 18,
+        minute: 0,
+        second: 0
+    },
+    bedtime: {
+        hour: 22,
+        minute: 0,
+        second: 0
+    }
+};
 
 let increment = (dt, freq) => {
     //Daily,Alternating Days,Every 3 Days,Every 4 Days,Every 5 Days,Every 6 Days,Weekly,Alternating Weeks,Monthly
@@ -32,7 +54,7 @@ let increment = (dt, freq) => {
         case 'every 6 days':
             t = 'd';
             i = 6;
-            break;            
+            break;
         case 'weekly':
             t = 'w';
             i = 1;
@@ -59,38 +81,7 @@ let mapDOW = (dow) => {
     return idx;
 }
 let mapTOD = (tod) => {
-    switch(_times.indexOf(tod.toLowerCase())) {
-        case 0:
-            return {
-                hour: 6,
-                minute: 0,
-                second: 0
-            };
-        case 1:
-            return {
-                hour: 12,
-                minute: 0,
-                second: 0
-            };
-        case 2:
-            return {
-                hour: 18,
-                minute: 0,
-                second: 0
-            };
-        case 3:
-            return {
-                hour: 22,
-                minute: 0,
-                second: 0
-            };
-        default:
-            return {
-                hour: 0,
-                minute: 0,
-                second: 0
-            };
-    }
+    return _tods[tod.toLowerCase()];
 }
 
 let scheduler = (schedule, last) => {
@@ -145,9 +136,18 @@ module.exports = {
         });
     },
     getTOD(t) {
-        return _times.find((time) => {
-            let mt = mapTOD(time);
-            return mt.hour == t.hour && mt.minute == t.minute;
-        });
-    }
+        t = t || {hour: moment().hour(), minute: 0};
+        let idx = 0;
+        if (t.hour >= 0 && t.hour <= _tods.noon.hour) {
+            idx = 0;
+        } else if (t.hour >= _tods.noon.hour && t.hour < _tods.evening.hour) {
+            idx = 1;
+        } else if (t.hour >= _tods.evening.hour && t.hour < _tods.bedtime.hour) {
+            idx = 2;
+        } else {
+            idx = 3;
+        }
+        return _times[idx];
+    },
+    mapTOD: mapTOD
 };

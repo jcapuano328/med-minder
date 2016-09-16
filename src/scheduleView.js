@@ -11,22 +11,24 @@ var log = require('./services/log');
 var ScheduleView = React.createClass({
     getInitialState() {
         return {
-            schedule: null
+            schedule: null,
+            filter: this.props.filter
         };
     },
     componentWillMount() {
+        this.props.events.once('schedulefilterchanged', this.onFilter);
         this.props.events.once('notificationacknowledged', this.onNotification);
         return this.fetch().done();
     },
     fetch() {
         let f = null;
-        if (!this.props.filter || this.props.filter == 'now') {
+        if (!this.state.filter || this.state.filter == 'now') {
             f = Reminders.getNow;
-        } else if (this.props.filter == 'today') {
+        } else if (this.state.filter == 'today') {
             f = Reminders.getToday;
-        } else if (this.props.filter == 'week') {
+        } else if (this.state.filter == 'week') {
             f = Reminders.getThisWeek;
-        } else if (this.props.filter == 'month') {
+        } else if (this.state.filter == 'month') {
             f = Reminders.getThisMonth;
         }
         return f()
@@ -37,6 +39,11 @@ var ScheduleView = React.createClass({
         .catch((err) => {
             log.error(err);
         });
+    },
+    onFilter(filter) {
+        this.state.filter = filter;
+        this.fetch();
+        this.props.events.once('schedulefilterchanged', this.onFilter);
     },
     onSelect(reminder) {
         this.props.events.emit('changeroute', 'reminder', {
@@ -72,32 +79,32 @@ var ScheduleView = React.createClass({
                             {this.renderView()}
                         </View>
                     )
-                    : (
-                        <View style={{flex:1, marginTop: 250, alignItems: 'center'}}>
+                    : (<View />
+                        /*<View style={{flex:1, marginTop: 250, alignItems: 'center'}}>
                             <Text style={{fontSize: 28, fontWeight: 'bold'}}>Empty</Text>
-                        </View>
+                        </View>*/
                     )
                 }
             </View>
         );
     },
     renderView() {
-        if (this.props.filter == 'now') {
+        if (this.state.filter == 'now') {
             return this.renderNow();
         }
-        if (this.props.filter == 'today') {
+        if (this.state.filter == 'today') {
             return this.renderToday();
         }
-        if (this.props.filter == 'week') {
+        if (this.state.filter == 'week') {
             return this.renderThisWeek();
         }
-        if (this.props.filter == 'month') {
+        if (this.state.filter == 'month') {
             return this.renderThisMonth();
         }
 
         return (
             <View style={{flex:1, marginTop: 250, alignItems: 'center'}}>
-                <Text style={{fontSize: 28, fontWeight: 'bold'}}>WTH is the filter? [{this.props.filter}]</Text>
+                <Text style={{fontSize: 28, fontWeight: 'bold'}}>WTH is the filter? [{this.state.filter}]</Text>
             </View>
         );
     },

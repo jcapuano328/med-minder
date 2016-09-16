@@ -148,11 +148,13 @@ var MainView = React.createClass({
         }
     },
     onFilter(filter) {
-        log.debug('filter ' + filter);
+        log.debug('filter ' + filter.label);
         if (filter.type == 'schedule') {
+            this.eventEmitter.emit('schedulefilterchanged', filter.value);
             this.setState({scheduleFilter: filter});
         }
         if (filter.type == 'reminder') {
+            this.eventEmitter.emit('reminderfilterchanged', filter.value);
             this.setState({reminderFilter: filter});
         }
     },

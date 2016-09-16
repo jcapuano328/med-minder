@@ -35,6 +35,8 @@ let comparer = (filter) => {
             &&
             (!filter.status || item.status == filter.status)
             &&
+            (!filter.now || (fdt.year()==idt.year() && fdt.month()==idt.month() && fdt.date()==idt.date() && fdt.hour()==idt.hour() && fdt.minute()==idt.minute()))
+            &&
             (!filter.day || (fdt.year()==idt.year() && fdt.month()==idt.month() && fdt.date()==idt.date()))
             &&
             (!filter.week || (fdt.year()==idt.year() && fdt.week()==idt.week()))
@@ -130,6 +132,31 @@ module.exports = {
                 reminder.notificationid = n.id;
                 return reminder;
             });
+        });
+    },
+    getNow() {
+        let tod = Scheduler.getTOD();
+        return Notifications.get()
+        .then((notifications) => {
+            console.log(tod);
+            let t = Scheduler.mapTOD(tod);
+            let now = moment({hour: t.hour, minute: t.minute, second: t.second});
+            return notifications.filter(comparer({on: now, now: true})).map((n) => {
+                let reminder = n.payload;
+                reminder.notificationid = n.id;
+                return reminder;
+            });
+        })
+        .then((data) => {
+            let schedule = {};
+            schedule[tod] = {};
+            data.forEach((d) => {
+                if (!schedule[tod][d.patient.name]) {
+                    schedule[tod][d.patient.name] = [];
+                }
+                schedule[tod][d.patient.name].push(d);
+            });
+            return schedule;
         });
     },
     getToday() {
@@ -243,7 +270,7 @@ module.exports = {
     cancel(reminder) {
         return this.remove(reminder);
     },
-    remove(reminder) {        
+    remove(reminder) {
         return Notifications.cancel([reminder.notificationid||reminder.id]);
     },
     removePatient(patient) {
