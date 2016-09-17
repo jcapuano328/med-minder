@@ -62,7 +62,7 @@ var MainView = React.createClass({
         this.eventEmitter.addListener('raisenotification', this.onNotification);
         this.state.initialRoute = this.state.routes.landing;
         //return Sample.load()
-        return new Promise((a,r) => a())        
+        return new Promise((a,r) => a())
         .then(() => {
             this.refs.navigator.resetTo(this.state.routes.schedule);
             //this.refs.navigator.resetTo(this.state.routes.patients);

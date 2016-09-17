@@ -105,7 +105,7 @@ var PatientDetailView = React.createClass({
         return (
             <View style={{flex: 1,marginTop: 50}}>
                 <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                    <TextInput style={{flex: 3, margin: 10, fontSize: 20}} placeholder={'Name'} onChangeText={this.onChangeName}>{this.state.name}</TextInput>
+                    <TextInput style={{flex: 3, marginLeft: 10, fontSize: 20}} placeholder={'Name'} onChangeText={this.onChangeName}>{this.state.name}</TextInput>
                     <View style={{flex:1, alignItems: 'center', justifyContent: 'center'}}>
                         <Text>Active</Text>
                         <Switch value={this.state.status == 'active'} onValueChange={this.onStatusChanged} />

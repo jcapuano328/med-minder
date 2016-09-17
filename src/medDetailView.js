@@ -93,17 +93,22 @@ var MedDetailView = React.createClass({
         //<TextInput style={{flex: 2, margin: 10, fontSize: 20}} placeholder={'Name'} onChangeText={this.onChangeName}>{this.state.name}</TextInput>
         return (
             <View style={{
-                //flex: 1,
+                flex: 1,
                 marginTop: 50
             }}>
                 <View style={{flex: 1, flexDirection: 'row'}}>
-                    <View style={{flex: 2, margin: 10}}>
-                        <TypeAhead value={this.state.name} placeholder={'Name'} onChangeValue={this.onChangeName} find={RxNav.find} focused={this.state.nameFocused}/>
+                    <View style={{flex: 2, marginLeft: 10, marginRight: 10}}>
+                        <TextInput style={{fontSize: 20}} placeholder={'Name'} onChangeText={this.onChangeName} onFocus={this.onFocus}>{this.state.name}</TextInput>
+                        {/*<TypeAhead value={this.state.name} placeholder={'Name'} onChangeValue={this.onChangeName} find={RxNav.find} focused={this.state.nameFocused}/>*/}
                     </View>
-                    <TextInput style={{flex: 1, margin: 10, fontSize: 20}} placeholder={'Dosage'} onChangeText={this.onChangeDosage} onFocus={this.onFocus}>{this.state.dosage}</TextInput>
+                    <View style={{flex: 1, marginLeft: 10, marginRight: 10}}>
+                        <TextInput style={{fontSize: 20}} placeholder={'Dosage'} onChangeText={this.onChangeDosage} onFocus={this.onFocus}>{this.state.dosage}</TextInput>
+                    </View>
                 </View>
-                <TextInput style={{margin: 10, fontSize: 20}} placeholder={'Instructions'} multiline={true} onChangeText={this.onChangeInstructions} onFocus={this.onFocus}>{this.state.instructions}</TextInput>
-                <View style={{margin: 10}}>
+                <View style={{flex: 1}}>
+                    <TextInput style={{marginLeft: 10, marginRight: 10, fontSize: 20}} placeholder={'Instructions'} multiline={true} onChangeText={this.onChangeInstructions} onFocus={this.onFocus}>{this.state.instructions}</TextInput>
+                </View>
+                <View style={{flex: 10, marginLeft: 10, marginRight: 10}}>
                     <View style={{flex: .5, flexDirection: 'row', justifyContent: 'center'}}>
                         <Text style={{flex: 3, fontSize: 20,fontWeight: 'bold', fontStyle: 'italic', marginLeft: 5, marginTop: 10}}>Schedule</Text>
                         <View style={{flex:1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
@@ -111,7 +116,7 @@ var MedDetailView = React.createClass({
                             <Switch value={this.state.status == 'active'} onValueChange={this.onStatusChanged} />
                         </View>
                     </View>
-                    <View style={{flex: 4, flexDirection: 'row', justifyContent: 'center'}}>
+                    <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                         <View style={{flex: 1, borderRightWidth: 1, borderRightColor: 'gray'}}>
                             <SelectList title={'Interval'} titleonly={true} items={frequencies.map((f) => {return {label: f.name, value: f.value};})} selected={this.state.frequency} onChanged={this.onFrequencyChanged}/>
                         </View>
@@ -120,7 +125,6 @@ var MedDetailView = React.createClass({
                         </View>
                     </View>
                     <View style={{flex: 1, justifyContent: 'center'}}>
-                        {/*<Text style={{flex: 1, fontSize: 16,fontWeight: 'bold', marginLeft: 15, marginTop: 13}}>Time of Day</Text>*/}
                         <View style={{flex: 1}}>
                             <TimeOfDay tods={Scheduler.times()} tod={this.state.tod} onSelect={this.onTimeOfDayChanged}/>
                         </View>
