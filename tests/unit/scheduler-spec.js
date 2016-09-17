@@ -893,4 +893,133 @@ describe('Scheduler', () => {
 			});
 		});
 	});
+
+	describe.only('getTOD', () => {
+		/*
+		describe('now', () => {
+			beforeEach(() => {
+				env.tod = env.scheduler.getTOD();
+			});
+
+			it('should be morning', () => {
+				expect(env.tod).to.equal('morning');
+			});
+		});
+		*/
+
+		describe('morning', () => {
+			describe('6 am', () => {
+				beforeEach(() => {
+					let now = moment({year: 2016, month: 9, day: 15, hour: 6, minute: 14, second: 34});
+					env.tod = env.scheduler.getTOD(now);
+				});
+
+				it('should be morning', () => {
+					expect(env.tod).to.equal('morning');
+				});
+			});
+			describe('9 am', () => {
+				beforeEach(() => {
+					let now = moment({year: 2016, month: 9, day: 15, hour: 9, minute: 59, second: 34});
+					env.tod = env.scheduler.getTOD(now);
+				});
+
+				it('should be morning', () => {
+					expect(env.tod).to.equal('morning');
+				});
+			});
+			describe('11:59 am', () => {
+				beforeEach(() => {
+					let now = moment({year: 2016, month: 9, day: 15, hour: 11, minute: 59, second: 59});
+					env.tod = env.scheduler.getTOD(now);
+				});
+
+				it('should be morning', () => {
+					expect(env.tod).to.equal('morning');
+				});
+			});
+		});
+
+		describe('morning', () => {
+			describe('6 am', () => {
+				beforeEach(() => {
+					let now = moment({year: 2016, month: 9, day: 15, hour: 6, minute: 14, second: 34});
+					env.tod = env.scheduler.getTOD(now);
+				});
+
+				it('should be morning', () => {
+					expect(env.tod).to.equal('morning');
+				});
+			});
+			describe('9 am', () => {
+				beforeEach(() => {
+					let now = moment({year: 2016, month: 9, day: 15, hour: 9, minute: 59, second: 34});
+					env.tod = env.scheduler.getTOD(now);
+				});
+
+				it('should be morning', () => {
+					expect(env.tod).to.equal('morning');
+				});
+			});
+			describe('11:59 am', () => {
+				beforeEach(() => {
+					let now = moment({year: 2016, month: 9, day: 15, hour: 11, minute: 59, second: 59});
+					env.tod = env.scheduler.getTOD(now);
+				});
+
+				it('should be morning', () => {
+					expect(env.tod).to.equal('morning');
+				});
+			});
+
+		});
+		describe('noon', () => {
+			describe('12 pm', () => {
+				beforeEach(() => {
+					let now = moment({year: 2016, month: 9, day: 15, hour: 12, minute: 0, second: 0});
+					env.tod = env.scheduler.getTOD(now);
+				});
+
+				it('should be noon', () => {
+					expect(env.tod).to.equal('noon');
+				});
+			});
+			describe('5:59 pm', () => {
+				beforeEach(() => {
+					let now = moment({year: 2016, month: 9, day: 15, hour: 17, minute: 59, second: 59});
+					env.tod = env.scheduler.getTOD(now);
+				});
+
+				it('should be noon', () => {
+					expect(env.tod).to.equal('noon');
+				});
+			});
+		});
+
+		describe('bedtime', () => {
+			describe('11:01 am', () => {
+				beforeEach(() => {
+					let now = moment({year: 2016, month: 9, day: 15, hour: 23, minute: 1, second: 0});
+					env.tod = env.scheduler.getTOD(now);
+				});
+
+				it('should be bedtime', () => {
+					expect(env.tod).to.equal('bedtime');
+				});
+			});
+		});
+
+		describe('overnight', () => {
+			describe('12:01 am', () => {
+				beforeEach(() => {
+					let now = moment({year: 2016, month: 9, day: 15, hour: 0, minute: 1, second: 0});
+					env.tod = env.scheduler.getTOD(now);
+				});
+
+				it('should be morning', () => {
+					expect(env.tod).to.equal('morning');
+				});
+			});
+		});
+	});
 });

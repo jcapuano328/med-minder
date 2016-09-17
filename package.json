@@ -1,14 +1,14 @@
 {
   "name": "medminder",
-  "version": "0.0.1",
+  "version": "1.1.0",
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "debug": "node node_modules/react-native/local-cli/cli.js run-android",
     "build-rel": "cd android && gradlew assembleRelease && cd ..",
     "build-dbg": "cd android && gradlew assembleDebug && cd ..",
-    "install-dbg": "adb install -r android/app/build/outputs/apk/mm-debug-1.0.apk",
-    "install-rel": "adb install -r android/app/build/outputs/apk/mm-release-1.0.apk",
+    "install-dbg": "adb install -r android/app/build/outputs/apk/mm-debug-1.1.apk",
+    "install-rel": "adb install -r android/app/build/outputs/apk/mm-release-1.1.apk",
     "bridge": "adb reverse tcp:8081 tcp:8081",
     "menu": "adb shell input keyevent 82",
     "logs": "adb logcat *:S ReactNative:V ReactNativeJS:V",

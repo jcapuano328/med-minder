@@ -133,16 +133,16 @@ var ScheduleView = React.createClass({
         */
     },
     renderThisWeek() {
+        /*
         return (
             <ScheduleWeekView data={this.state.schedule} onStatus={this.onStatus} onSelect={this.onSelect} />
         );
-        /*
+        */
         return (
             <View style={{flex:1, marginTop: 250, alignItems: 'center'}}>
                 <Text style={{fontSize: 28, fontWeight: 'bold'}}>WTH does This Week look like?</Text>
             </View>
         );
-        */
     },
     renderThisMonth() {
         return (

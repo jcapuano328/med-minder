@@ -137,15 +137,16 @@ module.exports = {
     },
     getTOD(t) {
         t = t || {hour: moment().hour(), minute: 0};
+        t.hour = typeof t.hour == 'function' ? t.hour() : t.hour;
         let idx = 0;
-        if (t.hour >= 0 && t.hour <= _tods.noon.hour) {
-            idx = 0;
+        if (t.hour >= 0 && t.hour < _tods.noon.hour) {
+            idx = 0;    // morning
         } else if (t.hour >= _tods.noon.hour && t.hour < _tods.evening.hour) {
-            idx = 1;
+            idx = 1;    // noon
         } else if (t.hour >= _tods.evening.hour && t.hour < _tods.bedtime.hour) {
-            idx = 2;
+            idx = 2;    // evening
         } else {
-            idx = 3;
+            idx = 3;    // bedtime
         }
         return _times[idx];
     },

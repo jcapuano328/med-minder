@@ -17,11 +17,14 @@ var ScheduleNowView = React.createClass({
         }
     */
     render() {
+        //console.log(this.props.data);
         let keys = Object.keys(this.props.data);
         if (keys.length > 0) {
             let tod = keys[0];
             return (
+                <View style={{flex: 1, marginTop: 55}}>
                 <ScheduleTODView tod={tod} data={this.props.data[tod]} events={this.props.events} onSelect={this.props.onSelect} onStatus={this.props.onStatus} />
+                </View>
             );
         }
         return (<View />)

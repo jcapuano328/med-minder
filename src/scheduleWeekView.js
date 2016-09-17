@@ -68,7 +68,7 @@ var ScheduleWeekView = React.createClass({
                                 </Text>
                             </View>
                             {Scheduler.days().map((d,j) => {
-                                log.debug('>>>>> ' + d + ' / ' + t);
+                                log.debug('>>>>> ' + d + ' / ' + t);                                
                                 return (
                                     <ScheduleTimeView key={i+j} data={this.props.data[d][t]} onPress={this.props.onSelected} />
                                 );

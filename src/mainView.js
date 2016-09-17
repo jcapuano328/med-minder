@@ -49,7 +49,7 @@ var MainView = React.createClass({
                 reminder: {index: 6, name: 'reminder', title: 'Reminder'},
                 about: {index: 7, name: 'about', title: 'About'}
             },
-            version: '0.0.1',
+            version: '1.1.0',
             scheduleFilter: scheduleFilterItems[0],
             reminderFilter: {}
         };
@@ -62,7 +62,7 @@ var MainView = React.createClass({
         this.eventEmitter.addListener('raisenotification', this.onNotification);
         this.state.initialRoute = this.state.routes.landing;
         //return Sample.load()
-        return new Promise((a,r) => a())
+        return new Promise((a,r) => a())        
         .then(() => {
             this.refs.navigator.resetTo(this.state.routes.schedule);
             //this.refs.navigator.resetTo(this.state.routes.patients);
@@ -126,7 +126,7 @@ var MainView = React.createClass({
         this.toggleDrawer();
     },
     onChangeRoute(route, data) {
-        log.debug('Change route to ' + route);
+        //log.debug('Change route to ' + route);
         if (this.state.routes[route]) {
             this.state.routes[route].title = data.title || this.state.routes[route].title;
             this.state.routes[route].data = data.data;
@@ -143,12 +143,12 @@ var MainView = React.createClass({
     onAdd(type) {
         // now what? don't want to go the eventing route again...
         return () => {
-            log.debug('Add ' + type);
+            //log.debug('Add ' + type);
             this.eventEmitter.emit('add' + type);
         }
     },
     onFilter(filter) {
-        log.debug('filter ' + filter.label);
+        //log.debug('filter ' + filter.label);
         if (filter.type == 'schedule') {
             this.eventEmitter.emit('schedulefilterchanged', filter.value);
             this.setState({scheduleFilter: filter});
@@ -189,7 +189,7 @@ var MainView = React.createClass({
     },
     renderScene(route, navigator) {
         route = route || {};
-        log.debug('render scene ' + route.name);
+        //log.debug('render scene ' + route.name);
         if (route.name == 'landing') {
             return (
                 <LandingView events={this.eventEmitter} />

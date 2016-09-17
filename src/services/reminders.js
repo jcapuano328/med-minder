@@ -25,20 +25,16 @@ let create = (patient, med, last) => {
 
 let comparer = (filter) => {
     filter = filter || {};
+    let fdt = moment(filter.on);
+    let ftod = Scheduler.getTOD(fdt);
     return (item) => {
-        let fdt = moment(filter.on);
         let idt = moment(item.sendAt);
-
-        let ftod = Scheduler.getTOD(fdt);
-        let itod = Scheduler.getTOD(idt);
-        console.log(ftod + ' / ' + itod);
-
         return (
             (!filter.patient || item.patient.id == filter.patient)
             &&
             (!filter.status || item.status == filter.status)
             &&
-            (!filter.now || (fdt.year()==idt.year() && fdt.month()==idt.month() && fdt.date()==idt.date() && ftod==itod))
+            (!filter.now || (fdt.year()==idt.year() && fdt.month()==idt.month() && fdt.date()==idt.date() && ftod==Scheduler.getTOD(idt)))
             &&
             (!filter.day || (fdt.year()==idt.year() && fdt.month()==idt.month() && fdt.date()==idt.date()))
             &&
