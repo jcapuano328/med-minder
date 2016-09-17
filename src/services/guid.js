@@ -1,69 +1,113 @@
 'use strict'
-var crypto = require('react-native-crypto');
+let hexdigits = ['0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'];
+
+let randomInt = (low, high) => {
+	return Math.floor(Math.random()*(high-low+1)) + low;
+}
+
+let randomOneOf = (list) => {
+    return list[randomInt(0, list.length-1)];
+}
 
 let getGUID = (guidversion,randomId) => {
-	/*
-	 in:     (1) 'guidversion' (1=timestamp or 2=random) and (2) 'randomId' (a function and will be idHexidecimal or idTimestamp)
-	 out:    returns ARRAY guid
-	*/
-
-	let value;
-	let guidarray = [];
-	let prev=0;
-
-	for(var i = 0; i < 20; i++) {
-		if(i >= 8) {
-			if(i !== 8 && i % 8 == 0) {
-				value = guidversion + randomId(3);  /* add group 3 */
-				guidarray.push(value);
-			} else if(i % 4 == 0) {
-				value = randomId(i-prev);           /* add group 1 and 2 */
-				guidarray.push(value);
-				prev = i;
-			}
-		}
-	}
-	value = randomizer(1,'89ab');           /* the first val in col4 needs to be 8, 9, a or b */
-	guidarray.push(value + randomId(3));    /* add group 4 */
-	guidarray.push(randomId(12));           /* add group 5 */
-	let guid = guidarray.join('-');
-	return guid;
 }
+
 let idHexidecimal = (length) => {
-	return crypto.randomBytes(Math.ceil(length/2)).toString('hex').slice(0,length);
+	let hex = [];
+	while (length-- > 0) {
+		hex.push(randomOneOf(hexdigits));
+	}
+	return hex.join('');
 }
+
+let nodeId = [(randomInt(0,255)&0xff)|0x01,randomInt(0,255)&0xff,randomInt(0,255)&0xff,randomInt(0,255)&0xff,randomInt(0,255)&0xff,randomInt(0,255)&0xff];
+let lastClockSeq = randomInt(10000, 1000000) & 0x3fff;;
+let lastMsecs = 0;
+let lastNsecs = 0;
+let byteToHex = [];
+let initializeV1 = () => {
+	for (var q = 0; q < 256; q++) {
+		byteToHex[q] = (q + 0x100).toString(16).substr(1);
+	}
+}
+initializeV1();
+
 let idTimestamp = (length) => {
-	let value = '';
-	let num;
-	let alphanum = '0123456789ABCDEF';
-
-	for(var i = 0; i < length; i++){
-		num = Math.floor(Math.random()*0x10).toString();
-		value = value ? value + alphanum[num] : alphanum[num];
+	//https://tools.ietf.org/html/rfc4122#section-4.2.1
+	let buf = [];
+	let i = 0;
+	let msecs = new Date().getTime();
+	let nsecs = lastNsecs + 1;
+	let clockseq = lastClockSeq;
+	let dt = (msecs - lastMsecs) + ((nsecs - lastNsecs)/10000);
+	if (dt < 0) {
+		clockseq = clockseq + 1 & 0x3fff;
 	}
-	return value;
-}
-let randomizer = (num, chars) => {
-	/*
-	 in:     (1) 'num' (the number of characters to return) and (2) 'chars' (the string of chars to use for the randomization)
-	 out:    returns STRING value
-	*/
+	if (dt < 0 || msecs > lastMsecs) {
+		nsecs = 0;
+    }
 
-	let rand = crypto.randomBytes(num);
-	let value = new Array(num);
-	let charlength = chars.length;
+	lastMsecs = msecs;
+    lastNsecs = nsecs;
+	lastClockSeq = clockseq;
 
-	for (var i = 0; i < num; i++) {
-		value[i] = chars[rand[i] % charlength]
-	}
-	return value.join('');
+	// Per 4.1.4 - Convert from unix epoch to Gregorian epoch
+    msecs += 12219292800000;
+
+    // `time_low`
+    let tl = ((msecs & 0xfffffff) * 10000 + nsecs) % 0x100000000;
+    buf[i++] = tl >>> 24 & 0xff;
+    buf[i++] = tl >>> 16 & 0xff;
+    buf[i++] = tl >>> 8 & 0xff;
+    buf[i++] = tl & 0xff;
+
+    // `time_mid`
+    let tmh = (msecs / 0x100000000 * 10000) & 0xfffffff;
+    buf[i++] = tmh >>> 8 & 0xff;
+    buf[i++] = tmh & 0xff;
+
+    // `time_high_and_version`
+    buf[i++] = tmh >>> 24 & 0xf | 0x10; // include version
+    buf[i++] = tmh >>> 16 & 0xff;
+
+    // `clock_seq_hi_and_reserved` (Per 4.2.2 - include variant)
+    buf[i++] = clockseq >>> 8 | 0x80;
+
+    // `clock_seq_low`
+    buf[i++] = clockseq & 0xff;
+
+    // `node`
+    for (var n = 0; n < 6; n++) {
+      buf[i + n] = nodeId[n];
+    }
+	i = 0;
+	return  byteToHex[buf[i++]] + byteToHex[buf[i++]] +
+            byteToHex[buf[i++]] + byteToHex[buf[i++]] + '-' +
+            byteToHex[buf[i++]] + byteToHex[buf[i++]] + '-' +
+            byteToHex[buf[i++]] + byteToHex[buf[i++]] + '-' +
+            byteToHex[buf[i++]] + byteToHex[buf[i++]] + '-' +
+            byteToHex[buf[i++]] + byteToHex[buf[i++]] +
+            byteToHex[buf[i++]] + byteToHex[buf[i++]] +
+            byteToHex[buf[i++]] + byteToHex[buf[i++]];
 }
 
 module.exports = {
 	v1(){
-		return return getGUID(1,idTimestamp);
+		return idTimestamp();
 	},
 	v4(){
-		return getGUID(4,idHexidecimal);
+		let version = 4;
+		return [8,4,4,4,12].map((c,i) => {
+			switch(i) {
+				case 2:
+					// group 3: first value must be the version
+					return version + idHexidecimal(c-1);
+				case 3:
+					// group 4: the first val to be 8, 9, a or b
+					return randomOneOf(['8','9','a','b']) + idHexidecimal(c-1);
+				default:
+					return idHexidecimal(c);
+			}
+		}).join('-');
 	}
 };

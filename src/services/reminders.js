@@ -1,5 +1,4 @@
 'use strict'
-var Store = require('../stores/store');
 var Patients = require('./patients');
 var Notifications = require('./notifications');
 var Scheduler = require('./scheduler');
@@ -114,6 +113,33 @@ let makeTOD = (tod) => {
     return Object.keys(tod).filter((k) => tod[k]);
 }
 
+let getForPatient = (patient) => {
+    log.debug('*********** get reminders for patient ' + patient.name);
+    return Notifications.get()
+    .then((notifications) => {
+        return notifications.filter((n) => {
+            //log.debug(n.payload.patient.name + ' (' + n.payload.patient.id + ' == ' + patient.id + ')');
+            return n.payload.patient.id == patient.id;
+        }).map((n) => {
+            let reminder = n.payload;
+            reminder.notificationid = n.id;
+            return reminder;
+        });
+    });
+}
+
+let removeForPatient = (patient) => {
+    return getForPatient(patient)
+    .then((reminders) => {
+        let ids = reminders.map((r) => r.notificationid||r.id);
+        if (ids && ids.length > 0) {
+            log.debug('-- remove reminders for ' + patient.name);
+            return Notifications.cancel(ids);
+        }
+    });
+}
+
+
 module.exports = {
     get(id) {
         return Notifications.getById(id);
@@ -122,20 +148,6 @@ module.exports = {
         return Notifications.get()
         .then((data) => {
             return data.sort(sorter);
-        });
-    },
-    getPatient(patient) {
-        log.debug('*********** get reminders for patient ' + patient.name);
-        return Notifications.get()
-        .then((notifications) => {
-            return notifications.filter((n) => {
-                //log.debug(n.payload.patient.name + ' (' + n.payload.patient.id + ' == ' + patient.id + ')');
-                return n.payload.patient.id == patient.id;
-            }).map((n) => {
-                let reminder = n.payload;
-                reminder.notificationid = n.id;
-                return reminder;
-            });
         });
     },
     getNow() {
@@ -244,7 +256,7 @@ module.exports = {
         return addReminder(patient, med, 0, tod, last);
     },
     reschedulePatient(patient) {
-        return this.removePatient(patient)
+        return removeForPatient(patient)
         .then(() => {
             if (patient.status == 'active') {
                 return addMedReminder(patient, 0, patient.meds);
@@ -275,16 +287,6 @@ module.exports = {
     },
     remove(reminder) {
         return Notifications.cancel([reminder.notificationid||reminder.id]);
-    },
-    removePatient(patient) {
-        return this.getPatient(patient)
-        .then((reminders) => {
-            let ids = reminders.map((r) => r.notificationid||r.id);
-            if (ids && ids.length > 0) {
-                log.debug('-- remove reminders for ' + patient.name);
-                return Notifications.cancel(ids);
-            }
-        });
     },
     removeAll() {
         return Notifications.cancel();

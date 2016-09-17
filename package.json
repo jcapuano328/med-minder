@@ -19,12 +19,9 @@
     "moment": "^2.14.1",
     "react": "15.3.1",
     "react-native": "^0.33.0",
-    "react-native-crypto": "^2.0.1",
     "react-native-fs": "^1.5.1",
     "react-native-menu": "^0.20.1",
-    "react-native-randombytes": "^2.1.0",
-    "react-native-system-notification": "^0.2.1",
-    "react-native-uuid": "^1.4.8"
+    "react-native-system-notification": "^0.2.1"
   },
   "devDependencies": {
     "chai": "^3.5.0",

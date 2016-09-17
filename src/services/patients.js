@@ -1,6 +1,6 @@
 'use strict'
 var Store = require('../stores/store')('medminder.patients');
-var uuid = require('react-native-uuid');
+var uuid = require('./guid');
 
 let orderby = ['status','name'];
 
@@ -17,7 +17,7 @@ module.exports = {
             if (data && data.length > 0) {
                 return data[0];
             }
-            return null;
+            return data;
         });
     },
     add(patient) {
@@ -26,7 +26,10 @@ module.exports = {
         .then((patients) => {
             patient.id = uuid.v1();
             patients.push(patient);
-            return Store.save(patients);
+            return Store.save(patients)
+            .then(() => {
+                return patients;
+            });
         });
     },
     update(patient) {
@@ -36,7 +39,10 @@ module.exports = {
             let idx = patients.findIndex((p) => p.id == patient.id);
             if (idx > -1) {
                 patients[idx] = patient;
-                return Store.save(patients);
+                return Store.save(patients)
+                .then(() => {
+                    return patients;
+                });
             }
         });
     },
@@ -47,7 +53,10 @@ module.exports = {
                 let idx = patients.findIndex((p) => p.id == patient.id);
                 if (idx > -1) {
                     patients.splice(idx,1);
-                    return Store.save(patients);
+                    return Store.save(patients)
+                    .then(() => {
+                        return patients;
+                    });
                 }
             });
         }

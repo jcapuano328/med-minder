@@ -2,7 +2,7 @@
 
 var Patients = require('./patients');
 var Reminders = require('./reminders');
-var uuid = require('react-native-uuid');
+var uuid = require('./guid');
 var log = require('./log');
 
 let addPatient = (patients, i) => {
