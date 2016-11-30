@@ -2,10 +2,11 @@
 
 var React = require('react');
 import { View, Image, Text } from 'react-native';
+import {Log} from 'react-native-app-nub';
 var ActionListView = require('./widgets/actionListView');
 var ScheduleMedListItemView = require('./scheduleMedListItemView');
 var Icons = require('./icons');
-var log = require('./services/log');
+var log = Log;
 
 let opacity = 0.20;
 
@@ -15,7 +16,7 @@ var ScheduleTODView = React.createClass({
             this.props.onStatus && this.props.onStatus(patient, tod, r);
         }
     },
-    render() {        
+    render() {
         let patients = this.props.data ? Object.keys(this.props.data) : [];
         return (
             <View style={{flex: 1}}>

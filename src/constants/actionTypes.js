@@ -1,0 +1,7 @@
+module.exports = {
+    TOAST: 'TOAST',
+    
+    SET_FILTER: 'SET_FILTER',
+    SET_PATIENTS: 'SET_PATIENTS',
+    UPDATE_PATIENT: 'UPDATE_PATIENT'
+};

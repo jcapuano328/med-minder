@@ -2,8 +2,9 @@
 
 var React = require('react');
 import { View } from 'react-native';
+import {Log} from 'react-native-app-nub';
 var ScheduleTODView = require('./scheduleTODView');
-var log = require('./services/log');
+var log = Log;
 
 var ScheduleNowView = React.createClass({
     /*

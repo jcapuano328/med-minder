@@ -2,7 +2,7 @@
 
 var React = require('react');
 import { View, TouchableOpacity, Text } from 'react-native';
-var IconButton = require('./iconButton');
+import {Checkbox} from 'react-native-app-nub';
 
 var ActionListItemView = React.createClass({
     onStatus() {
@@ -31,7 +31,7 @@ var ActionListItemView = React.createClass({
                 borderWidth: 1,
                 borderRadius: 10
             }}>
-                {this.props.onStatus ? <IconButton image={this.props.status} onPress={this.onStatus}/> : null}
+                {this.props.onStatus ? <Checkbox selected={this.props.status=='active'} onSelected={this.onStatus}/> : null}
                 <TouchableOpacity style={{flex: 2}} onPress={this.onSelect}>
                     <View style={{flex: 1}}>
                         <Text style={{fontSize: 24, fontWeight: 'bold', textAlign: 'left',marginLeft: 20}}>{this.props.title}</Text>

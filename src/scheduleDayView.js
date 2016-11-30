@@ -2,10 +2,11 @@
 
 var React = require('react');
 import { View } from 'react-native';
+import {Log} from 'react-native-app-nub';
 var ScheduleTODView = require('./scheduleTODView');
 var Scheduler = require('./services/scheduler');
 var Icons = require('./icons');
-var log = require('./services/log');
+var log = Log;
 
 var ScheduleDayView = React.createClass({
     render() {

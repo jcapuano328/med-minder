@@ -2,7 +2,7 @@
 
 var React = require('react');
 import { View, ScrollView, Text } from 'react-native';
-var IconButton = require('./iconButton');
+import {IconButton} from 'react-native-app-nub';
 var ActionListItemView = require('./actionListItemView');
 
 var ActionListView = React.createClass({

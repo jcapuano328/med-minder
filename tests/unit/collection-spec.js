@@ -5,7 +5,7 @@ var chai = require('chai'),
 	sandbox = require('sandboxed-module');
 chai.use(require('sinon-chai'));
 
-describe('Store', () => {
+describe('Collection', () => {
 	var env = {};
 	beforeEach(() => {
 		env = {};
@@ -29,20 +29,20 @@ describe('Store', () => {
 		};
 		env.datastr = JSON.stringify(env.data);
 
-		env.Store = sandbox.require('../../src/stores/store', {
+		env.Collection = sandbox.require('../../src/stores/collection', {
 			requires: {
 				"react-native-fs": env.rnfs,
 				"../services/log": env.log
 			}
 		});
-		env.store = env.Store(env.filename);
+		env.collection = env.Collection(env.filename);
     });
 
 	describe('load', () => {
 		describe('found', () => {
 			beforeEach((done) => {
 				env.rnfs.readFile.returns(Promise.accept(env.datastr));
-				env.store.load()
+				env.collection.load()
 				.then((data) => {
 					env.result = data;
 					done();
@@ -64,7 +64,7 @@ describe('Store', () => {
 		describe('not found', () => {
 			beforeEach((done) => {
 				env.rnfs.readFile.returns(Promise.reject('no file found'));
-				env.store.load()
+				env.collection.load()
 				.then((data) => {
 					env.result = data;
 					done();
@@ -87,7 +87,7 @@ describe('Store', () => {
 	describe('save', () => {
 		beforeEach((done) => {
 			env.rnfs.writeFile.returns(Promise.accept());
-			env.store.save(env.data)
+			env.collection.save(env.data)
 			.then(done)
 			.catch(done);
 		});
@@ -105,7 +105,7 @@ describe('Store', () => {
 	describe('remove', () => {
 		beforeEach((done) => {
 			env.rnfs.unlink.returns(Promise.accept());
-			env.store.remove()
+			env.collection.remove()
 			.then(done)
 			.catch(done);
 		});
@@ -132,7 +132,7 @@ describe('Store', () => {
 				{a: 1, b: 3}
 			];
 
-			env.actual = env.list.sort(env.store.sorter(env.orderby));
+			env.actual = env.list.sort(env.collection.sorter(env.orderby));
 		});
 
 		it('should order the list', () => {
@@ -154,7 +154,7 @@ describe('Store', () => {
 				{a: 2, b: 2}
 			];
 
-			env.actual = env.list.filter(env.store.comparer(env.filter));
+			env.actual = env.list.filter(env.collection.comparer(env.filter));
 		});
 
 		it('should filter the list', () => {
@@ -180,7 +180,7 @@ describe('Store', () => {
 
 			env.rnfs.readFile.returns(Promise.accept(env.datastr));
 
-			env.store.select(env.filter, env.orderby)
+			env.collection.select(env.filter, env.orderby)
 			.then((result) => {
 				env.actual = result;
 				done();

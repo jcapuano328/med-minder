@@ -2,11 +2,10 @@
 
 var React = require('react');
 import { View, Switch, Text, TextInput, Alert } from 'react-native';
-var DateTimePicker = require('./widgets/datetimePicker');
-var IconButton = require('./widgets/iconButton');
+import {DateTimePicker, IconButton, Log} from 'react-native-app-nub';
 var ActionListView = require('./widgets/actionListView');
 var Patients = require('./services/patients');
-var log = require('./services/log');
+var log = Log;
 
 var PatientDetailView = React.createClass({
     getInitialState() {

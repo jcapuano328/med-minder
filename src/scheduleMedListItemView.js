@@ -2,12 +2,12 @@
 
 var React = require('react');
 import { View, TouchableOpacity, Text } from 'react-native';
-var IconButton = require('./widgets/iconButton');
-var log = require('./services/log');
+import {Checkbox, Log} from 'react-native-app-nub';
+var log = Log;
 
 var ScheduleMedListItemView = React.createClass({
     onSelect(r) {
-        return () => {            
+        return () => {
             this.props.onSelect && this.props.onSelect({payload: r});
         }
     },
@@ -31,7 +31,7 @@ var ScheduleMedListItemView = React.createClass({
                             <TouchableOpacity key={i} onPress={this.onSelect(d)}>
                                 <View style={{flex: 1, flexDirection: 'row'}}>
                                     <View style={{marginTop: 5}}>
-                                        <IconButton image={d.status == 'pending' ? 'open' : 'complete'} width={16} height={16} onPress={this.onStatus(d)}/>
+                                        <Checkbox selected={d.status=='complete'} onSelected={this.onStatus(d)} />
                                     </View>
                                     <Text style={{flex: 1, fontSize: 16, fontWeight: 'bold', textDecorationLine: textdec}}>{med.name} {med.dosage}</Text>
                                     <Text style={{flex: 2, fontSize: 16, textDecorationLine: textdec}}>{med.instructions}</Text>

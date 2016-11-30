@@ -10,19 +10,19 @@ describe('Patients', () => {
 	beforeEach(() => {
 		env = {};
 		env.log = sandbox.require('../mocks/log')();
-		env.Store = sandbox.require('../../src/stores/store', {
+		env.Collection = sandbox.require('../../src/stores/collection', {
 			requires: {
 				"react-native-fs": {},
 				"../services/log": env.log
 			}
 		})('test');
-		env.store = {
+		env.collection = {
 			select: sinon.stub(),
 			save: sinon.stub(),
 			remove: sinon.stub(),
-			sorter: (o) => env.Store.sorter(o)
+			sorter: (o) => env.Collection.sorter(o)
 		};
-		sinon.spy(env.store, 'sorter');
+		sinon.spy(env.collection, 'sorter');
 		env.uuid = {
 			v1: sinon.stub().returns(123)
 		};
@@ -34,7 +34,7 @@ describe('Patients', () => {
 
 		env.patients = sandbox.require('../../src/services/patients', {
 			requires: {
-				"../stores/store": sinon.stub().returns(env.store),
+				"../stores/collection": sinon.stub().returns(env.collection),
 				"./guid": env.uuid,
 				"../services/log": env.log
 			}
@@ -43,7 +43,7 @@ describe('Patients', () => {
 
 	describe('getAll', () => {
 		beforeEach((done) => {
-			env.store.select.returns(Promise.accept(env.data));
+			env.collection.select.returns(Promise.accept(env.data));
 			env.patients.getAll()
 			.then((data) => {
 				env.result = data;
@@ -52,9 +52,9 @@ describe('Patients', () => {
 			.catch(done);
 		});
 
-		it('should invoke the store', () => {
-			expect(env.store.select).to.have.been.calledOnce;
-			expect(env.store.select).to.have.been.calledWith(null, ['status','name']);
+		it('should invoke the collection', () => {
+			expect(env.collection.select).to.have.been.calledOnce;
+			expect(env.collection.select).to.have.been.calledWith(null, ['status','name']);
 		});
 
 		it('should retrieve the data', () => {
@@ -65,7 +65,7 @@ describe('Patients', () => {
 	});
 	describe('getActive', () => {
 		beforeEach((done) => {
-			env.store.select.returns(Promise.accept(env.data));
+			env.collection.select.returns(Promise.accept(env.data));
 			env.patients.getActive()
 			.then((data) => {
 				env.result = data;
@@ -74,9 +74,9 @@ describe('Patients', () => {
 			.catch(done);
 		});
 
-		it('should invoke the store', () => {
-			expect(env.store.select).to.have.been.calledOnce;
-			expect(env.store.select).to.have.been.calledWith({status: 'active'}, ['status','name']);
+		it('should invoke the collection', () => {
+			expect(env.collection.select).to.have.been.calledOnce;
+			expect(env.collection.select).to.have.been.calledWith({status: 'active'}, ['status','name']);
 		});
 
 		it('should retrieve the data', () => {
@@ -87,7 +87,7 @@ describe('Patients', () => {
 	});
 	describe('get', () => {
 		beforeEach((done) => {
-			env.store.select.returns(Promise.accept([env.data[0]]));
+			env.collection.select.returns(Promise.accept([env.data[0]]));
 			env.patients.get(1)
 			.then((data) => {
 				env.result = data;
@@ -96,9 +96,9 @@ describe('Patients', () => {
 			.catch(done);
 		});
 
-		it('should invoke the store', () => {
-			expect(env.store.select).to.have.been.calledOnce;
-			expect(env.store.select).to.have.been.calledWith({id: 1}, ['status','name']);
+		it('should invoke the collection', () => {
+			expect(env.collection.select).to.have.been.calledOnce;
+			expect(env.collection.select).to.have.been.calledWith({id: 1}, ['status','name']);
 		});
 
 		it('should retrieve the data', () => {
@@ -108,8 +108,8 @@ describe('Patients', () => {
 	});
 	describe('add', () => {
 		beforeEach((done) => {
-			env.store.select.returns(Promise.accept(env.data));
-			env.store.save.returns(Promise.accept());
+			env.collection.select.returns(Promise.accept(env.data));
+			env.collection.save.returns(Promise.accept());
 			env.newpatient = {
 				name: 'foo',
 				status: 'active',
@@ -123,11 +123,11 @@ describe('Patients', () => {
 			.catch(done);
 		});
 
-		it('should invoke the store', () => {
-			expect(env.store.select).to.have.been.calledOnce;
-			expect(env.store.select).to.have.been.calledWith(null, ['status','name']);
-			expect(env.store.save).to.have.been.calledOnce;
-			expect(env.store.save).to.have.been.calledWith(env.data);
+		it('should invoke the collection', () => {
+			expect(env.collection.select).to.have.been.calledOnce;
+			expect(env.collection.select).to.have.been.calledWith(null, ['status','name']);
+			expect(env.collection.save).to.have.been.calledOnce;
+			expect(env.collection.save).to.have.been.calledWith(env.data);
 		});
 
 		it('should return the data', () => {
@@ -138,8 +138,8 @@ describe('Patients', () => {
 	});
 	describe('update', () => {
 		beforeEach((done) => {
-			env.store.select.returns(Promise.accept(env.data));
-			env.store.save.returns(Promise.accept());
+			env.collection.select.returns(Promise.accept(env.data));
+			env.collection.save.returns(Promise.accept());
 			env.existingpatient = {};
 			Object.assign(env.existingpatient, env.data[1]);
 			env.existingpatient.status = 'active';
@@ -151,11 +151,11 @@ describe('Patients', () => {
 			.catch(done);
 		});
 
-		it('should invoke the store', () => {
-			expect(env.store.select).to.have.been.calledOnce;
-			expect(env.store.select).to.have.been.calledWith(null, ['status','name']);
-			expect(env.store.save).to.have.been.calledOnce;
-			expect(env.store.save).to.have.been.calledWith(env.data);
+		it('should invoke the collection', () => {
+			expect(env.collection.select).to.have.been.calledOnce;
+			expect(env.collection.select).to.have.been.calledWith(null, ['status','name']);
+			expect(env.collection.save).to.have.been.calledOnce;
+			expect(env.collection.save).to.have.been.calledWith(env.data);
 		});
 
 		it('should return the data', () => {
@@ -166,8 +166,8 @@ describe('Patients', () => {
 	});
 	describe('remove', () => {
 		beforeEach((done) => {
-			env.store.select.returns(Promise.accept(env.data));
-			env.store.save.returns(Promise.accept());
+			env.collection.select.returns(Promise.accept(env.data));
+			env.collection.save.returns(Promise.accept());
 			env.existingpatient = {};
 			Object.assign(env.existingpatient, env.data[1]);
 			env.patients.remove(env.existingpatient)
@@ -178,11 +178,11 @@ describe('Patients', () => {
 			.catch(done);
 		});
 
-		it('should invoke the store', () => {
-			expect(env.store.select).to.have.been.calledOnce;
-			expect(env.store.select).to.have.been.calledWith(null, ['status','name']);
-			expect(env.store.save).to.have.been.calledOnce;
-			expect(env.store.save).to.have.been.calledWith(env.data);
+		it('should invoke the collection', () => {
+			expect(env.collection.select).to.have.been.calledOnce;
+			expect(env.collection.select).to.have.been.calledWith(null, ['status','name']);
+			expect(env.collection.save).to.have.been.calledOnce;
+			expect(env.collection.save).to.have.been.calledWith(env.data);
 		});
 
 		it('should return the data', () => {
@@ -193,7 +193,7 @@ describe('Patients', () => {
 	});
 	describe('removeAll', () => {
 		beforeEach((done) => {
-			env.store.remove.returns(Promise.accept());
+			env.collection.remove.returns(Promise.accept());
 			env.patients.removeAll()
 			.then(() => {
 				env.result = true;
@@ -202,10 +202,10 @@ describe('Patients', () => {
 			.catch(done);
 		});
 
-		it('should invoke the store', () => {
-			expect(env.store.select).to.not.have.been.called;
-			expect(env.store.save).to.not.have.been.called;
-			expect(env.store.remove).to.have.been.calledOnce;
+		it('should invoke the collection', () => {
+			expect(env.collection.select).to.not.have.been.called;
+			expect(env.collection.save).to.not.have.been.called;
+			expect(env.collection.remove).to.have.been.calledOnce;
 		});
 
 		it('should return', () => {
@@ -222,8 +222,8 @@ describe('Patients', () => {
 			]);
 		});
 
-		it('should invoke the store sorter', () => {
-			expect(env.store.sorter).to.have.been.calledOnce;
+		it('should invoke the collection sorter', () => {
+			expect(env.collection.sorter).to.have.been.calledOnce;
 		});
 
 		it('should return sorted result', () => {

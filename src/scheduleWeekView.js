@@ -2,9 +2,10 @@
 
 var React = require('react');
 import { View, Text } from 'react-native';
+import {Log} from 'react-native-app-nub';
 var ScheduleTimeView = require('./scheduleTimeView');
 var Scheduler = require('./services/scheduler');
-var log = require('./services/log');
+var log = Log;
 
 var ScheduleWeekHeader = React.createClass({
     dayHeader(s) {
@@ -68,7 +69,7 @@ var ScheduleWeekView = React.createClass({
                                 </Text>
                             </View>
                             {Scheduler.days().map((d,j) => {
-                                log.debug('>>>>> ' + d + ' / ' + t);                                
+                                log.debug('>>>>> ' + d + ' / ' + t);
                                 return (
                                     <ScheduleTimeView key={i+j} data={this.props.data[d][t]} onPress={this.props.onSelected} />
                                 );

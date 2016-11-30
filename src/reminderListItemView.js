@@ -2,7 +2,7 @@
 
 var React = require('react');
 import { View, Text } from 'react-native';
-var IconButton = require('./widgets/iconButton');
+import {IconButton} from 'react-native-app-nub';
 var moment = require('moment');
 
 var ReminderListItemView = React.createClass({

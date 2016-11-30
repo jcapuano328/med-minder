@@ -2,12 +2,12 @@
 
 var React = require('react');
 import { View, Text, TouchableOpacity, Alert } from 'react-native';
+import {Log} from 'react-native-app-nub';
 var ActionListView = require('./widgets/actionListView');
 var ReminderListItemView = require('./reminderListItemView');
-
 var Reminders = require('./services/reminders');
 var moment = require('moment');
-var log = require('./services/log');
+var log = Log;
 
 var RemindersView = React.createClass({
     getInitialState() {

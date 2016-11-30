@@ -2,21 +2,17 @@
 
 var React = require('react');
 import { View, Text, Navigator, Alert, ToastAndroid } from 'react-native';
-var DrawerLayout = require('./widgets/drawerLayout');
-var NavMenu = require('./widgets/navMenu');
-var TitleBar = require('./widgets/titleBar');
+import {DrawerLayout, NavMenu, TitleBar, LandingView, AboutView, Log} from 'react-native-app-nub';
 import { MenuContext } from 'react-native-menu';
+var Icons = require('./icons');
 var EventEmitter = require('EventEmitter');
-var LandingView = require('./landingView');
-var AboutView = require('./aboutView');
 var ScheduleView = require('./scheduleView');
 var PatientsView = require('./patientsView');
 var PatientDetailView = require('./patientDetailView');
 var MedDetailView = require('./medDetailView');
 var RemindersView = require('./remindersView');
 var ReminderDetailView = require('./reminderDetailView');
-var Sample = require('./services/sample.js');
-var log = require('./services/log');
+var log = Log;
 
 var scheduleFilterItems = [
     {type: 'schedule', label: 'Now', value: 'now'},
@@ -36,6 +32,13 @@ var remindersFilterItems = () => {
 */
 
 var MainView = React.createClass({
+    navitems: [
+        {id: 1,name: 'Home',image: Icons['home']},
+        {id: 2,name: 'Schedule',image: Icons['calendar']},
+        {id: 3,name: 'Patients',image: Icons['patients']},
+        {id: 4,name: 'Reminders',image: Icons['notifications']},
+        {id: 5,name: 'About',image: Icons['info']}
+    ],
     getInitialState() {
         return {
             drawer: false,
@@ -61,7 +64,7 @@ var MainView = React.createClass({
         this.eventEmitter.addListener('poproute', () => this.refs.navigator.pop());
         this.eventEmitter.addListener('raisenotification', this.onNotification);
         this.state.initialRoute = this.state.routes.landing;
-        //return Sample.load()
+        //return require('./services/sample.js').load()
         return new Promise((a,r) => a())
         .then(() => {
             this.refs.navigator.resetTo(this.state.routes.schedule);
@@ -190,14 +193,21 @@ var MainView = React.createClass({
     renderScene(route, navigator) {
         route = route || {};
         //log.debug('render scene ' + route.name);
-        if (route.name == 'landing') {
-            return (
-                <LandingView events={this.eventEmitter} />
-            );
-        }
         if (route.name == 'about') {
             return (
-                <AboutView version={this.state.version} events={this.eventEmitter} onClose={() => {navigator.pop();}} />
+                <AboutView logo={Icons.logo}
+                    title={'About Med Minder'}
+                    version={this.state.version}
+                    releasedate={'October 18, 2016'}
+                    description={'A no frills meds reminder.'}
+                    dependencies={[
+                        {description: 'react-native-system-notification', url: ''},
+                        {description: 'react-native-fs', url: ''},
+                        {description: 'react-native-menu', url: ''},
+                        {description: 'moment', url: ''}
+                    ]}
+                    events={this.eventEmitter} onClose={() => {navigator.pop();}}
+                />
             );
         }
 
@@ -239,7 +249,7 @@ var MainView = React.createClass({
         }
 
         return (
-            <LandingView events={this.eventEmitter} />
+            <LandingView top={30} splash={Icons.splash} events={this.eventEmitter} />
         );
     },
     render() {
@@ -252,14 +262,19 @@ var MainView = React.createClass({
                     onDrawerSlide={(e) => this.setState({drawerSlideOutput: JSON.stringify(e.nativeEvent)})}
                     onDrawerStateChanged={(e) => this.setState({drawerStateChangedOutput: JSON.stringify(e)})}
                     drawerWidth={300}
-                    renderNavigationView={() => <NavMenu onSelected={this.navMenuHandler} /> }>
+                    renderNavigationView={() => <NavMenu items={this.navitems.map((item,i) => {
+                            return (
+                                <NavMenuItem key={i+1} item={{id:item.id,name:item.name,desc:item.desc,image:Icons[item.image]}} onPress={this.navMenuHandler} />
+                            );
+                        })} />
+                }>
                     <MenuContext style={{flex: 1}}>
                         <Navigator
                             ref="navigator"
                             debugOverlay={false}
                             initialRoute={this.state.initialRoute}
                             renderScene={this.renderScene}
-                            navigationBar={<Navigator.NavigationBar style={{backgroundColor: 'gold'}} routeMapper={TitleBar()} />}
+                            navigationBar={<Navigator.NavigationBar style={{backgroundColor: 'gold'}} routeMapper={TitleBar({menu: Icons.menu, info: Icons.info, textcolor: 'black'})} />}
                         />
                     </MenuContext>
                 </DrawerLayout>

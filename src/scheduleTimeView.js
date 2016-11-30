@@ -2,7 +2,8 @@
 
 var React = require('react');
 import { View, Text } from 'react-native';
-var log = require('./services/log');
+import {Log} from 'react-native-app-nub';
+var log = Log;
 
 var MedView = React.createClass({
     render() {

@@ -2,8 +2,8 @@
 
 var React = require('react');
 import { View, Switch, Text, TextInput, Picker } from 'react-native';
+import {SelectList} from 'react-native-app-nub';
 var TypeAhead = require('./widgets/typeahead');
-var SelectList = require('./widgets/selectList');
 var TimeOfDay = require('./timeOfDay');
 var RxNav = require('./services/rxnav');
 var Scheduler = require('./services/scheduler');

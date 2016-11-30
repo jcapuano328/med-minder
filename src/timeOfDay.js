@@ -1,9 +1,9 @@
 'use strict'
 var React = require('react');
 import { View, Text, Image } from 'react-native';
-var IconButton = require('./widgets/iconButton');
+import {IconButton, Log} from 'react-native-app-nub';
 var Icons = require('./icons');
-var log = require('./services/log');
+var log = Log;
 
 var TimeOfDayView = React.createClass({
     getInitialState() {

@@ -1,18 +1,18 @@
 'use strict'
-var Store = require('../stores/store')('medminder.patients');
+var collection = require('../stores/collection')('medminder.patients');
 var uuid = require('./guid');
 
 let orderby = ['status','name'];
 
 module.exports = {
     getAll() {
-        return Store.select(null, orderby);
+        return collection.select(null, orderby);
     },
     getActive() {
-        return Store.select({status: 'active'}, orderby);
+        return collection.select({status: 'active'}, orderby);
     },
     get(id) {
-        return Store.select({id: id}, orderby)
+        return collection.select({id: id}, orderby)
         .then((data) => {
             if (data && data.length > 0) {
                 return data[0];
@@ -26,7 +26,7 @@ module.exports = {
         .then((patients) => {
             patient.id = uuid.v1();
             patients.push(patient);
-            return Store.save(patients)
+            return collection.save(patients)
             .then(() => {
                 return patients;
             });
@@ -39,7 +39,7 @@ module.exports = {
             let idx = patients.findIndex((p) => p.id == patient.id);
             if (idx > -1) {
                 patients[idx] = patient;
-                return Store.save(patients)
+                return collection.save(patients)
                 .then(() => {
                     return patients;
                 });
@@ -53,7 +53,7 @@ module.exports = {
                 let idx = patients.findIndex((p) => p.id == patient.id);
                 if (idx > -1) {
                     patients.splice(idx,1);
-                    return Store.save(patients)
+                    return collection.save(patients)
                     .then(() => {
                         return patients;
                     });
@@ -63,10 +63,10 @@ module.exports = {
         return new Promise((accept,reject) => accept());
     },
     removeAll() {
-        return Store.remove();
+        return collection.remove();
     },
     sort(a) {
-        return a.sort(Store.sorter(orderby));
+        return a.sort(collection.sorter(orderby));
     },
     createNewPatient(name) {
         return {

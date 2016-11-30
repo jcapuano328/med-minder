@@ -12,22 +12,34 @@
     "bridge": "adb reverse tcp:8081 tcp:8081",
     "menu": "adb shell input keyevent 82",
     "logs": "adb logcat *:S ReactNative:V ReactNativeJS:V",
-    "genkey": " keytool -genkey -v -keystore mm.keystore -alias mm -keyalg RSA -keysize 2048 -validity 10000"
+    "genkey": " keytool -genkey -v -keystore mm.keystore -alias mm -keyalg RSA -keysize 2048 -validity 10000",
+    "test": "mocha --require react-native-mock/mock --compilers js:babel-core/register --recursive tests/unit",
+    "test-dev": "mocha --require tests/mocks/loader.js --require react-native-mock/mock --compilers js:babel-core/register -w "
   },
   "dependencies": {
-    "apsl-react-native-button": "^3.0.0",
     "moment": "^2.14.1",
-    "react": "15.3.1",
-    "react-native": "^0.33.0",
+    "react": "15.3.2",
+    "react-native": "^0.34.0",
+    "react-native-app-nub": "https://git@github.com/jcapuano328/react-native-app-nub.git",
     "react-native-fs": "^1.5.1",
     "react-native-menu": "^0.20.1",
-    "react-native-system-notification": "^0.2.1"
+    "react-native-system-notification": "^0.2.1",
+    "react-redux": "^4.4.6",
+    "redux": "^3.6.0",
+    "redux-logger": "^2.7.4",
+    "redux-thunk": "^2.1.0"
   },
   "devDependencies": {
+    "babel-core": "^6.17.0",
+    "babel-preset-react-native": "^1.9.0",
     "chai": "^3.5.0",
-    "mocha": "^3.0.2",
+    "chai-enzyme": "^0.5.2",
+    "enzyme": "^2.4.1",
+    "mocha": "^3.1.0",
+    "react-dom": "^15.3.2",
+    "react-native-mock": "^0.2.6",
     "sandboxed-module": "^2.0.3",
-    "sinon": "^1.17.5",
+    "sinon": "^1.17.6",
     "sinon-chai": "^2.8.0"
   }
 }
