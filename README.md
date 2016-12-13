@@ -1,6 +1,19 @@
 # med-minder
 React Native med reminder app
 
+## Refactor for Redux and Router
+
+https://github.com/aksonov/react-native-router-flux
+
+https://medium.com/differential/react-native-basics-using-react-native-router-flux-f11e5128aff9#.oa459pk4n
+
+https://github.com/root-two/react-native-drawer
+
+
+### Forget the typeahead idea
+Navigate to a "simple" search form that auto-fills based on the entered criteria
+ala adding a contact to a text message
+
 ### Medication names are retrieved from RxNav:
 [RxNav] (https://rxnav.nlm.nih.gov/PrescribableAPIs.html)
 

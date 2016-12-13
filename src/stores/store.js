@@ -3,6 +3,10 @@ import thunk from 'redux-thunk';
 import rootReducer from '../reducers';
 /*  the "store" will look like so:
     {
+        info: {
+            version: string,
+            releasedate: datetime
+        },        
         patients: [], // the list of managed patients
         reminders: [],  // the list of managed reminders
         filter: {   // the filter for the schedule
