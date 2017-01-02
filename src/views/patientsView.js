@@ -2,12 +2,11 @@
 
 var React = require('react');
 import { View, Alert } from 'react-native';
-import {Log} from 'react-native-app-nub';
-var ActionListView = require('./widgets/actionListView');
+import ActionListView from '../components/actionListView';
+import log from '../components/log';
 var Patients = require('./services/patients');
 var Reminders = require('./services/reminders');
 var moment = require('moment');
-var log = Log;
 
 var PatientsView = React.createClass({
     getInitialState() {

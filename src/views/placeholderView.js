@@ -1,3 +1,4 @@
+import React from 'react';
 import { View, Text } from 'react-native';
 
 const PlaceholderView = (title) => {
@@ -6,7 +7,7 @@ const PlaceholderView = (title) => {
             <View style={{flex: 1}}>
                 <Text>{title}</Text>
             </View>
-        );        
+        );
     }
 }
 

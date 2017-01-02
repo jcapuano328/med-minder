@@ -1,14 +1,19 @@
-import { Icons } from 'react-native-app-nub';
-
 module.exports = {
-	"logo": require('./logo.png'),
-	"splash": require('./splash.png'),
-	"menu": Icons['menu-light'],
-	"info": Icons['info-light'],
-	"refresh": Icons['refresh-light'],
-	"back": Icons['back-light'],
+	"menu-dark": require('./hamburger-dark.png'),
+	"info-dark": require('./info-dark.png'),
+	"refresh-dark": require('./refresh-dark.png'),
+	"home-dark": require('./home-dark.png'),
 
-	"home": require('./home.png'),
+	"menu-light": require('./hamburger-light.png'),
+	"info-light": require('./info-light.png'),
+	"refresh-light": require('./refresh-light.png'),
+	"home-light": require('./home-light.png'),
+
+	"chevron-left": require('./chevron-left-light.png'),
+	"chevron-right": require('./chevron-right-light.png'),
+
+	"logo": require('./logo.png'),
+	"splash": require('./splash.png'),	
 	"patients": require('./patients.png'),
 	"notifications": require('./notifications.png'),
 

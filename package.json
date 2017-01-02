@@ -17,10 +17,10 @@
     "test-dev": "mocha --require tests/mocks/loader.js --require react-native-mock/mock --compilers js:babel-core/register -w "
   },
   "dependencies": {
+    "apsl-react-native-button": "^3.0.2",
     "moment": "^2.14.1",
-    "react": "15.3.2",
-    "react-native": "^0.34.0",
-    "react-native-app-nub": "https://git@github.com/jcapuano328/react-native-app-nub.git",
+    "react": "^15.4.1",
+    "react-native": "^0.38.0",
     "react-native-drawer": "^2.3.0",
     "react-native-fs": "^1.5.1",
     "react-native-menu": "^0.20.1",

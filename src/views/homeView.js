@@ -1,5 +1,5 @@
 import React from 'react';
-import {LandingView} from 'react-native-app-nub';
+import LandingView from '../components/landingView';
 import {splash} from '../res';
 
 const Home = () => {

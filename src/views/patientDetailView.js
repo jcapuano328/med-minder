@@ -2,8 +2,11 @@
 
 var React = require('react');
 import { View, Switch, Text, TextInput, Alert } from 'react-native';
-import {DateTimePicker, IconButton, Log} from 'react-native-app-nub';
-var ActionListView = require('./widgets/actionListView');
+import DateTimePicker from '../components/dateTimePicker';
+import IconButton from '../components/iconButton';
+import ActionListView from '../components/actionListView';
+import Log from '../components/log';
+
 var Patients = require('./services/patients');
 var log = Log;
 

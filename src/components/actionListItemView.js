@@ -2,7 +2,7 @@
 
 var React = require('react');
 import { View, TouchableOpacity, Text } from 'react-native';
-import {Checkbox} from 'react-native-app-nub';
+import Checkbox from './checkbox';
 
 var ActionListItemView = React.createClass({
     onStatus() {

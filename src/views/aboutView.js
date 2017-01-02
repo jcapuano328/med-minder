@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
-import {AboutView} from 'react-native-app-nub';
+import AboutView from '../components/aboutView';
 import {logo} from '../res';
 
 const About = () => {
