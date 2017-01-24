@@ -1,8 +1,7 @@
-'use strict';
 import React from 'react';
 import { Router } from 'react-native-router-flux';
 import routes, {MenuItems} from './routes';
-import NavDrawer from './components/navDrawer';
+import {NavDrawer} from 'react-native-nub';
 import { Provider } from 'react-redux';
 import store from './stores/store';
 

@@ -1,18 +1,22 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { Actions, Scene } from 'react-native-router-flux';
-import Icons from '../res';
+import {NavBar as navBar} from 'react-native-nub';
 import {HomeView,AboutView,PlaceholderView/*,ScheduleView,PatientsView,PatientDetailView,MedDetailView,RemindersView,ReminderDetailView*/} from '../views';
-import navBar from '../components/navBar';
-const NavBar = navBar({
+import Icons from '../res';
+import {getAll} from '../actions/patients';
+
+
+const NavBar = connect(null, {getAll})(navBar({
     style: {
         backgroundColor: 'gold'
     },
     onBack: Actions.pop,
     rightButtons: [
-        {image:'refresh-light', onPress: () => console.log('Press refresh!')},
+        {image:'refresh-light', onPress: (props) => props.getAll()},
         {image:'info-light', onPress: () => Actions.about() }
     ]
-});
+}));
 
 export const MenuItems = [
     {key: 'home',name: 'Home',image: Icons['home-light']},

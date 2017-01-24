@@ -1,5 +1,4 @@
-'use strict';
 import {AppRegistry} from 'react-native';
-let main = require('./src/main');
+import App from './src/app';
 
-AppRegistry.registerComponent('medminder', () => main);
+AppRegistry.registerComponent('medminder', () => App);

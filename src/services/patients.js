@@ -1,7 +1,6 @@
-'use strict'
-var collection = require('../stores/collection')('medminder.patients');
-var uuid = require('./guid');
-
+import uuid from './guid';
+import {Repository} from 'react-native-nub';
+let collection = Repository('medminder.patients');
 let orderby = ['status','name'];
 
 module.exports = {
