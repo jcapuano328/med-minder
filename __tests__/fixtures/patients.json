@@ -1,0 +1,100 @@
+[
+    {
+        "id": "970a8710-e305-11e6-afcd-73dcf720bce6",
+        "name": "Moe",
+        "dob": "1904-01-25",
+        "meds": [
+            {
+                "id": "a035f090-e305-11e6-99e5-2df3c818a8d6",
+                "name": "Fingers",
+                "dosage": "2",
+                "instructions": "Poke in eyes when stupid",
+                "schedule": {
+                    "frequency": "Daily",
+                    "dow": "Today",
+                    "tod": {
+                        "morning": true,
+                        "noon": false,
+                        "evening": false,
+                        "bedtime": false
+                    }
+                },
+                "status": "active"
+            }
+        ],
+        "status": "active",
+        "created": "2017-01-25T08:46:00-0500",
+        "modified": null
+    },
+    {
+        "id": "a46a2460-e305-11e6-a545-7954b41056a0",
+        "name": "Larry",
+        "dob": "1904-07-04",
+        "meds": [
+            {
+                "id": "aa762570-e305-11e6-9202-8b7619729ff6",
+                "name": "Open Hand",
+                "dosage": "1",
+                "instructions": "Smack to back of head when stupid",
+                "schedule": {
+                    "frequency": "Daily",
+                    "dow": "Today",
+                    "tod": {
+                        "morning": false,
+                        "noon": true,
+                        "evening": true,
+                        "bedtime": false
+                    }
+                },
+                "status": "active"
+            },
+            {
+                "id": "b6001860-e305-11e6-a53c-d30e9fa071a4",
+                "name": "Boot",
+                "dosage": "1",
+                "instructions": "Kick to back-side when stupid",
+                "schedule": {
+                    "frequency": "Daily",
+                    "dow": "Today",
+                    "tod": {
+                        "morning": true,
+                        "noon": false,
+                        "evening": false,
+                        "bedtime": true
+                    }
+                },
+                "status": "active"
+            }            
+        ],
+        "status": "active",
+        "created": "2017-01-25T08:46:00-0500",
+        "modified": null
+    },
+    {
+        "id": "bca60f80-e305-11e6-b1a6-6dab706e32e9",
+        "name": "Curly",
+        "dob": "1907-10-31",
+        "meds": [
+            {
+                "id": "c12b4980-e305-11e6-a7cc-bfb714222e85",
+                "name": "Hands",
+                "dosage": "2",
+                "instructions": "Rub on face when frustrated or confused",
+                "schedule": {
+                    "frequency": "Daily",
+                    "dow": "Today",
+                    "tod": {
+                        "morning": true,
+                        "noon": false,
+                        "evening": false,
+                        "bedtime": true
+                    }
+                },
+                "status": "active"
+            }
+        ],
+        "status": "active",
+        "created": "2017-01-25T08:46:00-0500",
+        "modified": null
+    }   
+]

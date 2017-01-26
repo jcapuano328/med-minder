@@ -18,3 +18,27 @@ export const getAll = () => (dispatch) => {
         toast(err.message || err)(dispatch);
     });
 }
+
+export const add = (patient) => (dispatch) => {
+    return patients.add(patient)
+    .then(() => {
+        dispatch({type: types.ADD_PATIENT, value: patient});
+    })
+    .catch((err) => {
+        console.error(err);
+        toast(err.message || err)(dispatch);
+    });
+}
+
+export const update = (patient) => (dispatch) => {
+    dispatch({type: types.UPDATE_PATIENT, value: patient});
+}
+
+export const remove = (patient) => (dispatch) => {
+    dispatch({type: types.REMOVE_PATIENT, value: patient});
+}
+
+export const setStatus = (patient, status) => (dispatch) => {
+    patient.status = status == 'active';
+    dispatch({type: types.UPDATE_PATIENT, value: patient});
+}

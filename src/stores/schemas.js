@@ -34,7 +34,7 @@ import { Schema, arrayOf } from 'normalizr';
 
 const Patient = new Schema('patients');
 const Medication = new Schema('medications');
-const Patients = arrayOf(item);
+const Patients = arrayOf(Patient);
 const Medications = arrayOf(Medication);
 Patient.define({
     meds: Medications

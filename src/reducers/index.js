@@ -1,12 +1,18 @@
 import { combineReducers } from 'redux';
 import info from './info';
-import patients from './patients';
-import filter from './filter';
 import toast from './toast';
+import filter from './filter';
+import patients from './patients';
+import patient from './patient';
+import medications from './medications';
+import medication from './medication';
 
 module.exports = combineReducers({
-    info: info,
-    patients: patients,
+    info: info,        
+    toast: toast,
     filter: filter,
-    toast: toast
+    patients: patients,
+    currentpatient: patient,
+    medications: medications,
+    currentmedication: medication,    
 });

@@ -13,7 +13,7 @@ module.exports = (state = defaultState, action) => {
             table: {...action.value.patients}
         };
 
-    case types.ADD_PATIENT:
+    case types.ADD_PATIENT:        
         return {
             sort: [...state.sort, action.value.id],
             table: {
@@ -22,8 +22,10 @@ module.exports = (state = defaultState, action) => {
                     id: action.value.id,
                     status: action.value.status,
                     name: action.value.name,
-                    desc: action.value.desc,
-                    subpatients: action.value.subpatients
+                    dob: action.value.dob,
+                    meds: action.value.meds,
+                    created: action.value.created,
+                    modified: action.value.modified
                 }
             }
         };

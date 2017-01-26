@@ -13,8 +13,7 @@
     "menu": "adb shell input keyevent 82",
     "logs": "adb logcat *:S ReactNative:V ReactNativeJS:V",
     "genkey": " keytool -genkey -v -keystore mm.keystore -alias mm -keyalg RSA -keysize 2048 -validity 10000",
-    "test": "mocha --require react-native-mock/mock --compilers js:babel-core/register --recursive tests/unit",
-    "test-dev": "mocha --require tests/mocks/loader.js --require react-native-mock/mock --compilers js:babel-core/register -w "
+    "test": "jest"
   },
   "dependencies": {
     "denormalizr": "^0.4.1",        
@@ -26,17 +25,13 @@
     "react-native-nub": "https://git@github.com/jcapuano328/react-native-nub.git",
     "react-native-system-notification": "^0.2.1"
   },
+  "jest": {
+    "preset": "react-native"
+  },
   "devDependencies": {
-    "babel-core": "^6.17.0",
-    "babel-preset-react-native": "^1.9.0",
-    "chai": "^3.5.0",
-    "chai-enzyme": "^0.5.2",
-    "enzyme": "^2.4.1",
-    "mocha": "^3.1.0",
-    "react-dom": "^15.3.2",
-    "react-native-mock": "^0.2.6",
-    "sandboxed-module": "^2.0.3",
-    "sinon": "^1.17.6",
-    "sinon-chai": "^2.8.0"
+    "babel-jest": "17.0.2",
+    "babel-preset-react-native": "1.9.0",
+    "jest": "17.0.3",
+    "react-test-renderer": "15.4.1"
   }
 }

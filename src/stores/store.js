@@ -22,7 +22,7 @@ import rootReducer from '../reducers';
                 id : {
                     id: string,
                     name: string,
-                    dob: string/datetime,
+                    dob: datetime,
                     meds: [
                         // ordered list of medication identifiers for this patient
                     ],

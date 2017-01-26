@@ -29,5 +29,10 @@ into "project/node_modules/react-native-system-notification/android/build.gradle
 after adding as i was getting another Multi-dex related issue, I had to enable multi-dex and app runs without error.
 
 
-##### sandboxed-module require react-native dependencies
-must have an "main" entry in the modules' package.json file that includes a default js file
+## Resources
+- [normalizr](https://github.com/paularmstrong/normalizr)
+- [denormalizr](https://github.com/gpbl/denormalizr)
+- [Using Normalizr in a Redux Store](https://medium.com/@mcowpercoles/using-normalizr-js-in-a-redux-store-96ab33991369#.7m9jtzfu4)
+- [State Management in Redux](https://github.com/reactjs/redux/issues/994)
+- [Redux-ORM : a "bigger" approach to normalization](https://github.com/tommikaikkonen/redux-orm)
+- [Jest : you know, for testing](https://facebook.github.io/jest/)
