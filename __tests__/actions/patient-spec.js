@@ -1,73 +1,106 @@
-import {SELECT_ITEM,UPDATE_SELECTED_ITEM,ADD_ITEM,UPDATE_ITEM} from '../../src/constants/actionTypes';
+import {SELECT_PATIENT,UPDATE_SELECTED_PATIENT,ADD_PATIENT,UPDATE_PATIENT} from '../../src/constants/actionTypes';
+import chai, {expect} from 'chai';
+import sinon from 'sinon';
+import sinonChai from 'sinon-chai';
+chai.use(sinonChai);
+import sandbox from '../fixtures/sandboxModuleES6';
 
-describe('item actions', () => {
+describe('Patient actions', () => {
     var env = {};
     beforeEach(() => {
         env = {};
-        env.dispatch = jest.fn();
-        env.getState = jest.fn();
-        env.item = {
+        env.dispatch = sinon.stub();
+        env.getState = sinon.stub();
+        env.toast = {
+            toast: sinon.stub()
+        };        
+        env.service = {
+            add: sinon.stub(),
+            update: sinon.stub()
+        };        
+        env.patient = {
             id: 1,
-            status: true,
             name: '1',
-            desc: 'one',
-            subitems: [10,11,12]
+            dob: new Date(1993,7,3),
+            meds: [10,11,12],
+            status: 'active',
+            created: new Date(),
+            modified: null
         };
-        env.actions = require('../../src/actions/item');
+        env.actions = sandbox('../../src/actions/patient', {
+            requires: {
+                '../services/patients': env.service,
+                './toast': env.toast                
+            }
+        });
     });
 
     describe('select', () => {
         beforeEach(() => {
-            return env.actions.select(env.item)(env.dispatch);
+            return env.actions.select(env.patient)(env.dispatch);
         });
 
-        it('should dispatch SELECT_ITEM', () => {
-            expect(env.dispatch).toHaveBeenCalledWith({type: SELECT_ITEM, value: env.item});
+        it('should dispatch SELECT_PATIENT', () => {
+            expect(env.dispatch).to.have.been.calledWith({type: SELECT_PATIENT, value: env.patient});
         });
     });
 
     describe('create', () => {
         beforeEach(() => {
-            env.item = {
-                status: true,
-                name: 'New Item',
-                desc: '',
-                subitems: []
+            env.patient = {
+                name: 'New Patient',
+                dob: null,                                
+                meds: [],
+                status: 'active',
+                created: null,
+                modified: null                
             };
-            return env.actions.create()(env.dispatch);
+            return env.actions.create('New Patient')(env.dispatch);
         });
 
-        it('should dispatch SELECT_ITEM', () => {
-            expect(env.dispatch).toHaveBeenCalledWith({type: SELECT_ITEM, value: env.item});
+        it('should dispatch SELECT_PATIENT', () => {
+            expect(env.dispatch).to.have.been.calledWith({type: SELECT_PATIENT, value: env.patient});
         });
     });
 
     describe('accept', () => {
         describe('new', () => {
             beforeEach(() => {
-                env.item = {
-                    status: true,
-                    name: 'New Item',
-                    desc: '',
-                    subitems: []
+                env.patient = {
+                    status: 'active',
+                    name: 'New Patient',
+                    dob: new Date(2001,2,1),
+                    meds: []
                 };
-                env.getState.mockReturnValue({currentitem: env.item});
+                env.getState.returns({currentpatient: env.patient});
+                env.service.add.returns(new Promise((resolve,reject) => resolve()));
                 return env.actions.accept()(env.dispatch, env.getState);
             });
 
-            it('should dispatch ADD_ITEM', () => {
-                expect(env.dispatch).toHaveBeenCalledWith({type: ADD_ITEM, value: env.item});
+            it('should invoke the patients service', () => {
+                expect(env.service.add).to.have.been.calledOnce;
+                expect(env.service.add).to.have.been.calledWith(env.patient);
+            });
+
+            it('should dispatch ADD_PATIENT', () => {
+                expect(env.dispatch).to.have.been.calledWith({type: ADD_PATIENT, value: env.patient});
             });
         });
 
         describe('existing', () => {
             beforeEach(() => {
-                env.getState.mockReturnValue({currentitem: env.item});
+                env.getState.returns({currentpatient: env.patient});
+                env.service.update.returns(new Promise((resolve,reject) => resolve()));
                 return env.actions.accept()(env.dispatch, env.getState);
             });
 
-            it('should dispatch UPDATE_ITEM', () => {
-                expect(env.dispatch).toHaveBeenCalledWith({type: UPDATE_ITEM, value: env.item});
+            it('should invoke the patients service', () => {
+                expect(env.service.update).to.have.been.calledOnce;
+                expect(env.service.update).to.have.been.calledWith(env.patient);
+            });
+
+            it('should dispatch UPDATE_PATIENT', () => {
+                expect(env.dispatch).to.have.been.calledWith({type: UPDATE_PATIENT, value: env.patient});
             });
         });
     });
@@ -77,8 +110,8 @@ describe('item actions', () => {
             return env.actions.setStatus('active')(env.dispatch);
         });
 
-        it('should dispatch UPDATE_SELECTED_ITEM', () => {
-            expect(env.dispatch).toHaveBeenCalledWith({type: UPDATE_SELECTED_ITEM, value: {field: 'status', value: 'active'}});
+        it('should dispatch UPDATE_SELECTED_PATIENT', () => {
+            expect(env.dispatch).to.have.been.calledWith({type: UPDATE_SELECTED_PATIENT, value: {field: 'status', value: 'active'}});
         });
     });
 
@@ -87,18 +120,19 @@ describe('item actions', () => {
             return env.actions.setName('a name')(env.dispatch);
         });
 
-        it('should dispatch UPDATE_SELECTED_ITEM', () => {
-            expect(env.dispatch).toHaveBeenCalledWith({type: UPDATE_SELECTED_ITEM, value: {field: 'name', value: 'a name'}});
+        it('should dispatch UPDATE_SELECTED_PATIENT', () => {
+            expect(env.dispatch).to.have.been.calledWith({type: UPDATE_SELECTED_PATIENT, value: {field: 'name', value: 'a name'}});
         });
     });
 
-    describe('setDesc', () => {
+    describe('setDOB', () => {
         beforeEach(() => {
-            return env.actions.setDesc('a description')(env.dispatch);
+            env.dob = new Date(1995,10,20);
+            return env.actions.setDOB(env.dob)(env.dispatch);
         });
 
-        it('should dispatch UPDATE_SELECTED_ITEM', () => {
-            expect(env.dispatch).toHaveBeenCalledWith({type: UPDATE_SELECTED_ITEM, value: {field: 'desc', value: 'a description'}});
+        it('should dispatch UPDATE_SELECTED_PATIENT', () => {
+            expect(env.dispatch).to.have.been.calledWith({type: UPDATE_SELECTED_PATIENT, value: {field: 'dob', value: env.dob}});
         });
     });
 });

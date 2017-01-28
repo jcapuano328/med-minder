@@ -40,4 +40,7 @@ buck-out/
 android/app/libs
 android/keystores/debug.keystore
 
+# VS Code
+.vscode/
+
 doc/todo/

@@ -36,3 +36,27 @@ after adding as i was getting another Multi-dex related issue, I had to enable m
 - [State Management in Redux](https://github.com/reactjs/redux/issues/994)
 - [Redux-ORM : a "bigger" approach to normalization](https://github.com/tommikaikkonen/redux-orm)
 - [Jest : you know, for testing](https://facebook.github.io/jest/)
+
+##### Debugging in VS Code
+https://github.com/facebook/jest/issues/1652#issuecomment-265444539
+
+launch.json
+```
+{
+	"name": "Run Tests With Debugger (slower, use npm run watch for normal work)",
+	"type": "node",
+	"request": "launch",
+	"port": 5858,
+	"address": "localhost",
+	"stopOnEntry": false,
+	"runtimeExecutable": null,
+	"runtimeArgs": [
+		"--debug-brk",
+		//./node_modules/.bin/jest",
+		"${workspaceRoot}/node_modules/jest/bin/jest.js",
+		"-i",
+		"__tests__/actions/patients-spec.js"
+	],
+	"cwd": "${workspaceRoot}"
+},
+```

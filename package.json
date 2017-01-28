@@ -13,14 +13,17 @@
     "menu": "adb shell input keyevent 82",
     "logs": "adb logcat *:S ReactNative:V ReactNativeJS:V",
     "genkey": " keytool -genkey -v -keystore mm.keystore -alias mm -keyalg RSA -keysize 2048 -validity 10000",
-    "test": "jest"
+    "test": "jest",
+    "testm": "mocha --compilers js:babel-core/register",
+    "test-dev": "mocha --compilers js:babel-core/register -w ",    
+    "test-spec": "mocha --compilers js:babel-core/register -w __tests__/actions/patient-spec.js"
   },
   "dependencies": {
-    "denormalizr": "^0.4.1",        
+    "denormalizr": "^0.4.1",
     "moment": "^2.14.1",
     "normalizr": "^2.3.0",
     "react": "^15.4.1",
-    "react-native": "^0.39.2",    
+    "react-native": "^0.39.2",
     "react-native-menu": "^0.20.1",
     "react-native-nub": "https://git@github.com/jcapuano328/react-native-nub.git",
     "react-native-system-notification": "^0.2.1"
@@ -29,9 +32,17 @@
     "preset": "react-native"
   },
   "devDependencies": {
+    "babel-core": "^6.22.1",
     "babel-jest": "17.0.2",
+    "babel-preset-es2015": "^6.22.0",
     "babel-preset-react-native": "1.9.0",
+    "babel-register": "^6.22.0",
+    "chai": "^3.5.0",
     "jest": "17.0.3",
-    "react-test-renderer": "15.4.1"
+    "mocha": "^3.2.0",
+    "react-test-renderer": "15.4.1",
+    "sandboxed-module": "^2.0.3",
+    "sinon": "^1.17.7",
+    "sinon-chai": "^2.8.0"
   }
 }

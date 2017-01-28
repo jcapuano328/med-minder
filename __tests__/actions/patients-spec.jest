@@ -1,0 +1,104 @@
+import {SET_PATIENTS,SET_MEDICATIONS,UPDATE_PATIENT,REMOVE_PATIENT} from '../../src/constants/actionTypes';
+import * as Schemas from '../../src/stores/schemas';
+import guid from '../../src/services/guid';
+
+describe('patients actions', () => {
+    var env = {};
+    beforeEach(() => {
+        env = {};
+        env.dispatch = jest.fn();
+        env.toast = {
+            toast: jest.fn()
+        };
+        env.service = {
+            getAll: jest.fn(),
+            update: jest.fn(),
+            remove: jest.fn()
+        };
+        env.normalizr = {
+            normalize: jest.fn()
+        };
+        jest.mock('../../src/actions/toast', () => env.toast);
+        jest.mock('../../src/services/patients', () => env.service);
+        jest.mock('normalizr', () => env.normalizr);
+
+        env.patients = require('../fixtures/patients.json');
+        env.normalized = require('../fixtures/patients-normalized.json');
+        env.actions = require('../../src/actions/patients');
+    });
+
+    describe.skip('getAll', () => {
+        beforeEach(() => {
+            env.service.getAll.mockReturnValue(new Promise((resolve,reject) => resolve(env.patients)));
+            env.normalizr.normalize.mockReturnValue(env.normalized);
+            return env.actions.getAll()(env.dispatch);
+        });
+
+        it('should invoke the patients service', () => {
+            expect(env.service.getAll).toHaveBeenCalledTimes(1);
+        });
+
+        xit('should normalize the data', () => {
+            expect(env.normalizr.normalize).toHaveBeenCalledTimes(1);
+            expect(env.normalizr.normalize).toHaveBeenCalledWith(env.patients, Schemas.Patients);
+        });
+
+        it('should dispatch SET_PATIENTS', () => {
+            expect(env.dispatch).toHaveBeenCalledWith({type: SET_PATIENTS, value: {ids: env.normalized.result, patients: env.normalized.entities.patients}});
+        });
+
+        it('should dispatch SET_MEDICATIONS', () => {
+            expect(env.dispatch).toHaveBeenCalledWith({type: SET_MEDICATIONS, value: env.normalized.entities.medications});
+        });
+
+        it('should not raise an error', () => {
+            expect(env.toast.toast).not.toHaveBeenCalled();
+        });
+    });
+
+    describe.skip('remove', () => {
+        beforeEach(() => {
+            env.service.remove.mockReturnValue(new Promise((resolve,reject) => resolve()));
+            env.patient = env.normalized.entities.patients[env.normalized.result[0]];
+            return env.actions.remove(env.patient)(env.dispatch);
+        });
+
+        it('should invoke the patients service', () => {
+            expect(env.service.remove).toHaveBeenCalledTimes(1);
+            expect(env.service.remove).toHaveBeenCalledWith(env.patient);
+        });
+
+        it('should dispatch REMOVE_PATIENT', () => {
+            expect(env.dispatch).toHaveBeenCalledWith({type: REMOVE_PATIENT, value: env.patient});
+        });
+
+        it('should not raise an error', () => {
+            expect(env.toast.toast).not.toHaveBeenCalled();
+        });        
+    });
+
+    describe('setStatus', () => {
+        beforeEach(() => {
+            env.service.update.mockReturnValue(new Promise((resolve,reject) => resolve()));
+            env.patient = {
+                ...env.normalized.entities.patients[env.normalized.result[0]],
+                status: 'inactive'
+            };
+            return env.actions.setStatus(env.patient, 'active')(env.dispatch);
+        });
+
+        it('should set status to active', () => {
+            expect(env.patient.status).toBe('active');
+        });
+
+        it('should invoke the patients service', () => {
+            expect(env.service.update).toHaveBeenCalledTimes(1);
+            expect(env.service.update).toHaveBeenCalledWith(env.patient);
+        });
+
+        xit('should dispatch UPDATE_PATIENT', () => {
+            expect(env.dispatch).toHaveBeenCalledWith({type: UPDATE_PATIENT, value: env.patient});
+        });
+    });
+
+});

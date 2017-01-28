@@ -8,37 +8,36 @@ export const getAll = () => (dispatch) => {
     return patients.getAll()
     .then((data) => {
         let normalized = normalize(data, Schemas.Patients);
-        dispatch({type: types.SET_PATIENTS, value: {ids: normalized.result, patients: normalized.entities.Patients}});
-        dispatch({type: types.SET_MEDICATIONS, value: normalized.entities.Medications});
+        dispatch({type: types.SET_PATIENTS, value: {ids: normalized.result, patients: normalized.entities.patients}});
+        dispatch({type: types.SET_MEDICATIONS, value: normalized.entities.medications});
         
         return data;
     })
-    .catch((err) => {
+    .catch((err) => {        
         console.error(err);
         toast(err.message || err)(dispatch);
     });
 }
 
-export const add = (patient) => (dispatch) => {
-    return patients.add(patient)
+export const remove = (patient) => (dispatch) => {
+    return patients.remove(patient)
     .then(() => {
-        dispatch({type: types.ADD_PATIENT, value: patient});
+        dispatch({type: types.REMOVE_PATIENT, value: patient});
     })
     .catch((err) => {
         console.error(err);
         toast(err.message || err)(dispatch);
-    });
-}
-
-export const update = (patient) => (dispatch) => {
-    dispatch({type: types.UPDATE_PATIENT, value: patient});
-}
-
-export const remove = (patient) => (dispatch) => {
-    dispatch({type: types.REMOVE_PATIENT, value: patient});
+    });    
 }
 
 export const setStatus = (patient, status) => (dispatch) => {
-    patient.status = status == 'active';
-    dispatch({type: types.UPDATE_PATIENT, value: patient});
+    patient.status = status;
+    return patients.update(patient)
+    .then(() => {        
+        dispatch({type: types.UPDATE_PATIENT, value: patient});
+    })
+    .catch((err) => {
+        console.error(err);
+        toast(err.message || err)(dispatch);
+    });        
 }

@@ -8,9 +8,9 @@ describe('schemas', () => {
     var env = {};
     beforeEach(() => {
         env = {};
-        env.after = normalize(env.before, Schemas.Patients);
+        env.after = normalize(before, Schemas.Patients);
         env.back = denormalize(env.after.result, env.after.entities, Schemas.Patients);
-    });
+    });    
 
     it('should be normalized', () => {
         //console.log(JSON.stringify(env.after, null, 4));
